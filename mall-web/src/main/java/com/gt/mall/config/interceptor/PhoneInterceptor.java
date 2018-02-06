@@ -28,11 +28,11 @@ public class PhoneInterceptor extends AuthorizeOrLoginController implements Hand
      */
     @Override
     public boolean preHandle( HttpServletRequest request, HttpServletResponse response, Object handler ) throws Exception {
-	//	logger.info( ">>>PhoneInterceptor>>>>>>>在请求处理之前进行调用（Controller方法调用之前）" );
-	logger.info( ">>>PhoneInterceptor>>basePath = " + CommonUtil.getpath( request ) );
+        //	logger.info( ">>>PhoneInterceptor>>>>>>>在请求处理之前进行调用（Controller方法调用之前）" );
+        logger.info( ">>>PhoneInterceptor>>basePath = " + CommonUtil.getpath( request ) );
 
-	long startTime = System.currentTimeMillis();
-	request.setAttribute( "runStartTime", startTime );
+        long startTime = System.currentTimeMillis();
+        request.setAttribute( "runStartTime", startTime );
 
 	// 获得在下面代码中要用的request,response,session对象
 	Map< String,Object > params = getParameterMap( request );
@@ -56,46 +56,46 @@ public class PhoneInterceptor extends AuthorizeOrLoginController implements Hand
      */
     @Override
     public void postHandle( HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView ) throws Exception {
-	long startTime = (Long) request.getAttribute( "runStartTime" );
+        long startTime = (Long) request.getAttribute( "runStartTime" );
 
-	long endTime = System.currentTimeMillis();
+        long endTime = System.currentTimeMillis();
 
-	long executeTime = endTime - startTime;
+        long executeTime = endTime - startTime;
 
-	HandlerMethod handlerMethod = (HandlerMethod) handler;
-	Method method = handlerMethod.getMethod();
-	/*if ( logger.isDebugEnabled() ) {*/
-	logger.error( "方法:" + handlerMethod.getBean() + "." + method.getName() + "  ；  请求参数：" + handlerMethod.getMethodParameters() );
-	logger.error( "访问的执行时间 : " + executeTime + "ms----页面：" + CommonUtil.getpath( request ) );
+        HandlerMethod handlerMethod = (HandlerMethod) handler;
+        Method method = handlerMethod.getMethod();
+    /*if ( logger.isDebugEnabled() ) {*/
+        logger.error( "方法:" + handlerMethod.getBean() + "." + method.getName() + "  ；  请求参数：" + handlerMethod.getMethodParameters() );
+        logger.error( "访问的执行时间 : " + executeTime + "ms----页面：" + CommonUtil.getpath( request ) );
     }
 
     private Map< String,Object > getParameterMap( HttpServletRequest request ) {
-	// 参数Map
-	Map map = request.getParameterMap();
-	// 返回值Map
-	Map< String,Object > returnMap = new HashMap<>();
-	Iterator entries = map.entrySet().iterator();
-	Map.Entry entry;
-	String name = "";
-	String value = "";
-	while ( entries.hasNext() ) {
-	    entry = (Map.Entry) entries.next();
-	    name = (String) entry.getKey();
-	    Object valueObj = entry.getValue();
-	    if ( null == valueObj ) {
-		value = "";
-	    } else if ( valueObj instanceof String[] ) {
-		String[] values = (String[]) valueObj;
-		for ( int i = 0; i < values.length; i++ ) {
-		    value = values[i] + ",";
-		}
-		value = value.substring( 0, value.length() - 1 );
-	    } else {
-		value = valueObj.toString();
-	    }
-	    returnMap.put( name, value );
-	}
-	return returnMap;
+        // 参数Map
+        Map map = request.getParameterMap();
+        // 返回值Map
+        Map< String,Object > returnMap = new HashMap<>();
+        Iterator entries = map.entrySet().iterator();
+        Map.Entry entry;
+        String name = "";
+        String value = "";
+        while ( entries.hasNext() ) {
+            entry = (Map.Entry) entries.next();
+            name = (String) entry.getKey();
+            Object valueObj = entry.getValue();
+            if ( null == valueObj ) {
+                value = "";
+            } else if ( valueObj instanceof String[] ) {
+                String[] values = (String[]) valueObj;
+                for ( int i = 0; i < values.length; i++ ) {
+                    value = values[i] + ",";
+                }
+                value = value.substring( 0, value.length() - 1 );
+            } else {
+                value = valueObj.toString();
+            }
+            returnMap.put( name, value );
+        }
+        return returnMap;
     }
 
     /**

@@ -82,73 +82,73 @@ public class PhonePresaleNewController extends AuthorizeOrUcLoginController {
     @ResponseBody
     @RequestMapping( value = "toAddDeposit", method = RequestMethod.POST )
     public ServerResponse< Map< String,Object > > toAddDeposit( HttpServletRequest request, HttpServletResponse response,
-		    @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO, PhoneSearchDepositDTO searchDTO ) {
-	Map< String,Object > result = new HashMap<>();
-	try {
-	    coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "6" ) );////判断活动是否已经过期
+        @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO, PhoneSearchDepositDTO searchDTO ) {
+        Map< String,Object > result = new HashMap<>();
+        try {
+            coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "6" ) );////判断活动是否已经过期
 
-	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
-	    //	    userLogin( request, response, loginDTO );
+            Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
+            //	    userLogin( request, response, loginDTO );
 
-	    MallProduct product = mallProductService.selectById( searchDTO.getProId() );//获取商品信息
-	    int shopid = 0;
-	    if ( CommonUtil.isNotEmpty( product.getShopId() ) ) {
-		shopid = product.getShopId();
-		MallRedisUtils.getMallShopId( shopid, loginDTO.getBusId());
-	    }
-	    int proNum = 1;
-	    if ( CommonUtil.isNotEmpty( searchDTO.getNum() ) ) {
-		proNum = searchDTO.getNum();
+            MallProduct product = mallProductService.selectById( searchDTO.getProId() );//获取商品信息
+            int shopid = 0;
+            if ( CommonUtil.isNotEmpty( product.getShopId() ) ) {
+                shopid = product.getShopId();
+                MallRedisUtils.getMallShopId( shopid, loginDTO.getBusId() );
+            }
+            int proNum = 1;
+            if ( CommonUtil.isNotEmpty( searchDTO.getNum() ) ) {
+                proNum = searchDTO.getNum();
 
-	    }
-	    //查询商品的预售信息
-	    MallPresale presale = mallPresaleService.getPresaleByProId( searchDTO.getProId(), shopid, searchDTO.getPresaleId() );
-	    if ( CommonUtil.isNotEmpty( presale ) ) {
-		DecimalFormat df = new DecimalFormat( "######0.00" );
-		double money = CommonUtil.toDouble( presale.getDepositPercent() ) * proNum;
-		presale.setDepositPercent( BigDecimal.valueOf( CommonUtil.toDouble( df.format( money ) ) ) );
-	    }
+            }
+            //查询商品的预售信息
+            MallPresale presale = mallPresaleService.getPresaleByProId( searchDTO.getProId(), shopid, searchDTO.getPresaleId() );
+            if ( CommonUtil.isNotEmpty( presale ) ) {
+                DecimalFormat df = new DecimalFormat( "######0.00" );
+                double money = CommonUtil.toDouble( presale.getDepositPercent() ) * proNum;
+                presale.setDepositPercent( BigDecimal.valueOf( CommonUtil.toDouble( df.format( money ) ) ) );
+            }
 
-	    result.put( "presale", presale );
-	    result.put( "product", product );
-	    double proPrice = CommonUtil.toDouble( product.getProPrice() );
-	    if ( CommonUtil.isNotEmpty( searchDTO.getInvId() ) && searchDTO.getInvId() > 0 ) {
-		MallProductInventory inventory = mallProductInventoryService.selectById( searchDTO.getInvId() );
-		if ( "0".equals( inventory.getIsDelete().toString() ) && inventory.getProductId().toString().equals( searchDTO.getProId().toString() ) ) {
-		    proPrice = CommonUtil.toDouble( inventory.getInvPrice() );
-		}
-	    }
+            result.put( "presale", presale );
+            result.put( "product", product );
+            double proPrice = CommonUtil.toDouble( product.getProPrice() );
+            if ( CommonUtil.isNotEmpty( searchDTO.getInvId() ) && searchDTO.getInvId() > 0 ) {
+                MallProductInventory inventory = mallProductInventoryService.selectById( searchDTO.getInvId() );
+                if ( "0".equals( inventory.getIsDelete().toString() ) && inventory.getProductId().toString().equals( searchDTO.getProId().toString() ) ) {
+                    proPrice = CommonUtil.toDouble( inventory.getInvPrice() );
+                }
+            }
 
-	    List< MallPresaleTime > timeList = mallPresaleTimeService.getPresaleTimeByPreId( presale.getId() );
-	    proPrice = mallPresaleService.getPresalePrice( proPrice, timeList );
-	    DecimalFormat df = new DecimalFormat( "######0.00" );
-	    proPrice = CommonUtil.toDouble( df.format( proPrice ) );
-	    result.put( "orderPrice", df.format( proPrice * searchDTO.getNum() ) );//订购价
+            List< MallPresaleTime > timeList = mallPresaleTimeService.getPresaleTimeByPreId( presale.getId() );
+            proPrice = mallPresaleService.getPresalePrice( proPrice, timeList );
+            DecimalFormat df = new DecimalFormat( "######0.00" );
+            proPrice = CommonUtil.toDouble( df.format( proPrice ) );
+            result.put( "orderPrice", df.format( proPrice * searchDTO.getNum() ) );//订购价
 
-	    List imagelist = pageService.imageProductList( searchDTO.getProId(), 1 );//获取轮播图列表
-	    result.put( "imagelist", imagelist.get( 0 ) );
-	    String is_specifica = product.getIsSpecifica().toString();
-	    Map guige = new HashMap();
-	    if ( is_specifica.equals( "1" ) ) {
-		guige = pageService.productSpecifications( searchDTO.getProId(), searchDTO.getInvId() + "" );
-	    }
+            List imagelist = pageService.imageProductList( searchDTO.getProId(), 1 );//获取轮播图列表
+            result.put( "imagelist", imagelist.get( 0 ) );
+            String is_specifica = product.getIsSpecifica().toString();
+            Map guige = new HashMap();
+            if ( is_specifica.equals( "1" ) ) {
+                guige = pageService.productSpecifications( searchDTO.getProId(), searchDTO.getInvId() + "" );
+            }
 
-	    int memType = memberService.isCardType( member.getId() );
-	    if ( guige != null && guige.size() > 0 ) {
-		result.put( "proSpecificaIds", guige.get( "xids" ) );
-	    }
+            int memType = memberService.isCardType( member.getId() );
+            if ( guige != null && guige.size() > 0 ) {
+                result.put( "proSpecificaIds", guige.get( "xids" ) );
+            }
 
-	    PayWay payWay = payService.getPayWay( loginDTO.getBusId() );
-	    result.put( "payWayList", MarginUtil.getPayWay( memType, payWay, CommonUtil.judgeBrowser( request ) ) );
+            PayWay payWay = payService.getPayWay( loginDTO.getBusId() );
+            result.put( "payWayList", MarginUtil.getPayWay( memType, payWay, CommonUtil.judgeBrowser( request ) ) );
 
-	} catch ( BusinessException be ) {
-	    return ErrorInfo.createByErrorCodeMessage( be.getCode(), be.getMessage(), be.getData() );
-	} catch ( Exception e ) {
-	    logger.error( "获取交纳保证金信息异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取交纳保证金信息异常" );
-	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, true );
+        } catch ( BusinessException be ) {
+            return ErrorInfo.createByErrorCodeMessage( be.getCode(), be.getMessage(), be.getData() );
+        } catch ( Exception e ) {
+            logger.error( "获取交纳保证金信息异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取交纳保证金信息异常" );
+        }
+        return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, true );
     }
 
     /**
@@ -158,21 +158,21 @@ public class PhonePresaleNewController extends AuthorizeOrUcLoginController {
     @ResponseBody
     @RequestMapping( value = "addDeposit", method = RequestMethod.POST )
     public ServerResponse< Map< String,Object > > addDeposit( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO,
-		    PhoneAddDepositDTO depositDTO ) {
-	Map< String,Object > result = null;
-	try {
-	    //	    userLogin( request, response, loginDTO );
-	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
+        PhoneAddDepositDTO depositDTO ) {
+        Map< String,Object > result = null;
+        try {
+            //	    userLogin( request, response, loginDTO );
+            Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 
-	    result = mallPresaleDepositService.addDeposit( depositDTO, member, loginDTO.getBrowerType() );
-	} catch ( BusinessException be ) {
-	    return ServerResponse.createByErrorCodeMessage( be.getCode(), be.getMessage() );
-	} catch ( Exception e ) {
-	    logger.error( "交纳定金异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "交纳定金异常" );
-	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, false );
+            result = mallPresaleDepositService.addDeposit( depositDTO, member, loginDTO.getBrowerType() );
+        } catch ( BusinessException be ) {
+            return ServerResponse.createByErrorCodeMessage( be.getCode(), be.getMessage() );
+        } catch ( Exception e ) {
+            logger.error( "交纳定金异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "交纳定金异常" );
+        }
+        return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, false );
     }
 
     /**
@@ -183,22 +183,22 @@ public class PhonePresaleNewController extends AuthorizeOrUcLoginController {
     @ResponseBody
     @PostMapping( value = "payWay" )
     public ServerResponse payWay( HttpServletRequest request, HttpServletResponse response, @RequestBody Map< String,Object > params ) {
-	try {
-	    if ( CommonUtil.isEmpty( params.get( "out_trade_no" ) ) && CommonUtil.isNotEmpty( params.get( "no" ) ) ) {
-		params.put( "out_trade_no", params.get( "no" ) );
-	    }
-	    mallPresaleDepositService.paySuccessPresale( params );
-	    return ServerResponse.createBySuccessCode();
-	} catch ( BusinessException e ) {
-	    if ( e.getCode() == ResponseEnums.NEED_LOGIN.getCode() ) {
-		return ErrorInfo.createByErrorCodeMessage( e.getCode(), e.getMessage(), e.getData() );
-	    }
-	    return ErrorInfo.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), e.getMessage() );
-	} catch ( Exception e ) {
-	    logger.error( "预售缴纳定金回调异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ErrorInfo.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "预售缴纳定金回调异常" );
-	}
+        try {
+            if ( CommonUtil.isEmpty( params.get( "out_trade_no" ) ) && CommonUtil.isNotEmpty( params.get( "no" ) ) ) {
+                params.put( "out_trade_no", params.get( "no" ) );
+            }
+            mallPresaleDepositService.paySuccessPresale( params );
+            return ServerResponse.createBySuccessCode();
+        } catch ( BusinessException e ) {
+            if ( e.getCode() == ResponseEnums.NEED_LOGIN.getCode() ) {
+                return ErrorInfo.createByErrorCodeMessage( e.getCode(), e.getMessage(), e.getData() );
+            }
+            return ErrorInfo.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), e.getMessage() );
+        } catch ( Exception e ) {
+            logger.error( "预售缴纳定金回调异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ErrorInfo.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "预售缴纳定金回调异常" );
+        }
     }
 
     /**
@@ -208,55 +208,55 @@ public class PhonePresaleNewController extends AuthorizeOrUcLoginController {
     @ResponseBody
     @RequestMapping( value = "messageRemind", method = RequestMethod.POST )
     public ServerResponse messageRemind( HttpServletRequest request, HttpServletResponse response,
-		    @ApiParam( name = "preId", value = "预售ID", required = true ) @RequestParam String preId,
-		    @ApiParam( name = "busId", value = "商家ID", required = true ) @RequestParam Integer busId ) {
-	try {
-	    Member member = MallSessionUtils.getLoginMember( request, busId );
-	    Map< String,Object > param = new HashMap<>();
-	    param.put( "preId", preId );
-	    Map< String,Object > result = mallPresaleDepositService.addMessage( param, member.getId().toString() );
-	    Boolean flag = (Boolean) result.get( "result" );
-	    if ( !flag ) {
-		return ServerResponse.createBySuccessCodeMessage( ResponseEnums.ERROR.getCode(), "预售提醒失败，稍后请重新提交" );
-	    }
-	} catch ( Exception e ) {
-	    logger.error( "预售提醒异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "预售提醒异常" );
-	}
-	return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
+        @ApiParam( name = "preId", value = "预售ID", required = true ) @RequestParam String preId,
+        @ApiParam( name = "busId", value = "商家ID", required = true ) @RequestParam Integer busId ) {
+        try {
+            Member member = MallSessionUtils.getLoginMember( request, busId );
+            Map< String,Object > param = new HashMap<>();
+            param.put( "preId", preId );
+            Map< String,Object > result = mallPresaleDepositService.addMessage( param, member.getId().toString() );
+            Boolean flag = (Boolean) result.get( "result" );
+            if ( !flag ) {
+                return ServerResponse.createBySuccessCodeMessage( ResponseEnums.ERROR.getCode(), "预售提醒失败，稍后请重新提交" );
+            }
+        } catch ( Exception e ) {
+            logger.error( "预售提醒异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "预售提醒异常" );
+        }
+        return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
     }
 
     @ApiOperation( value = "获取我的定金列表", notes = "获取我的定金列表" )
     @ResponseBody
     @RequestMapping( value = "myDepositList", method = RequestMethod.POST )
     public ServerResponse myDepositList( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO ) {
-	List< MallPresaleDeposit > depositList = null;
-	try {
-	    coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "6" ) );////判断活动是否已经过期
+        List< MallPresaleDeposit > depositList = null;
+        try {
+            coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "6" ) );////判断活动是否已经过期
 
-	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
-	    //	    userLogin( request, response, loginDTO );
+            Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
+            //	    userLogin( request, response, loginDTO );
 
-	    MallPresaleDeposit deposit = new MallPresaleDeposit();
-	    List< Integer > memberList = memberService.findMemberListByIds( member.getId() );//查询会员信息
+            MallPresaleDeposit deposit = new MallPresaleDeposit();
+            List< Integer > memberList = memberService.findMemberListByIds( member.getId() );//查询会员信息
 
-	    if ( CommonUtil.isNotEmpty( memberList ) && memberList.size() > 0 ) {
-		deposit.setOldUserIdList( memberList );
-	    } else {
-		deposit.setUserId( member.getId() );
-	    }
+            if ( CommonUtil.isNotEmpty( memberList ) && memberList.size() > 0 ) {
+                deposit.setOldUserIdList( memberList );
+            } else {
+                deposit.setUserId( member.getId() );
+            }
 
-	    depositList = mallPresaleDepositService.getMyPresale( deposit );
+            depositList = mallPresaleDepositService.getMyPresale( deposit );
 
-	} catch ( BusinessException be ) {
-	    return ErrorInfo.createByErrorCodeMessage( be.getCode(), be.getMessage(), be.getData() );
-	} catch ( Exception e ) {
-	    logger.error( "获取我的定金列表异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取我的定金列表异常" );
-	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), depositList, true );
+        } catch ( BusinessException be ) {
+            return ErrorInfo.createByErrorCodeMessage( be.getCode(), be.getMessage(), be.getData() );
+        } catch ( Exception e ) {
+            logger.error( "获取我的定金列表异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取我的定金列表异常" );
+        }
+        return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), depositList, true );
     }
 
 }

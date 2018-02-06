@@ -51,24 +51,24 @@ public class MallAppletImageNewController extends BaseController {
     @ApiImplicitParams( { @ApiImplicitParam( name = "curPage", value = "页数", paramType = "query", required = false, dataType = "int" ) } )
     @RequestMapping( value = "/list", method = RequestMethod.POST )
     public ServerResponse list( HttpServletRequest request, HttpServletResponse response, Integer curPage ) {
-	Map< String,Object > result = new HashMap<>();
-	try {
-	    BusUser user = MallSessionUtils.getLoginUser( request );
-	    Map< String,Object > params = new HashMap<>();
-	    params.put( "curPage", curPage );
-	    List< Map< String,Object > > shoplist = storeService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
-	    if ( shoplist != null && shoplist.size() > 0 ) {
-		params.put( "userId", user.getId() );
-		PageUtil page = appletImageService.selectImageByShopId( params );
-		result.put( "page", page );
+        Map< String,Object > result = new HashMap<>();
+        try {
+            BusUser user = MallSessionUtils.getLoginUser( request );
+            Map< String,Object > params = new HashMap<>();
+            params.put( "curPage", curPage );
+            List< Map< String,Object > > shoplist = storeService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
+            if ( shoplist != null && shoplist.size() > 0 ) {
+                params.put( "userId", user.getId() );
+                PageUtil page = appletImageService.selectImageByShopId( params );
+                result.put( "page", page );
 
-	    }
-	} catch ( Exception e ) {
-	    logger.error( "小程序图片管理列表异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "小程序图片管理列表异常" );
-	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
+            }
+        } catch ( Exception e ) {
+            logger.error( "小程序图片管理列表异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "小程序图片管理列表异常" );
+        }
+        return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
     }
 
     /**
@@ -78,16 +78,16 @@ public class MallAppletImageNewController extends BaseController {
     @ResponseBody
     @RequestMapping( value = "/appletInfo", method = RequestMethod.POST )
     public ServerResponse appletInfo( HttpServletRequest request, HttpServletResponse response,
-		    @ApiParam( name = "id", value = "小程序图片ID", required = true ) @RequestParam Integer id ) {
-	Map< String,Object > imageMap = null;
-	try {
-	    imageMap = appletImageService.selectImageById( id );
-	} catch ( Exception e ) {
-	    logger.error( "获取小程序图片信息异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取小程序图片信息异常" );
-	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), imageMap );
+        @ApiParam( name = "id", value = "小程序图片ID", required = true ) @RequestParam Integer id ) {
+        Map< String,Object > imageMap = null;
+        try {
+            imageMap = appletImageService.selectImageById( id );
+        } catch ( Exception e ) {
+            logger.error( "获取小程序图片信息异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取小程序图片信息异常" );
+        }
+        return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), imageMap );
     }
 
     /**
@@ -98,27 +98,27 @@ public class MallAppletImageNewController extends BaseController {
     @SysLogAnnotation( description = "保存小程序图片信息", op_function = "2" )
     @RequestMapping( value = "/save", method = RequestMethod.POST )
     public ServerResponse saveOrUpdate( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
-	try {
-	    int code = -1;// 编辑成功
-	    Integer userId = MallSessionUtils.getLoginUser( request ).getId();
-	    if ( CommonUtil.isNotEmpty( userId ) && CommonUtil.isNotEmpty( params ) ) {
-		boolean flag = appletImageService.editImage( params, userId );// 编辑商品
-		if ( flag ) { code = 1;}
-	    }
-	    if ( code <= 0 ) {
-		return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "保存小程序图片失败" );
-	    }
+        try {
+            int code = -1;// 编辑成功
+            Integer userId = MallSessionUtils.getLoginUser( request ).getId();
+            if ( CommonUtil.isNotEmpty( userId ) && CommonUtil.isNotEmpty( params ) ) {
+                boolean flag = appletImageService.editImage( params, userId );// 编辑商品
+                if ( flag ) { code = 1;}
+            }
+            if ( code <= 0 ) {
+                return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "保存小程序图片失败" );
+            }
 
-	} catch ( BusinessException e ) {
-	    logger.error( "保存小程序图片信息异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
-	} catch ( Exception e ) {
-	    logger.error( "保存小程序图片信息异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByError();
-	}
-	return ServerResponse.createBySuccessCode();
+        } catch ( BusinessException e ) {
+            logger.error( "保存小程序图片信息异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
+        } catch ( Exception e ) {
+            logger.error( "保存小程序图片信息异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByError();
+        }
+        return ServerResponse.createBySuccessCode();
     }
 
     /**
@@ -129,31 +129,31 @@ public class MallAppletImageNewController extends BaseController {
     @SysLogAnnotation( description = "删除小程序图片信息", op_function = "4" )
     @RequestMapping( value = "/delete", method = RequestMethod.POST )
     public ServerResponse delete( HttpServletRequest request, HttpServletResponse response, @ApiParam( name = "id", value = "小程序图片Id", required = true ) @RequestParam Integer id,
-		    @ApiParam( name = "type", value = "类型 -1删除 -2不显示 1显示", required = true ) @RequestParam Integer type ) {
-	try {
-	    MallAppletImage images = new MallAppletImage();
-	    images.setId( id );
-	    if ( type == -1 ) {
-		images.setIsDelete( 1 );
-	    } else if ( type == -2 ) {
-		images.setIsShow( 0 );
-	    } else {
-		images.setIsShow( 1 );
-	    }
-	    boolean flag = appletImageService.updateById( images );
-	    if ( !flag ) {
-		return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "删除小程序图片记录异常" );
-	    }
-	} catch ( BusinessException e ) {
-	    logger.error( "删除小程序图片信息异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
-	} catch ( Exception e ) {
-	    logger.error( "删除小程序图片信息异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "删除小程序图片信息异常" );
-	}
-	return ServerResponse.createBySuccessCode();
+        @ApiParam( name = "type", value = "类型 -1删除 -2不显示 1显示", required = true ) @RequestParam Integer type ) {
+        try {
+            MallAppletImage images = new MallAppletImage();
+            images.setId( id );
+            if ( type == -1 ) {
+                images.setIsDelete( 1 );
+            } else if ( type == -2 ) {
+                images.setIsShow( 0 );
+            } else {
+                images.setIsShow( 1 );
+            }
+            boolean flag = appletImageService.updateById( images );
+            if ( !flag ) {
+                return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "删除小程序图片记录异常" );
+            }
+        } catch ( BusinessException e ) {
+            logger.error( "删除小程序图片信息异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
+        } catch ( Exception e ) {
+            logger.error( "删除小程序图片信息异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "删除小程序图片信息异常" );
+        }
+        return ServerResponse.createBySuccessCode();
     }
 
 }

@@ -130,7 +130,7 @@ public interface MallGroupService extends BaseService< MallGroup > {
      * @param params  分组信息
      * @param product 商品信息
      */
-    void copyProductGroupByProduct( Map< String,Object > params, MallProduct product );
+    void copyProductGroupByProduct( Map< String,Object > params, MallProduct product , List< Map< String,Object > > productGroupList);
 
     /**
      * 通过搜索名称模糊查询分组信息

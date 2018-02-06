@@ -8,18 +8,20 @@ import java.util.Map;
 
 /**
  * <p>
- *  服务类
+ * 服务类
  * </p>
  *
  * @author yangqian
  * @since 2017-07-31
  */
-public interface PurchaseCompanyModeService extends BaseService<PurchaseCompanyMode > {
+public interface PurchaseCompanyModeService extends BaseService< PurchaseCompanyMode > {
     /**
      * 分页查询数据
+     *
      * @param parms
+     *
      * @return
      */
-    PageUtil findList(Map<String,Object> parms);
+    PageUtil findList( Map< String,Object > parms );
 
 }

@@ -21,81 +21,100 @@ public interface MallPifaDAO extends BaseMapper< MallPifa > {
      * 统计批发信息
      *
      * @param params
+     *
      * @return
      */
-    int selectByCount(Map<String, Object> params);
+    int selectByCount( Map< String,Object > params );
 
     /**
      * 分页查询批发信息
      *
      * @param params
+     *
      * @return
      */
-    List<MallPifa> selectByPage(Map<String, Object> params);
+    List< MallPifa > selectByPage( Map< String,Object > params );
 
     /**
      * 通过id查询批发信息商品信息
+     *
      * @param id
+     *
      * @return
      */
-    Map<String, Object> selectByPifaId(Integer id);
+    Map< String,Object > selectByPifaId( Integer id );
 
     /**
      * 查询是否存在未开始和进行中的商品
+     *
      * @param pifa
+     *
      * @return
      */
-    List<MallPifa> selectPifaByProId(MallPifa pifa);
+    List< MallPifa > selectPifaByProId( MallPifa pifa );
 
     /**
      * 查询是否存在未开始和进行中的商品
+     *
      * @param pifa
+     *
      * @return
      */
-    List<MallPifa> selectStartPifaByProId(MallPifa pifa);
+    List< MallPifa > selectStartPifaByProId( MallPifa pifa );
 
     /**
      * 根据id查询批发
+     *
      * @param id
+     *
      * @return
      */
-    MallPifa selecPifaByIds(Integer id);
+    MallPifa selecPifaByIds( Integer id );
 
     /**
      * 通过店铺id查询批发信息
+     *
      * @param maps
+     *
      * @return
      */
-    List<Map<String, Object> > selectgbProductByShopId(Map<String, Object> maps);
+    List< Map< String,Object > > selectgbProductByShopId( Map< String,Object > maps );
 
     /**
      * 统计批发商品数量
+     *
      * @param maps
+     *
      * @return
      */
-    int selectCountgbProductByShopId(Map<String, Object> maps);
+    int selectCountgbProductByShopId( Map< String,Object > maps );
 
     /**
      * 根据商品id查询批发信息
+     *
      * @param pifa
+     *
      * @return
      */
-    MallPifa selectBuyByProductId(MallPifa pifa);
+    MallPifa selectBuyByProductId( MallPifa pifa );
 
     /**
      * 统计购买批发商品的信息
+     *
      * @param params
+     *
      * @return
      */
-    int selectCountJoinNum(Map<String, Object> params);
+    int selectCountJoinNum( Map< String,Object > params );
 
     /**
      * 查询正在进行中的批发
+     *
      * @param params
+     *
      * @return
      */
-    List<MallPifa> selectStartPiFaByProductId(Map<String, Object> params);
-
+    List< MallPifa > selectStartPiFaByProductId( Map< String,Object > params );
 
     /**
      * 查询正在进行的批发商品
@@ -107,5 +126,5 @@ public interface MallPifaDAO extends BaseMapper< MallPifa > {
     /**
      * 统计正在进行的批发商品
      */
-    int selectCountGoingPifaProduct(PhoneSearchProductDTO searchProductDTO);
+    int selectCountGoingPifaProduct( PhoneSearchProductDTO searchProductDTO );
 }

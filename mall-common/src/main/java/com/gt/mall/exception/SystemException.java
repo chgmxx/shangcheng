@@ -18,34 +18,34 @@ public class SystemException extends RuntimeException {
     private String data;//异常内容
 
     public SystemException( String message ) {
-	super( message );
-	this.message = message;
+        super( message );
+        this.message = message;
     }
 
     public SystemException( int code, String message ) {
-	super( message );
-	this.message = message;
-	this.code = code;
+        super( message );
+        this.message = message;
+        this.code = code;
     }
 
     public SystemException( int code, String message, String data ) {
-	super( message );
-	this.message = message;
-	this.code = code;
-	this.data = data;
+        super( message );
+        this.message = message;
+        this.code = code;
+        this.data = data;
     }
 
     public int getCode() {
-	return code;
+        return code;
     }
 
     @Override
     public String getMessage() {
-	return message;
+        return message;
     }
 
     public String getData() {
-	return data;
+        return data;
     }
 
 }

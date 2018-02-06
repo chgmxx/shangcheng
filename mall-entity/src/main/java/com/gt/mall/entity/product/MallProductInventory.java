@@ -101,25 +101,25 @@ public class MallProductInventory extends Model< MallProductInventory > {
 
     @Override
     protected Serializable pkVal() {
-	return this.id;
+        return this.id;
     }
 
     @Override
     public String toString() {
-	return "MallProductInventory{" +
-			"id=" + id +
-			", productId=" + productId +
-			", specificaIds=" + specificaIds +
-			", invPrice=" + invPrice +
-			", invNum=" + invNum +
-			", invCode=" + invCode +
-			", invSaleNum=" + invSaleNum +
-			", isDelete=" + isDelete +
-			", isDefault=" + isDefault +
-			", specificaImgId=" + specificaImgId +
-			", erpInvId=" + erpInvId +
-			", erpSpecvalueId=" + erpSpecvalueId +
-                        ", logisticsWeight=" + logisticsWeight +
-			"}";
+        return "MallProductInventory{" +
+            "id=" + id +
+            ", productId=" + productId +
+            ", specificaIds=" + specificaIds +
+            ", invPrice=" + invPrice +
+            ", invNum=" + invNum +
+            ", invCode=" + invCode +
+            ", invSaleNum=" + invSaleNum +
+            ", isDelete=" + isDelete +
+            ", isDefault=" + isDefault +
+            ", specificaImgId=" + specificaImgId +
+            ", erpInvId=" + erpInvId +
+            ", erpSpecvalueId=" + erpSpecvalueId +
+            ", logisticsWeight=" + logisticsWeight +
+            "}";
     }
 }

@@ -90,56 +90,56 @@ public class MallPresale extends Model< MallPresale > {
     @TableField( "order_num" )
     private Integer    orderNum;
 
-    @TableField(exist = false)
+    @TableField( exist = false )
     private String shopName;//店铺名称
 
-    @TableField(exist = false)
+    @TableField( exist = false )
     private String proName;//商品名称
 
-    @TableField(exist = false)
+    @TableField( exist = false )
     private int status;//预售状态
 
-    @TableField(exist = false)
+    @TableField( exist = false )
     private int joinId = 0;//参加用户id
 
-    @TableField(exist = false)
+    @TableField( exist = false )
     private long times;
 
-    @TableField(exist = false)
+    @TableField( exist = false )
     private long startTimes;
 
-    @TableField(exist = false)
+    @TableField( exist = false )
     private String twoCodePath;
 
-    @TableField(exist = false)
+    @TableField( exist = false )
     private int invNum;
 
-    @TableField(exist = false)
-    private List<Map<String, Object> > list;
+    @TableField( exist = false )
+    private List< Map< String,Object > > list;
 
-    @TableField(exist = false)
+    @TableField( exist = false )
     private int wx_shop_id; //门店ID 关联wx_shop表的id
 
     @Override
     protected Serializable pkVal() {
-	return this.id;
+        return this.id;
     }
 
     @Override
     public String toString() {
-	return "MallPresale{" +
-			"id=" + id +
-			", productId=" + productId +
-			", shopId=" + shopId +
-			", saleStartTime=" + saleStartTime +
-			", saleEndTime=" + saleEndTime +
-			", isDeposit=" + isDeposit +
-			", depositPercent=" + depositPercent +
-			", userId=" + userId +
-			", createTime=" + createTime +
-			", isDelete=" + isDelete +
-			", isUse=" + isUse +
-			", orderNum=" + orderNum +
-			"}";
+        return "MallPresale{" +
+            "id=" + id +
+            ", productId=" + productId +
+            ", shopId=" + shopId +
+            ", saleStartTime=" + saleStartTime +
+            ", saleEndTime=" + saleEndTime +
+            ", isDeposit=" + isDeposit +
+            ", depositPercent=" + depositPercent +
+            ", userId=" + userId +
+            ", createTime=" + createTime +
+            ", isDelete=" + isDelete +
+            ", isUse=" + isUse +
+            ", orderNum=" + orderNum +
+            "}";
     }
 }

@@ -19,23 +19,23 @@ public class MyWebAppConfigurer extends WebMvcConfigurerAdapter {
     //快速解决页面转向问题
     @Override
     public void addViewControllers( ViewControllerRegistry registry ) {
-	registry.addViewController( "/" ).setViewName( "/index.html" );
-	registry.addViewController( "/error" ).setViewName( "/error/404Two" );
+        registry.addViewController( "/" ).setViewName( "/index.html" );
+        registry.addViewController( "/error" ).setViewName( "/error/404Two" );
     }
 
     @Override
     public void addInterceptors( InterceptorRegistry registry ) {
 
-	//	registry.addInterceptor( new MyInterceptor() ).addPathPatterns( "/**" );
+        //	registry.addInterceptor( new MyInterceptor() ).addPathPatterns( "/**" );
 
-	registry.addInterceptor( new MyInterceptor() ).addPathPatterns( "/**" ).excludePathPatterns( "/**/E9lM9uM4ct/**", "/**/L6tgXlBFeK/**", "/**/mallAPI/**" );
-	registry.addInterceptor( new BackInterceptor() ).addPathPatterns( "/**/E9lM9uM4ct/**" );
-	registry.addInterceptor( new PhoneInterceptor() ).addPathPatterns( "/**/L6tgXlBFeK/**" );
-	registry.addInterceptor( new ApiInterceptor() ).addPathPatterns( "/**/mallAPI/**" );
+        registry.addInterceptor( new MyInterceptor() ).addPathPatterns( "/**" ).excludePathPatterns( "/**/E9lM9uM4ct/**", "/**/L6tgXlBFeK/**", "/**/mallAPI/**" );
+        registry.addInterceptor( new BackInterceptor() ).addPathPatterns( "/**/E9lM9uM4ct/**" );
+        registry.addInterceptor( new PhoneInterceptor() ).addPathPatterns( "/**/L6tgXlBFeK/**" );
+        registry.addInterceptor( new ApiInterceptor() ).addPathPatterns( "/**/mallAPI/**" );
 
 	     	/*registry.addInterceptor(new SysLogInterceptor()).addPathPatterns("*//**");*/
 
-	super.addInterceptors( registry );
+        super.addInterceptors( registry );
     }
 
     /**
@@ -43,7 +43,7 @@ public class MyWebAppConfigurer extends WebMvcConfigurerAdapter {
      */
     @Override
     public void addResourceHandlers( ResourceHandlerRegistry registry ) {
-	super.addResourceHandlers( registry );
+        super.addResourceHandlers( registry );
     }
 
     /**
@@ -55,8 +55,8 @@ public class MyWebAppConfigurer extends WebMvcConfigurerAdapter {
      */
     @Override
     public void addCorsMappings( CorsRegistry registry ) {
-	registry.addMapping( "/**" ).allowedHeaders( "*" ).allowedMethods( "*" ).allowedOrigins( "*" );
-	super.addCorsMappings( registry );
+        registry.addMapping( "/**" ).allowedHeaders( "*" ).allowedMethods( "*" ).allowedOrigins( "*" );
+        super.addCorsMappings( registry );
     }
 
 }

@@ -150,32 +150,32 @@ public class MallPresaleDeposit extends Model< MallPresaleDeposit > {
 
     @Override
     protected Serializable pkVal() {
-	return this.id;
+        return this.id;
     }
 
     @Override
     public String toString() {
 
-	return "MallPresaleDeposit{" +
-			"id=" + id +
-			", presaleId=" + presaleId +
-			", productId=" + productId +
-			", proSpecificaIds=" + proSpecificaIds +
-			", proName=" + proName +
-			", proImgUrl=" + proImgUrl +
-			", depositNo=" + depositNo +
-			", depositMoney=" + depositMoney +
-			", orderMoney=" + orderMoney +
-			", depositStatus=" + depositStatus +
-			", payWay=" + payWay +
-			", payTime=" + payTime +
-			", payNo=" + payNo +
-			", returnNo=" + returnNo +
-			", returnTime=" + returnTime +
-			", userId=" + userId +
-			", createTime=" + createTime +
-			", isSubmit=" + isSubmit +
-			", proNum=" + proNum +
-			"}";
+        return "MallPresaleDeposit{" +
+            "id=" + id +
+            ", presaleId=" + presaleId +
+            ", productId=" + productId +
+            ", proSpecificaIds=" + proSpecificaIds +
+            ", proName=" + proName +
+            ", proImgUrl=" + proImgUrl +
+            ", depositNo=" + depositNo +
+            ", depositMoney=" + depositMoney +
+            ", orderMoney=" + orderMoney +
+            ", depositStatus=" + depositStatus +
+            ", payWay=" + payWay +
+            ", payTime=" + payTime +
+            ", payNo=" + payNo +
+            ", returnNo=" + returnNo +
+            ", returnTime=" + returnTime +
+            ", userId=" + userId +
+            ", createTime=" + createTime +
+            ", isSubmit=" + isSubmit +
+            ", proNum=" + proNum +
+            "}";
     }
 }

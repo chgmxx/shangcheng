@@ -4,11 +4,10 @@ import java.util.Date;
 
 public class Card {
 
-
     /**
      * 积分卡
      */
-    public static final int POINT_CARD = 1;
+    public static final int POINT_CARD    = 1;
     /**
      * 折扣卡
      */
@@ -16,7 +15,7 @@ public class Card {
     /**
      * 储值卡
      */
-    public static final int VALUE_CARD = 3;
+    public static final int VALUE_CARD    = 3;
 
     public static final int TIME_CARD = 4; //时效卡
 
@@ -245,9 +244,10 @@ public class Card {
      * This method sets the value of the database column t_member_card.mc_id
      *
      * @param mcId the value for t_member_card.mc_id
+     *
      * @mbggenerated Thu May 11 15:47:22 CST 2017
      */
-    public void setMcId(Integer mcId) {
+    public void setMcId( Integer mcId ) {
         this.mcId = mcId;
     }
 
@@ -267,9 +267,10 @@ public class Card {
      * This method sets the value of the database column t_member_card.cardNo
      *
      * @param cardno the value for t_member_card.cardNo
+     *
      * @mbggenerated Thu May 11 15:47:22 CST 2017
      */
-    public void setCardno(String cardno) {
+    public void setCardno( String cardno ) {
         this.cardno = cardno == null ? null : cardno.trim();
     }
 
@@ -289,9 +290,10 @@ public class Card {
      * This method sets the value of the database column t_member_card.ct_id
      *
      * @param ctId the value for t_member_card.ct_id
+     *
      * @mbggenerated Thu May 11 15:47:22 CST 2017
      */
-    public void setCtId(Integer ctId) {
+    public void setCtId( Integer ctId ) {
         this.ctId = ctId;
     }
 
@@ -311,9 +313,10 @@ public class Card {
      * This method sets the value of the database column t_member_card.gt_id
      *
      * @param gtId the value for t_member_card.gt_id
+     *
      * @mbggenerated Thu May 11 15:47:22 CST 2017
      */
-    public void setGtId(Integer gtId) {
+    public void setGtId( Integer gtId ) {
         this.gtId = gtId;
     }
 
@@ -333,9 +336,10 @@ public class Card {
      * This method sets the value of the database column t_member_card.public_Id
      *
      * @param publicId the value for t_member_card.public_Id
+     *
      * @mbggenerated Thu May 11 15:47:22 CST 2017
      */
-    public void setPublicId(Integer publicId) {
+    public void setPublicId( Integer publicId ) {
         this.publicId = publicId;
     }
 
@@ -355,9 +359,10 @@ public class Card {
      * This method sets the value of the database column t_member_card.receiveDate
      *
      * @param receivedate the value for t_member_card.receiveDate
+     *
      * @mbggenerated Thu May 11 15:47:22 CST 2017
      */
-    public void setReceivedate(Date receivedate) {
+    public void setReceivedate( Date receivedate ) {
         this.receivedate = receivedate;
     }
 
@@ -377,9 +382,10 @@ public class Card {
      * This method sets the value of the database column t_member_card.source
      *
      * @param source the value for t_member_card.source
+     *
      * @mbggenerated Thu May 11 15:47:22 CST 2017
      */
-    public void setSource(Byte source) {
+    public void setSource( Byte source ) {
         this.source = source;
     }
 
@@ -399,9 +405,10 @@ public class Card {
      * This method sets the value of the database column t_member_card.isbinding
      *
      * @param isbinding the value for t_member_card.isbinding
+     *
      * @mbggenerated Thu May 11 15:47:22 CST 2017
      */
-    public void setIsbinding(Byte isbinding) {
+    public void setIsbinding( Byte isbinding ) {
         this.isbinding = isbinding;
     }
 
@@ -421,9 +428,10 @@ public class Card {
      * This method sets the value of the database column t_member_card.money
      *
      * @param money the value for t_member_card.money
+     *
      * @mbggenerated Thu May 11 15:47:22 CST 2017
      */
-    public void setMoney(Double money) {
+    public void setMoney( Double money ) {
         this.money = money;
     }
 
@@ -443,9 +451,10 @@ public class Card {
      * This method sets the value of the database column t_member_card.frequency
      *
      * @param frequency the value for t_member_card.frequency
+     *
      * @mbggenerated Thu May 11 15:47:22 CST 2017
      */
-    public void setFrequency(Integer frequency) {
+    public void setFrequency( Integer frequency ) {
         this.frequency = frequency;
     }
 
@@ -465,9 +474,10 @@ public class Card {
      * This method sets the value of the database column t_member_card.gr_id
      *
      * @param grId the value for t_member_card.gr_id
+     *
      * @mbggenerated Thu May 11 15:47:22 CST 2017
      */
-    public void setGrId(Integer grId) {
+    public void setGrId( Integer grId ) {
         this.grId = grId;
     }
 
@@ -487,9 +497,10 @@ public class Card {
      * This method sets the value of the database column t_member_card.expireDate
      *
      * @param expiredate the value for t_member_card.expireDate
+     *
      * @mbggenerated Thu May 11 15:47:22 CST 2017
      */
-    public void setExpiredate(Date expiredate) {
+    public void setExpiredate( Date expiredate ) {
         this.expiredate = expiredate;
     }
 
@@ -509,9 +520,10 @@ public class Card {
      * This method sets the value of the database column t_member_card.ucId
      *
      * @param ucid the value for t_member_card.ucId
+     *
      * @mbggenerated Thu May 11 15:47:22 CST 2017
      */
-    public void setUcid(Integer ucid) {
+    public void setUcid( Integer ucid ) {
         this.ucid = ucid;
     }
 
@@ -531,9 +543,10 @@ public class Card {
      * This method sets the value of the database column t_member_card.nominateCode
      *
      * @param nominatecode the value for t_member_card.nominateCode
+     *
      * @mbggenerated Thu May 11 15:47:22 CST 2017
      */
-    public void setNominatecode(String nominatecode) {
+    public void setNominatecode( String nominatecode ) {
         this.nominatecode = nominatecode == null ? null : nominatecode.trim();
     }
 
@@ -553,9 +566,10 @@ public class Card {
      * This method sets the value of the database column t_member_card.systemcode
      *
      * @param systemcode the value for t_member_card.systemcode
+     *
      * @mbggenerated Thu May 11 15:47:22 CST 2017
      */
-    public void setSystemcode(String systemcode) {
+    public void setSystemcode( String systemcode ) {
         this.systemcode = systemcode == null ? null : systemcode.trim();
     }
 
@@ -575,9 +589,10 @@ public class Card {
      * This method sets the value of the database column t_member_card.isChecked
      *
      * @param ischecked the value for t_member_card.isChecked
+     *
      * @mbggenerated Thu May 11 15:47:22 CST 2017
      */
-    public void setIschecked(Byte ischecked) {
+    public void setIschecked( Byte ischecked ) {
         this.ischecked = ischecked;
     }
 
@@ -597,9 +612,10 @@ public class Card {
      * This method sets the value of the database column t_member_card.applyType
      *
      * @param applytype the value for t_member_card.applyType
+     *
      * @mbggenerated Thu May 11 15:47:22 CST 2017
      */
-    public void setApplytype(Byte applytype) {
+    public void setApplytype( Byte applytype ) {
         this.applytype = applytype;
     }
 
@@ -619,9 +635,10 @@ public class Card {
      * This method sets the value of the database column t_member_card.memberId
      *
      * @param memberid the value for t_member_card.memberId
+     *
      * @mbggenerated Thu May 11 15:47:22 CST 2017
      */
-    public void setMemberid(Integer memberid) {
+    public void setMemberid( Integer memberid ) {
         this.memberid = memberid;
     }
 
@@ -641,9 +658,10 @@ public class Card {
      * This method sets the value of the database column t_member_card.changeCardType
      *
      * @param changecardtype the value for t_member_card.changeCardType
+     *
      * @mbggenerated Thu May 11 15:47:22 CST 2017
      */
-    public void setChangecardtype(Byte changecardtype) {
+    public void setChangecardtype( Byte changecardtype ) {
         this.changecardtype = changecardtype;
     }
 
@@ -663,9 +681,10 @@ public class Card {
      * This method sets the value of the database column t_member_card.entityMemberId
      *
      * @param entitymemberid the value for t_member_card.entityMemberId
+     *
      * @mbggenerated Thu May 11 15:47:22 CST 2017
      */
-    public void setEntitymemberid(Integer entitymemberid) {
+    public void setEntitymemberid( Integer entitymemberid ) {
         this.entitymemberid = entitymemberid;
     }
 
@@ -685,9 +704,10 @@ public class Card {
      * This method sets the value of the database column t_member_card.cardStatus
      *
      * @param cardstatus the value for t_member_card.cardStatus
+     *
      * @mbggenerated Thu May 11 15:47:22 CST 2017
      */
-    public void setCardstatus(Byte cardstatus) {
+    public void setCardstatus( Byte cardstatus ) {
         this.cardstatus = cardstatus;
     }
 
@@ -707,9 +727,10 @@ public class Card {
      * This method sets the value of the database column t_member_card.busId
      *
      * @param busid the value for t_member_card.busId
+     *
      * @mbggenerated Thu May 11 15:47:22 CST 2017
      */
-    public void setBusid(Integer busid) {
+    public void setBusid( Integer busid ) {
         this.busid = busid;
     }
 
@@ -729,9 +750,10 @@ public class Card {
      * This method sets the value of the database column t_member_card.oldId
      *
      * @param oldid the value for t_member_card.oldId
+     *
      * @mbggenerated Thu May 11 15:47:22 CST 2017
      */
-    public void setOldid(Integer oldid) {
+    public void setOldid( Integer oldid ) {
         this.oldid = oldid;
     }
 
@@ -751,9 +773,10 @@ public class Card {
      * This method sets the value of the database column t_member_card.giveMoney
      *
      * @param givemoney the value for t_member_card.giveMoney
+     *
      * @mbggenerated Thu May 11 15:47:22 CST 2017
      */
-    public void setGivemoney(Double givemoney) {
+    public void setGivemoney( Double givemoney ) {
         this.givemoney = givemoney;
     }
 
@@ -773,9 +796,10 @@ public class Card {
      * This method sets the value of the database column t_member_card.shopId
      *
      * @param shopid the value for t_member_card.shopId
+     *
      * @mbggenerated Thu May 11 15:47:22 CST 2017
      */
-    public void setShopid(Integer shopid) {
+    public void setShopid( Integer shopid ) {
         this.shopid = shopid;
     }
 
@@ -795,9 +819,10 @@ public class Card {
      * This method sets the value of the database column t_member_card.online
      *
      * @param online the value for t_member_card.online
+     *
      * @mbggenerated Thu May 11 15:47:22 CST 2017
      */
-    public void setOnline(Byte online) {
+    public void setOnline( Byte online ) {
         this.online = online;
     }
 }

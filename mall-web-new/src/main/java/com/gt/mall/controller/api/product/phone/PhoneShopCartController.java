@@ -54,95 +54,95 @@ public class PhoneShopCartController extends AuthorizeOrUcLoginController {
     @ResponseBody
     @PostMapping( value = "addShopCart", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse addShopCart( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneAddShopCartDTO params ) {
-	try {
+        try {
 
-	    Member member = MallSessionUtils.getLoginMember( request, params.getBusId() );
+            Member member = MallSessionUtils.getLoginMember( request, params.getBusId() );
 
-	    mallShopCartService.addShoppingCart( member, params, request, response );
+            mallShopCartService.addShoppingCart( member, params, request, response );
 
-	} catch ( BusinessException e ) {
-	    logger.error( "加入购物车异常：" + e.getMessage() );
-	    return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
-	} catch ( Exception e ) {
-	    logger.error( "加入购物车异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorMessage( "加入购物车失败" );
-	}
-	return ServerResponse.createBySuccessCode();
+        } catch ( BusinessException e ) {
+            logger.error( "加入购物车异常：" + e.getMessage() );
+            return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
+        } catch ( Exception e ) {
+            logger.error( "加入购物车异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorMessage( "加入购物车失败" );
+        }
+        return ServerResponse.createBySuccessCode();
     }
 
     @ApiOperation( value = "查询购物车接口", notes = "查询购物车数据", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     @ApiImplicitParams( {
-		    @ApiImplicitParam( name = "busId", value = "商家id,必传", paramType = "query", required = true, dataType = "Integer" ),
-		    @ApiImplicitParam( name = "shopId", value = "店铺id", paramType = "query", required = true, dataType = "Integer" ),
-		    @ApiImplicitParam( name = "type", value = "购物车类型 1批发购物车可不传", paramType = "query", dataType = "Integer", defaultValue = "0" ),
-		    @ApiImplicitParam( name = "loginDTO", value = "登陆参数", required = true, paramType = "query", dataType = "Object" )
+        @ApiImplicitParam( name = "busId", value = "商家id,必传", paramType = "query", required = true, dataType = "Integer" ),
+        @ApiImplicitParam( name = "shopId", value = "店铺id", paramType = "query", required = true, dataType = "Integer" ),
+        @ApiImplicitParam( name = "type", value = "购物车类型 1批发购物车可不传", paramType = "query", dataType = "Integer", defaultValue = "0" ),
+        @ApiImplicitParam( name = "loginDTO", value = "登陆参数", required = true, paramType = "query", dataType = "Object" )
     } )
     @ResponseBody
     @PostMapping( value = "getShopCart", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse< PhoneShopCartResult > getShopCart( HttpServletRequest request, HttpServletResponse response, Integer busId, Integer shopId, Integer type,
-		    PhoneLoginDTO loginDTO ) {
-	try {
-	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
+        PhoneLoginDTO loginDTO ) {
+        try {
+            Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 
 	    /*loginDTO.setUcLogin( 1 );//不需要登陆
-	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断*/
+        userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断*/
 
-	    PhoneShopCartResult result = mallShopCartService.getShopCart( member, busId, type, request, response );
+            PhoneShopCartResult result = mallShopCartService.getShopCart( member, busId, type, request, response );
 
-	    MallRedisUtils.getMallShopId( shopId, loginDTO.getBusId() );//从session获取店铺id  或  把店铺id存入session
+            MallRedisUtils.getMallShopId( shopId, loginDTO.getBusId() );//从session获取店铺id  或  把店铺id存入session
 
-	    return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
-	} catch ( BusinessException be ) {
-	    return ErrorInfo.createByErrorCodeMessage( be.getCode(), be.getMessage(), be.getData() );
-	} catch ( Exception e ) {
-	    logger.error( "查询购物车异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorMessage( "查询购物车失败" );
-	}
+            return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
+        } catch ( BusinessException be ) {
+            return ErrorInfo.createByErrorCodeMessage( be.getCode(), be.getMessage(), be.getData() );
+        } catch ( Exception e ) {
+            logger.error( "查询购物车异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorMessage( "查询购物车失败" );
+        }
     }
 
     @ApiOperation( value = "删除购物车接口", notes = "用户删除购物车", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     @ResponseBody
     @PostMapping( value = "removeShopCart", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse< PhoneRemoveShopCartDTO > removeShopCart( HttpServletRequest request, HttpServletResponse response,
-		    @RequestBody @Valid @ModelAttribute PhoneRemoveShopCartDTO params ) {
-	try {
+        @RequestBody @Valid @ModelAttribute PhoneRemoveShopCartDTO params ) {
+        try {
 
-	    mallShopCartService.removeShopCart( params, request, response );
+            mallShopCartService.removeShopCart( params, request, response );
 
-	} catch ( BusinessException e ) {
-	    logger.error( "删除购物车异常：" + e.getMessage() );
-	    return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
-	} catch ( Exception e ) {
-	    logger.error( "删除购物车异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorMessage( "删除购物车失败" );
-	}
-	return ServerResponse.createBySuccessCode();
+        } catch ( BusinessException e ) {
+            logger.error( "删除购物车异常：" + e.getMessage() );
+            return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
+        } catch ( Exception e ) {
+            logger.error( "删除购物车异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorMessage( "删除购物车失败" );
+        }
+        return ServerResponse.createBySuccessCode();
     }
 
     @ApiOperation( value = "购物车去结算接口", notes = "购物车去结算", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     @ApiImplicitParams(
-		    @ApiImplicitParam( name = "str", value = "参数", paramType = "query", required = true, dataType = "String" )
+        @ApiImplicitParam( name = "str", value = "参数", paramType = "query", required = true, dataType = "String" )
     )
     @ResponseBody
     @PostMapping( value = "shopCartOrder", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse shopCartOrder( HttpServletRequest request, HttpServletResponse response, String str ) {
-	try {
+        try {
 
-	    List< PhoneShopCartOrderDTO > params = JSONArray.parseArray( str, PhoneShopCartOrderDTO.class );
+            List< PhoneShopCartOrderDTO > params = JSONArray.parseArray( str, PhoneShopCartOrderDTO.class );
 
-	    mallShopCartService.shopCartOrder( params );
-	} catch ( BusinessException e ) {
-	    logger.error( "购物车去结算异常：" + e.getMessage() );
-	    return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
-	} catch ( Exception e ) {
-	    logger.error( "购物车去结算异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorMessage( "购物车去结算失败" );
-	}
-	return ServerResponse.createBySuccessCode();
+            mallShopCartService.shopCartOrder( params );
+        } catch ( BusinessException e ) {
+            logger.error( "购物车去结算异常：" + e.getMessage() );
+            return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
+        } catch ( Exception e ) {
+            logger.error( "购物车去结算异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorMessage( "购物车去结算失败" );
+        }
+        return ServerResponse.createBySuccessCode();
     }
 
 }

@@ -1,6 +1,5 @@
 package com.gt.mall;
 
-import com.gt.mall.bean.MemberAddress;
 import com.gt.mall.service.inter.member.MemberService;
 import com.gt.mall.service.inter.user.BusUserService;
 import com.gt.mall.service.inter.user.DictService;
@@ -52,7 +51,7 @@ public class BaseControllerTest extends BasicTest {
 
     @Test
     public void tests() {
-	MemberAddress memberAddress = memberAddressService.addreSelectId( 146 );
+        //	MemberAddress memberAddress = memberAddressService.addreSelectId( 146 );
     }
 }
 

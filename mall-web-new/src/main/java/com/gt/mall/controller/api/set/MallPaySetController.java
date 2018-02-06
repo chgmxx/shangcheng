@@ -63,29 +63,29 @@ public class MallPaySetController extends BaseController {
     @ResponseBody
     @RequestMapping( value = "/paySetInfo", method = RequestMethod.POST )
     public ServerResponse paySetInfo( HttpServletRequest request, HttpServletResponse response ) {
-	Map< String,Object > result = new HashMap<>();
-	try {
-	    BusUser user = MallSessionUtils.getLoginUser( request );
-	    MallPaySet paySet = new MallPaySet();
-	    paySet.setUserId( user.getId() );
-	    MallPaySet set = mallPaySetService.selectByUserId( paySet );
-	    result.put( "set", set );
-	    if ( CommonUtil.isNotEmpty( set ) ) {
-		if ( CommonUtil.isNotEmpty( set.getSmsMessage() ) ) {
-		    Map smsMsgObj = JSONObject.fromObject( set.getSmsMessage() );
-		    result.put( "paySuccessText", smsMsgObj.get( "1" ) );//支付成功提醒内容
-		}
-		if ( CommonUtil.isNotEmpty( set.getFooterJson() ) ) {
-		    JSONObject foorerObj = JSONObject.fromObject( set.getFooterJson() );
-		    result.put( "foorerObj", foorerObj );//手机端底部菜单
-		}
-	    }
-	} catch ( Exception e ) {
-	    logger.error( "获取商城设置异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取商城设置异常" );
-	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
+        Map< String,Object > result = new HashMap<>();
+        try {
+            BusUser user = MallSessionUtils.getLoginUser( request );
+            MallPaySet paySet = new MallPaySet();
+            paySet.setUserId( user.getId() );
+            MallPaySet set = mallPaySetService.selectByUserId( paySet );
+            result.put( "set", set );
+            if ( CommonUtil.isNotEmpty( set ) ) {
+                if ( CommonUtil.isNotEmpty( set.getSmsMessage() ) ) {
+                    Map smsMsgObj = JSONObject.fromObject( set.getSmsMessage() );
+                    result.put( "paySuccessText", smsMsgObj.get( "1" ) );//支付成功提醒内容
+                }
+                if ( CommonUtil.isNotEmpty( set.getFooterJson() ) ) {
+                    JSONObject foorerObj = JSONObject.fromObject( set.getFooterJson() );
+                    result.put( "foorerObj", foorerObj );//手机端底部菜单
+                }
+            }
+        } catch ( Exception e ) {
+            logger.error( "获取商城设置异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取商城设置异常" );
+        }
+        return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
     }
 
     /**
@@ -95,64 +95,64 @@ public class MallPaySetController extends BaseController {
     @ResponseBody
     @RequestMapping( value = "/getTemplate", method = RequestMethod.POST )
     public ServerResponse getTemplate( HttpServletRequest request, HttpServletResponse response ) {
-	Map< String,Object > result = new HashMap<>();
-	try {
-	    BusUser user = MallSessionUtils.getLoginUser( request );
-	    List< Map > msgArr = null;
-	    List< Map > busMsgArr = null;
-	    MallPaySet paySet = new MallPaySet();
-	    paySet.setUserId( user.getId() );
-	    MallPaySet set = mallPaySetService.selectByUserId( paySet );
-	    if ( CommonUtil.isNotEmpty( set ) ) {
-		if ( CommonUtil.isNotEmpty( set.getMessageJson() ) ) {
-		    msgArr = JSONArray.fromObject( set.getMessageJson() );
-		}
-		if ( CommonUtil.isNotEmpty( set.getBusMessageJson() ) ) {
-		    busMsgArr = JSONArray.fromObject( set.getBusMessageJson() );
-		}
-	    }
+        Map< String,Object > result = new HashMap<>();
+        try {
+            BusUser user = MallSessionUtils.getLoginUser( request );
+            List< Map > msgArr = null;
+            List< Map > busMsgArr = null;
+            MallPaySet paySet = new MallPaySet();
+            paySet.setUserId( user.getId() );
+            MallPaySet set = mallPaySetService.selectByUserId( paySet );
+            if ( CommonUtil.isNotEmpty( set ) ) {
+                if ( CommonUtil.isNotEmpty( set.getMessageJson() ) ) {
+                    msgArr = JSONArray.fromObject( set.getMessageJson() );
+                }
+                if ( CommonUtil.isNotEmpty( set.getBusMessageJson() ) ) {
+                    busMsgArr = JSONArray.fromObject( set.getBusMessageJson() );
+                }
+            }
 
-	    List< Map > messageList = wxPublicUserService.selectTempObjByBusId( user.getId() );
-	    List< Map > messages = new ArrayList< Map >();//粉丝消息模板
-	    List< Map > busMessages = new ArrayList< Map >();//商家消息模板
-	    if ( messageList != null && messageList.size() > 0 ) {
-		for ( Map map : messageList ) {
-		    if ( map.get( "title" ).equals( Constants.BUY_SUCCESS_NOTICE ) ) {
-			if ( msgArr != null && msgArr.size() > 0 ) {
-			    for ( Map obj : msgArr ) {
-				map.put( "selected", "0" );
-				if ( CommonUtil.toInteger( obj.get( "id" ) ) == CommonUtil.toInteger( map.get( "id" ) ) ) {
-				    map.put( "selected", "1" );
-				    break;
-				}
-			    }
-			}
-			messages.add( map );
-		    } else {
-			List< String > fauCodeList = Arrays.asList( Constants.BUS_TEMPLATE_LIST );
-			if ( fauCodeList.contains( map.get( "title" ) ) == true ) {
-			    if ( busMsgArr != null && busMsgArr.size() > 0 ) {
-				for ( Map obj : busMsgArr ) {
-				    map.put( "selected", "0" );
-				    if ( CommonUtil.toInteger( obj.get( "id" ) ) == CommonUtil.toInteger( map.get( "id" ) ) ) {
-					map.put( "selected", "1" );
-					break;
-				    }
-				}
-			    }
-			    busMessages.add( map );
-			}
-		    }
-		}
-	    }
-	    result.put( "messageList", messages );
-	    result.put( "busMessages", busMessages );
-	} catch ( Exception e ) {
-	    logger.error( "获取消息模板异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取消息模板异常" );
-	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
+            List< Map > messageList = wxPublicUserService.selectTempObjByBusId( user.getId() );
+            List< Map > messages = new ArrayList< Map >();//粉丝消息模板
+            List< Map > busMessages = new ArrayList< Map >();//商家消息模板
+            if ( messageList != null && messageList.size() > 0 ) {
+                for ( Map map : messageList ) {
+                    if ( map.get( "title" ).equals( Constants.BUY_SUCCESS_NOTICE ) ) {
+                        if ( msgArr != null && msgArr.size() > 0 ) {
+                            for ( Map obj : msgArr ) {
+                                map.put( "selected", "0" );
+                                if ( CommonUtil.toInteger( obj.get( "id" ) ) == CommonUtil.toInteger( map.get( "id" ) ) ) {
+                                    map.put( "selected", "1" );
+                                    break;
+                                }
+                            }
+                        }
+                        messages.add( map );
+                    } else {
+                        List< String > fauCodeList = Arrays.asList( Constants.BUS_TEMPLATE_LIST );
+                        if ( fauCodeList.contains( map.get( "title" ) ) == true ) {
+                            if ( busMsgArr != null && busMsgArr.size() > 0 ) {
+                                for ( Map obj : busMsgArr ) {
+                                    map.put( "selected", "0" );
+                                    if ( CommonUtil.toInteger( obj.get( "id" ) ) == CommonUtil.toInteger( map.get( "id" ) ) ) {
+                                        map.put( "selected", "1" );
+                                        break;
+                                    }
+                                }
+                            }
+                            busMessages.add( map );
+                        }
+                    }
+                }
+            }
+            result.put( "messageList", messages );
+            result.put( "busMessages", busMessages );
+        } catch ( Exception e ) {
+            logger.error( "获取消息模板异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取消息模板异常" );
+        }
+        return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
     }
 
     /**
@@ -163,25 +163,25 @@ public class MallPaySetController extends BaseController {
     @SysLogAnnotation( description = "保存商城设置信息", op_function = "2" )
     @RequestMapping( value = "/setSave", method = RequestMethod.POST )
     public ServerResponse setSave( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
-	try {
-	    BusUser user = MallSessionUtils.getLoginUser( request );
-	    //	    set.setUserId( user.getId() );
-	    //	    com.alibaba.fastjson.JSONObject set2 = com.alibaba.fastjson.JSONObject.parseObject( JSON.toJSONString( set ) );
-	    params.put( "userId", user.getId() );
-	    int num = mallPaySetService.editPaySet( params );
-	    if ( num <= 0 ) {
-		return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "保存商城设置信息异常" );
-	    }
-	} catch ( BusinessException e ) {
-	    logger.error( "保存商城设置信息异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
-	} catch ( Exception e ) {
-	    logger.error( "保存商城设置信息异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
-	}
-	return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
+        try {
+            BusUser user = MallSessionUtils.getLoginUser( request );
+            //	    set.setUserId( user.getId() );
+            //	    com.alibaba.fastjson.JSONObject set2 = com.alibaba.fastjson.JSONObject.parseObject( JSON.toJSONString( set ) );
+            params.put( "userId", user.getId() );
+            int num = mallPaySetService.editPaySet( params );
+            if ( num <= 0 ) {
+                return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "保存商城设置信息异常" );
+            }
+        } catch ( BusinessException e ) {
+            logger.error( "保存商城设置信息异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
+        } catch ( Exception e ) {
+            logger.error( "保存商城设置信息异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
+        }
+        return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
     }
 
     /**
@@ -192,65 +192,65 @@ public class MallPaySetController extends BaseController {
     @SysLogAnnotation( description = "设置消息模板", op_function = "2" )
     @RequestMapping( value = "/setSmsTemplate", method = RequestMethod.POST )
     @ApiImplicitParams( { @ApiImplicitParam( name = "template_json", value = "{\"title\":\"积分变动提醒\",\"id\":23} ", paramType = "query", required = true, dataType = "String" ),
-		    @ApiImplicitParam( name = "type", value = "商家0/粉丝1", paramType = "query", required = true, dataType = "int" ),
-		    @ApiImplicitParam( name = "operation", value = "操作 1开启 0关闭", paramType = "query", required = true, dataType = "int" ) } )
+        @ApiImplicitParam( name = "type", value = "商家0/粉丝1", paramType = "query", required = true, dataType = "int" ),
+        @ApiImplicitParam( name = "operation", value = "操作 1开启 0关闭", paramType = "query", required = true, dataType = "int" ) } )
     public ServerResponse setSmsTemplate( HttpServletRequest request, HttpServletResponse response, String template_json, Integer type, Integer operation ) {
-	try {
-	    BusUser user = MallSessionUtils.getLoginUser( request );
-	    List< Map > msgArr = null;
-	    MallPaySet paySet = new MallPaySet();
-	    paySet.setUserId( user.getId() );
-	    MallPaySet set = mallPaySetService.selectByUserId( paySet );
-	    if ( CommonUtil.isNotEmpty( set ) ) {
-		if ( type == 1 ) {
-		    if ( CommonUtil.isNotEmpty( set.getMessageJson() ) ) {
-			msgArr = JSONArray.fromObject( set.getMessageJson() );
-		    } else {
-			msgArr = new ArrayList<>();
-		    }
-		} else {
-		    if ( CommonUtil.isNotEmpty( set.getBusMessageJson() ) ) {
-			msgArr = JSONArray.fromObject( set.getBusMessageJson() );
-		    } else {
-			msgArr = new ArrayList<>();
-		    }
-		}
-	    }
-	    template_json = CommonUtil.urlEncode( template_json );
-	    Map temp = JSONObject.fromObject( template_json );
+        try {
+            BusUser user = MallSessionUtils.getLoginUser( request );
+            List< Map > msgArr = null;
+            MallPaySet paySet = new MallPaySet();
+            paySet.setUserId( user.getId() );
+            MallPaySet set = mallPaySetService.selectByUserId( paySet );
+            if ( CommonUtil.isNotEmpty( set ) ) {
+                if ( type == 1 ) {
+                    if ( CommonUtil.isNotEmpty( set.getMessageJson() ) ) {
+                        msgArr = JSONArray.fromObject( set.getMessageJson() );
+                    } else {
+                        msgArr = new ArrayList<>();
+                    }
+                } else {
+                    if ( CommonUtil.isNotEmpty( set.getBusMessageJson() ) ) {
+                        msgArr = JSONArray.fromObject( set.getBusMessageJson() );
+                    } else {
+                        msgArr = new ArrayList<>();
+                    }
+                }
+            }
+            template_json = CommonUtil.urlEncode( template_json );
+            Map temp = JSONObject.fromObject( template_json );
 
-	    if ( operation == 1 ) {
-		msgArr.add( temp );
-		if ( type == 0 ) {//商家
-		    set.setBusMessageJson( msgArr.toString() );
-		} else {
-		    set.setMessageJson( msgArr.toString() );
-		}
-	    } else {
-		for ( Map map : msgArr ) {
-		    if ( CommonUtil.toInteger( map.get( "id" ) ) == CommonUtil.toInteger( temp.get( "id" ) ) ) {
-			msgArr.remove( map );
-			break;
-		    }
-		}
-		if ( type == 0 ) {//商家
-		    set.setBusMessageJson( msgArr.toString() );
-		} else {
-		    set.setMessageJson( msgArr.toString() );
-		}
-	    }
-	    mallPaySetService.updateById( set );
+            if ( operation == 1 ) {
+                msgArr.add( temp );
+                if ( type == 0 ) {//商家
+                    set.setBusMessageJson( msgArr.toString() );
+                } else {
+                    set.setMessageJson( msgArr.toString() );
+                }
+            } else {
+                for ( Map map : msgArr ) {
+                    if ( CommonUtil.toInteger( map.get( "id" ) ) == CommonUtil.toInteger( temp.get( "id" ) ) ) {
+                        msgArr.remove( map );
+                        break;
+                    }
+                }
+                if ( type == 0 ) {//商家
+                    set.setBusMessageJson( msgArr.toString() );
+                } else {
+                    set.setMessageJson( msgArr.toString() );
+                }
+            }
+            mallPaySetService.updateById( set );
 
-	} catch ( BusinessException e ) {
-	    logger.error( "设置消息模板异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
-	} catch ( Exception e ) {
-	    logger.error( "设置消息模板异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
-	}
-	return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
+        } catch ( BusinessException e ) {
+            logger.error( "设置消息模板异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
+        } catch ( Exception e ) {
+            logger.error( "设置消息模板异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
+        }
+        return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
     }
 
     /**
@@ -261,43 +261,43 @@ public class MallPaySetController extends BaseController {
     @SysLogAnnotation( description = "判断有无认证服务号", op_function = "2" )
     @RequestMapping( value = "/isAuthService", method = RequestMethod.POST )
     public ServerResponse isAuthService( HttpServletRequest request, HttpServletResponse response ) {
-	Integer flag = null;
-	Map< String,Object > result = new HashMap<>();
-	try {
-	    BusUser user = MallSessionUtils.getLoginUser( request );
-	    WxPublicUsers wxPublicUsers = wxPublicUserService.selectByUserId( user.getId() );
-	    //商家有无授权
-	    Wrapper wrapper = new EntityWrapper<>();
-	    wrapper.where( "is_delete =0 and bus_id= {0}", user.getId() );
-	    List< MallBusMessageMember > busMessageMemberList = mallBusMessageMemberService.selectList( wrapper );
+        Integer flag = null;
+        Map< String,Object > result = new HashMap<>();
+        try {
+            BusUser user = MallSessionUtils.getLoginUser( request );
+            WxPublicUsers wxPublicUsers = wxPublicUserService.selectByUserId( user.getId() );
+            //商家有无授权
+            Wrapper wrapper = new EntityWrapper<>();
+            wrapper.where( "is_delete =0 and bus_id= {0}", user.getId() );
+            List< MallBusMessageMember > busMessageMemberList = mallBusMessageMemberService.selectList( wrapper );
 
-	    if ( wxPublicUsers == null ) {
-		flag = -1;//未认证;
-	    } else if ( busMessageMemberList == null || busMessageMemberList.size() == 0 ) {
-		flag = -2;//未授权;
-	    } else {
-		if ( wxPublicUsers.getVerifyTypeInfo() == -1 ) {
-		    flag = -1;//未认证
-		} else if ( wxPublicUsers.getVerifyTypeInfo() != -1 && wxPublicUsers.getServiceTypeInfo() == 2 && CommonUtil.isNotEmpty( wxPublicUsers.getMchId() ) ) {
-		    flag = 1; //有服务号
-		} else {
-		    flag = 0; //无服务号
-		}
-	    }
-	    result.put( "flag", flag );
-	    result.put( "busId", user.getId() );
-	    result.put( "duofenTwoCodeUrl", PropertiesUtil.getDuofenTwoCodeUrl() );//多粉二维码地址
-	    result.put( "domain", PropertiesUtil.getWxmpDomain() );
-	} catch ( BusinessException e ) {
-	    logger.error( "判断有无认证服务号异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
-	} catch ( Exception e ) {
-	    logger.error( "判断有无认证服务号异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
-	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
+            if ( wxPublicUsers == null ) {
+                flag = -1;//未认证;
+            } else if ( busMessageMemberList == null || busMessageMemberList.size() == 0 ) {
+                flag = -2;//未授权;
+            } else {
+                if ( wxPublicUsers.getVerifyTypeInfo() == -1 ) {
+                    flag = -1;//未认证
+                } else if ( wxPublicUsers.getVerifyTypeInfo() != -1 && wxPublicUsers.getServiceTypeInfo() == 2 && CommonUtil.isNotEmpty( wxPublicUsers.getMchId() ) ) {
+                    flag = 1; //有服务号
+                } else {
+                    flag = 0; //无服务号
+                }
+            }
+            result.put( "flag", flag );
+            result.put( "busId", user.getId() );
+            result.put( "duofenTwoCodeUrl", PropertiesUtil.getDuofenTwoCodeUrl() );//多粉二维码地址
+            result.put( "domain", PropertiesUtil.getWxmpDomain() );
+        } catch ( BusinessException e ) {
+            logger.error( "判断有无认证服务号异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
+        } catch ( Exception e ) {
+            logger.error( "判断有无认证服务号异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
+        }
+        return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
     }
 
 }

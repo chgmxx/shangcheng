@@ -29,32 +29,32 @@ public class ApiInterceptor implements HandlerInterceptor {
      */
     @Override
     public boolean preHandle( HttpServletRequest servletRequest, HttpServletResponse servletResponse, Object handler ) throws Exception {
-	//	logger.info( "进入拦截器" );
-	//	logger.info( ">>>ApiInterceptor>>>>>>>在请求处理之前进行调用（Controller方法调用之前）" );
-	logger.info( ">>>ApiInterceptor>>>  basePath = " + CommonUtil.getpath( servletRequest ) );
-	long startTime = System.currentTimeMillis();
-	servletRequest.setAttribute( "runStartTime", startTime );
-	boolean isSuccess = true;
+        //	logger.info( "进入拦截器" );
+        //	logger.info( ">>>ApiInterceptor>>>>>>>在请求处理之前进行调用（Controller方法调用之前）" );
+        logger.info( ">>>ApiInterceptor>>>  basePath = " + CommonUtil.getpath( servletRequest ) );
+        long startTime = System.currentTimeMillis();
+        servletRequest.setAttribute( "runStartTime", startTime );
+        boolean isSuccess = true;
 
-	String signKey = "MV8MMFQUMU1HJ6F2GNH40ZFJJ7Q8LNVM"; // 定义到配置文件中
-	String signStr = ( (HttpServletRequest) servletRequest ).getHeader( "sign" );
-	// 解析签名
-	SignBean signBean = JSON.parseObject( signStr, SignBean.class );
-	// 获取签名信息
-	String code = SignUtils.decSign( signKey, signBean, null );
-	logger.debug( code );
-	if ( SignEnum.TIME_OUT.getCode().equals( code ) ) {
-	    // 超过指定时间
-	    throw new ResponseEntityException( "请求超过指定时间" );
-	} else if ( SignEnum.SIGN_ERROR.getCode().equals( code ) ) {
-	    // 签名验证错误
-	    throw new ResponseEntityException( "签名验证错误，请检查签名信息" );
-	} else if ( SignEnum.SERVER_ERROR.getCode().equals( code ) ) {
-	    // 签名系统错误
-	    throw new ResponseEntityException( "系统错误，请检查传入参数" );
+        String signKey = "MV8MMFQUMU1HJ6F2GNH40ZFJJ7Q8LNVM"; // 定义到配置文件中
+        String signStr = ( (HttpServletRequest) servletRequest ).getHeader( "sign" );
+        // 解析签名
+        SignBean signBean = JSON.parseObject( signStr, SignBean.class );
+        // 获取签名信息
+        String code = SignUtils.decSign( signKey, signBean, null );
+        logger.debug( code );
+        if ( SignEnum.TIME_OUT.getCode().equals( code ) ) {
+            // 超过指定时间
+            throw new ResponseEntityException( "请求超过指定时间" );
+        } else if ( SignEnum.SIGN_ERROR.getCode().equals( code ) ) {
+            // 签名验证错误
+            throw new ResponseEntityException( "签名验证错误，请检查签名信息" );
+        } else if ( SignEnum.SERVER_ERROR.getCode().equals( code ) ) {
+            // 签名系统错误
+            throw new ResponseEntityException( "系统错误，请检查传入参数" );
 
-	}
-	return isSuccess;// 只有返回true才会继续向下执行，返回false取消当前请求
+        }
+        return isSuccess;// 只有返回true才会继续向下执行，返回false取消当前请求
     }
 
     /**
@@ -63,17 +63,17 @@ public class ApiInterceptor implements HandlerInterceptor {
     @Override
     public void postHandle( HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView ) throws Exception {
 
-	long startTime = (Long) request.getAttribute( "runStartTime" );
+        long startTime = (Long) request.getAttribute( "runStartTime" );
 
-	long endTime = System.currentTimeMillis();
+        long endTime = System.currentTimeMillis();
 
-	long executeTime = endTime - startTime;
+        long executeTime = endTime - startTime;
 
-	HandlerMethod handlerMethod = (HandlerMethod) handler;
-	Method method = handlerMethod.getMethod();
-	/*if ( logger.isDebugEnabled() ) {*/
-	logger.error( "方法:" + handlerMethod.getBean() + "." + method.getName() + "  ；  请求参数：" + handlerMethod.getMethodParameters() );
-	logger.error( "访问的执行时间 : " + executeTime + "ms----页面：" + CommonUtil.getpath( request ) );
+        HandlerMethod handlerMethod = (HandlerMethod) handler;
+        Method method = handlerMethod.getMethod();
+    /*if ( logger.isDebugEnabled() ) {*/
+        logger.error( "方法:" + handlerMethod.getBean() + "." + method.getName() + "  ；  请求参数：" + handlerMethod.getMethodParameters() );
+        logger.error( "访问的执行时间 : " + executeTime + "ms----页面：" + CommonUtil.getpath( request ) );
     }
 
     /**

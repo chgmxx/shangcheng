@@ -93,7 +93,7 @@
     </select>
     <select id="ownerResponseList" parameterType="map" resultMap="BaseResultMap">
         SELECT t.`content`,t.`rep_p_id` FROM t_mall_comment t
-		WHERE t.rep_p_id = #{appraise};
+        WHERE t.rep_p_id = #{appraise};
     </select>
 
     <!--<resultMap id="commnet_maps" type="java.util.Map">-->

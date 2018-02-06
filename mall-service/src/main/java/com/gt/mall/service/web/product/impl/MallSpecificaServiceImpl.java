@@ -29,24 +29,24 @@ public class MallSpecificaServiceImpl extends BaseServiceImpl< MallSpecificaDAO,
 
     @Override
     public MallSpecifica selectBySpecName( Map< String,Object > params ) {
-        if(CommonUtil.isEmpty( params )){
+        if ( CommonUtil.isEmpty( params ) ) {
             return null;
-	}
-	Wrapper< MallSpecifica > specificaWrapper = new EntityWrapper<>();
-	if(CommonUtil.isNotEmpty( params.get( "name" ) )){
-	    specificaWrapper.where( "spec_name = {0}",params.get( "name" ) );
-	}
-	if(CommonUtil.isNotEmpty( params.get( "userId" ) )){
-	    specificaWrapper.where( "user_id = {0}",params.get( "userId" ) );
-	}
-	if ( CommonUtil.isNotEmpty( params.get( "erpNameId" ) ) ) {
-	    specificaWrapper.where( "erp_name_id = {0}", params.get( "erpNameId" ) );
-	}
-	List<MallSpecifica> specificaList = mallSpecificaDAO.selectList( specificaWrapper );
-	if(CommonUtil.isNotEmpty( specificaList ) && specificaList.size() > 0){
-	    return specificaList.get( 0 );
-	}
-	return null;
+        }
+        Wrapper< MallSpecifica > specificaWrapper = new EntityWrapper<>();
+        if ( CommonUtil.isNotEmpty( params.get( "name" ) ) ) {
+            specificaWrapper.where( "spec_name = {0}", params.get( "name" ) );
+        }
+        if ( CommonUtil.isNotEmpty( params.get( "userId" ) ) ) {
+            specificaWrapper.where( "user_id = {0}", params.get( "userId" ) );
+        }
+        if ( CommonUtil.isNotEmpty( params.get( "erpNameId" ) ) ) {
+            specificaWrapper.where( "erp_name_id = {0}", params.get( "erpNameId" ) );
+        }
+        List< MallSpecifica > specificaList = mallSpecificaDAO.selectList( specificaWrapper );
+        if ( CommonUtil.isNotEmpty( specificaList ) && specificaList.size() > 0 ) {
+            return specificaList.get( 0 );
+        }
+        return null;
     }
 
 }

@@ -51,40 +51,40 @@ public class ServerResponse< T > implements Serializable {
     private T data;
 
     protected ServerResponse( int code, Boolean... isShowPath ) {
-	this.code = code;
-	isSowPath( isShowPath );
+        this.code = code;
+        isSowPath( isShowPath );
     }
 
     protected ServerResponse( int code, T data, Boolean... isShowPath ) {
-	this.code = code;
-	this.data = data;
-	isSowPath( isShowPath );
+        this.code = code;
+        this.data = data;
+        isSowPath( isShowPath );
     }
 
     protected ServerResponse( int code, String msg, Boolean... isShowPath ) {
-	this.code = code;
-	this.msg = msg;
-	isSowPath( isShowPath );
+        this.code = code;
+        this.msg = msg;
+        isSowPath( isShowPath );
     }
 
     protected ServerResponse( int code, String msg, T data, Boolean... isShowPath ) {
-	this.code = code;
-	this.msg = msg;
-	this.data = data;
-	isSowPath( isShowPath );
+        this.code = code;
+        this.msg = msg;
+        this.data = data;
+        isSowPath( isShowPath );
     }
 
     private void isSowPath( Boolean... isShowPath ) {
-	boolean isShow = CommonUtil.isEmpty( isShowPath ) || isShowPath.length == 0 ? true : isShowPath[0];
-	if ( isShow ) {
-	    this.imgUrl = PropertiesUtil.getResourceUrl();
-	    this.path = PropertiesUtil.getHomeUrl();
-	    this.webPath = PropertiesUtil.getPhoneWebHomeUrl();
-	} else {
-	    this.imgUrl = null;
-	    this.path = null;
-	    this.webPath = null;
-	}
+        boolean isShow = CommonUtil.isEmpty( isShowPath ) || isShowPath.length == 0 ? true : isShowPath[0];
+        if ( isShow ) {
+            this.imgUrl = PropertiesUtil.getResourceUrl();
+            this.path = PropertiesUtil.getHomeUrl();
+            this.webPath = PropertiesUtil.getPhoneWebHomeUrl();
+        } else {
+            this.imgUrl = null;
+            this.path = null;
+            this.webPath = null;
+        }
 
     }
 
@@ -94,7 +94,7 @@ public class ServerResponse< T > implements Serializable {
      * @return ServerResponse
      */
     public static < T > ServerResponse< T > createBySuccess() {
-	return createBySuccessMessage( ResponseEnums.SUCCESS.getDesc() );
+        return createBySuccessMessage( ResponseEnums.SUCCESS.getDesc() );
     }
 
     /**
@@ -103,7 +103,7 @@ public class ServerResponse< T > implements Serializable {
      * @return ServerResponse
      */
     public static < T > ServerResponse< T > createBySuccessCode() {
-	return createBySuccessMessage( ResponseEnums.SUCCESS.getCode() );
+        return createBySuccessMessage( ResponseEnums.SUCCESS.getCode() );
     }
 
     /**
@@ -114,7 +114,7 @@ public class ServerResponse< T > implements Serializable {
      * @return ServerResponse
      */
     public static < T > ServerResponse< T > createBySuccess( T data ) {
-	return createBySuccess( null, data );
+        return createBySuccess( null, data );
     }
 
     /**
@@ -125,7 +125,7 @@ public class ServerResponse< T > implements Serializable {
      * @return ServerResponse
      */
     public static < T > ServerResponse< T > createBySuccessMessage( String msg ) {
-	return createBySuccess( msg, null );
+        return createBySuccess( msg, null );
     }
 
     /**
@@ -136,7 +136,7 @@ public class ServerResponse< T > implements Serializable {
      * @return ServerResponse
      */
     public static < T > ServerResponse< T > createBySuccessMessage( int code ) {
-	return createBySuccessCodeMessage( code, false );
+        return createBySuccessCodeMessage( code, false );
     }
 
     /**
@@ -148,7 +148,7 @@ public class ServerResponse< T > implements Serializable {
      * @return ServerResponse
      */
     public static < T > ServerResponse< T > createBySuccess( String msg, T data ) {
-	return createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), msg, data );
+        return createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), msg, data );
     }
 
     /**
@@ -161,7 +161,7 @@ public class ServerResponse< T > implements Serializable {
      * @return ServerResponse
      */
     public static < T > ServerResponse< T > createBySuccessCodeMessage( int code, String msg, T data, Boolean... isShowPath ) {
-	return new ServerResponse<>( code, msg, data, isShowPath );
+        return new ServerResponse<>( code, msg, data, isShowPath );
     }
 
     /**
@@ -172,7 +172,7 @@ public class ServerResponse< T > implements Serializable {
      * @return ServerResponse
      */
     public static < T > ServerResponse< T > createBySuccessCodeMessage( int code, Boolean... isShowPath ) {
-	return new ServerResponse<>( code, isShowPath );
+        return new ServerResponse<>( code, isShowPath );
     }
 
     /**
@@ -184,7 +184,7 @@ public class ServerResponse< T > implements Serializable {
      * @return ServerResponse
      */
     public static < T > ServerResponse< T > createBySuccessCodeMessage( int code, String msg, Boolean... isShowPath ) {
-	return new ServerResponse<>( code, msg, isShowPath );
+        return new ServerResponse<>( code, msg, isShowPath );
     }
 
     /**
@@ -196,7 +196,7 @@ public class ServerResponse< T > implements Serializable {
      * @return ServerResponse
      */
     public static < T > ServerResponse< T > createBySuccessCodeData( int code, T data, Boolean... isShowPath ) {
-	return new ServerResponse< T >( code, data, isShowPath );
+        return new ServerResponse< T >( code, data, isShowPath );
     }
 
     /**
@@ -205,7 +205,7 @@ public class ServerResponse< T > implements Serializable {
      * @return ServerResponse
      */
     public static < T > ServerResponse< T > createByError() {
-	return createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
+        return createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
     }
 
     /**
@@ -216,7 +216,7 @@ public class ServerResponse< T > implements Serializable {
      * @return ServerResponse
      */
     public static < T > ServerResponse< T > createByErrorMessage( String errorMessage ) {
-	return createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), errorMessage );
+        return createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), errorMessage );
     }
 
     /**
@@ -228,7 +228,7 @@ public class ServerResponse< T > implements Serializable {
      * @return ServerResponse
      */
     public static < T > ServerResponse< T > createByErrorCodeMessage( int errorCode, String errorMessage ) {
-	return new ServerResponse<>( errorCode, errorMessage, false );
+        return new ServerResponse<>( errorCode, errorMessage, false );
     }
 
     /**
@@ -241,36 +241,36 @@ public class ServerResponse< T > implements Serializable {
      * @return ServerResponse
      */
     public static < T > ServerResponse< T > createByErrorCodeMessage( int errorCode, String errorMessage, T data ) {
-	return new ServerResponse<>( errorCode, errorMessage, data, false );
+        return new ServerResponse<>( errorCode, errorMessage, data, false );
     }
 
     //使之不在json序列化结果当中，作用用于判断
     @JsonIgnore
     public boolean isSuccess() {
-	return this.code == ResponseEnums.SUCCESS.getCode();
+        return this.code == ResponseEnums.SUCCESS.getCode();
     }
 
     public int getCode() {
-	return code;
+        return code;
     }
 
     public T getData() {
-	return data;
+        return data;
     }
 
     public String getMsg() {
-	return msg;
+        return msg;
     }
 
     public String getImgUrl() {
-	return imgUrl;
+        return imgUrl;
     }
 
     public String getPath() {
-	return path;
+        return path;
     }
 
     public String getWebPath() {
-	return webPath;
+        return webPath;
     }
 }

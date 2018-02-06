@@ -3,11 +3,16 @@ package com.gt.mall.utils;
 import com.gt.api.bean.session.Member;
 import com.gt.mall.enums.ResponseEnums;
 import com.gt.mall.exception.BusinessException;
-import org.apache.log4j.Logger;
 
+/**
+ * 订单工具类
+ *
+ * @author yangqian
+ */
 public class AddOrderUtil {
 
-    private static final Logger logger = Logger.getLogger( AddOrderUtil.class );
+    private AddOrderUtil() {
+    }
 
     /**
      * 判断积分和粉币是否足够
@@ -16,35 +21,25 @@ public class AddOrderUtil {
      * @param member            会员对象
      * @param productTotalMoney 商品总价
      */
-    public static void isJiFenOrFenbi( int selectPayWayId, Member member, Double productTotalMoney ) {
-	if ( selectPayWayId == 8 ) {
-	    boolean isFenbi = true;
-	    if ( CommonUtil.isNotEmpty( member.getFansCurrency() ) ) {
-		double fenbi = member.getFansCurrency();
-		if ( fenbi < productTotalMoney || fenbi < 0 ) {
-		    isFenbi = false;
-		}
-	    } else {
-		isFenbi = false;
-	    }
-	    if ( !isFenbi ) {
-		throw new BusinessException( ResponseEnums.PARAMS_NULL_ERROR.getCode(), "您的粉币不够，不能用粉币来兑换这件商品" );
-	    }
-	}
-	if ( selectPayWayId == 4 ) {
-	    boolean isJifen = true;
-	    if ( CommonUtil.isNotEmpty( member.getIntegral() ) ) {
-		double fenbi = member.getIntegral();
-		if ( fenbi < productTotalMoney || fenbi < 0 ) {
-		    isJifen = false;
-		}
-	    } else {
-		isJifen = false;
-	    }
-	    if ( !isJifen ) {
-		throw new BusinessException( ResponseEnums.PARAMS_NULL_ERROR.getCode(), "您的粉币不够，不能用粉币来兑换这件商品" );
-	    }
-	}
+    public static void isJiFenOrFenbi( Integer selectPayWayId, Member member, Double productTotalMoney ) {
+        if ( selectPayWayId == null || member == null|| productTotalMoney == null ) {
+            return;
+        }
+        if ( selectPayWayId == 8 && member.getFansCurrency() == null ) {
+            throw new BusinessException( ResponseEnums.FENBI_EXCHANGE_NULL_ERROR.getCode(), ResponseEnums.FENBI_EXCHANGE_NULL_ERROR.getDesc() );
+        }
+        if ( selectPayWayId == 4 && member.getIntegral() == null ) {
+            throw new BusinessException( ResponseEnums.JIFEN_EXCHANGE_NULL_ERROR.getCode(), ResponseEnums.JIFEN_EXCHANGE_NULL_ERROR.getDesc() );
+        }
+        if ( selectPayWayId == 8 ) {
+            if ( member.getFansCurrency() < productTotalMoney || member.getFansCurrency() < 0 ) {
+                throw new BusinessException( ResponseEnums.FENBI_EXCHANGE_NULL_ERROR.getCode(), ResponseEnums.FENBI_EXCHANGE_NULL_ERROR.getDesc() );
+            }
+        } else if ( selectPayWayId == 4 ) {
+            if ( member.getIntegral() < productTotalMoney || member.getIntegral() < 0 ) {
+                throw new BusinessException( ResponseEnums.JIFEN_EXCHANGE_NULL_ERROR.getCode(), ResponseEnums.JIFEN_EXCHANGE_NULL_ERROR.getDesc() );
+            }
+        }
     }
 
 }

@@ -12,74 +12,73 @@ import java.io.Serializable;
 
 /**
  * <p>
- * 
+ * <p>
  * </p>
  *
  * @author yangqian
  * @since 2017-07-31
  */
 @Data
-@Accessors(chain = true)
-@TableName("purchase_company_mode")
-public class PurchaseCompanyMode extends Model<PurchaseCompanyMode> {
+@Accessors( chain = true )
+@TableName( "purchase_company_mode" )
+public class PurchaseCompanyMode extends Model< PurchaseCompanyMode > {
 
     private static final long serialVersionUID = 1L;
 
-	@TableId(value="id", type= IdType.AUTO)
-	private Integer id;
+    @TableId( value = "id", type = IdType.AUTO )
+    private Integer id;
     /**
      * 公司名称
      */
-	@TableField("company_name")
-	private String companyName;
+    @TableField( "company_name" )
+    private String  companyName;
     /**
      * 公司地址
      */
-	@TableField("company_address")
-	private String companyAddress;
+    @TableField( "company_address" )
+    private String  companyAddress;
     /**
      * 公司联系电话
      */
-	@TableField("company_tel")
-	private String companyTel;
+    @TableField( "company_tel" )
+    private String  companyTel;
     /**
      * 公司官网
      */
-	@TableField("company_internet")
-	private String companyInternet;
+    @TableField( "company_internet" )
+    private String  companyInternet;
     /**
      * 商家id
      */
-	@TableField("bus_id")
-	private Integer busId;
+    @TableField( "bus_id" )
+    private Integer busId;
     /**
      * 经纬度
      */
-    	@TableField("longitude")
-	private String longitude;
+    @TableField( "longitude" )
+    private String  longitude;
     /**
      * 经纬度
      */
-    	@TableField("latitude")
-	private String latitude;
+    @TableField( "latitude" )
+    private String  latitude;
 
+    @Override
+    protected Serializable pkVal() {
+        return this.id;
+    }
 
-	@Override
-	protected Serializable pkVal() {
-		return this.id;
-	}
-
-	@Override
-	public String toString() {
-		return "PurchaseCompanyMode{" +
-			"id=" + id +
-			", companyName=" + companyName +
-			", companyAddress=" + companyAddress +
-			", companyTel=" + companyTel +
-			", companyInternet=" + companyInternet +
-			", busId=" + busId +
-			", longitude=" + longitude +
-			", latitude=" + latitude +
-			"}";
-	}
+    @Override
+    public String toString() {
+        return "PurchaseCompanyMode{" +
+            "id=" + id +
+            ", companyName=" + companyName +
+            ", companyAddress=" + companyAddress +
+            ", companyTel=" + companyTel +
+            ", companyInternet=" + companyInternet +
+            ", busId=" + busId +
+            ", longitude=" + longitude +
+            ", latitude=" + latitude +
+            "}";
+    }
 }

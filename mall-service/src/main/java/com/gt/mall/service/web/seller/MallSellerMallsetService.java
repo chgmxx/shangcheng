@@ -53,12 +53,12 @@ public interface MallSellerMallsetService extends BaseService< MallSellerMallset
     /**
      * 保存或修改商城设置
      *
-     * @param member 用户
+     * @param member     用户
      * @param mallSetDTO 商城设置的内容
      *
      * @return flag :{ true 修改成功  false 修改失败}
      */
-    Map< String,Object > newSaveSeller( Member member, PhoneAddMallSetDTO mallSetDTO,Integer type);
+    Map< String,Object > newSaveSeller( Member member, PhoneAddMallSetDTO mallSetDTO, Integer type );
 
     /**
      * 查询销售员首页的所有商品信息
@@ -110,7 +110,7 @@ public interface MallSellerMallsetService extends BaseService< MallSellerMallset
     /**
      * 查询销售员自选的商品
      */
-    PageUtil selectProductBySaleMember( MallSellerMallset mallSet, Map< String,Object > params,  Member member  );
+    PageUtil selectProductBySaleMember( MallSellerMallset mallSet, Map< String,Object > params, Member member );
 
     /**
      * 查询销售佣金

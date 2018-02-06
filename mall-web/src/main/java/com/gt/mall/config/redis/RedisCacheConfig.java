@@ -29,21 +29,21 @@ public class RedisCacheConfig extends CachingConfigurerSupport {
 
     @Bean
     public RedisTemplate< String,String > redisTemplate( RedisConnectionFactory cf ) {
-	LOG.debug( "注入StringRedisTemplate" );
-	RedisTemplate< String,String > redisTemplate = new RedisTemplate<>();
-	redisTemplate.setConnectionFactory( cf );
-	return redisTemplate;
+        LOG.debug( "注入StringRedisTemplate" );
+        RedisTemplate< String,String > redisTemplate = new RedisTemplate<>();
+        redisTemplate.setConnectionFactory( cf );
+        return redisTemplate;
     }
 
     @Bean
     public CacheManager cacheManager( RedisTemplate redisTemplate ) {
-	RedisCacheManager cacheManager = new RedisCacheManager( redisTemplate );
-	//默认超时时间,单位秒
-	cacheManager.setDefaultExpiration( 3000 );
-	//根据缓存名称设置超时时间,0为不超时
-	Map< String,Long > expires = new ConcurrentHashMap<>();
-	cacheManager.setExpires( expires );
-	return cacheManager;
+        RedisCacheManager cacheManager = new RedisCacheManager( redisTemplate );
+        //默认超时时间,单位秒
+        cacheManager.setDefaultExpiration( 3000 );
+        //根据缓存名称设置超时时间,0为不超时
+        Map< String,Long > expires = new ConcurrentHashMap<>();
+        cacheManager.setExpires( expires );
+        return cacheManager;
     }
 
 }

@@ -70,6 +70,6 @@ public interface MallOrderDetailDAO extends BaseMapper< MallOrderDetail > {
      * @return
      */
     List< Map< String,Object > > selectProductMoneyByWay( @Param( "startTime" ) String startTime, @Param( "endTime" ) String endTime, @Param( "productId" ) Integer productId,
-                    @Param( "payWay" ) Integer payWay );
+        @Param( "payWay" ) Integer payWay );
 
 }

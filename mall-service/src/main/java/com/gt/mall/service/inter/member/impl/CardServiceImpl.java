@@ -30,13 +30,13 @@ public class CardServiceImpl implements CardService {
      * @return 卡券信息
      */
     public Map< String,Object > findDuofenCardByReceiveId( int receiveId ) {
-	Map< String,Object > params = new HashMap<>();
-	params.put( "receiveId", receiveId );
-	String data = HttpSignUtil.signHttpSelect( params, "/memberAPI/cardCouponseApi/findDuofenCardByReceiveId" );
-	if ( CommonUtil.isNotEmpty( data ) ) {
-	    return JSONObject.toJavaObject( JSONObject.parseObject( data ), Map.class );
-	}
-	return null;
+        Map< String,Object > params = new HashMap<>();
+        params.put( "receiveId", receiveId );
+        String data = HttpSignUtil.signHttpSelect( params, "/memberAPI/cardCouponseApi/findDuofenCardByReceiveId" );
+        if ( CommonUtil.isNotEmpty( data ) ) {
+            return JSONObject.toJavaObject( JSONObject.parseObject( data ), Map.class );
+        }
+        return null;
     }
 
     /**
@@ -47,27 +47,27 @@ public class CardServiceImpl implements CardService {
      * @return 卡包信息
      */
     public List< Map > findReceiveByBusUserId( int busUserId ) {
-	Map< String,Object > params = new HashMap<>();
-	params.put( "busId", busUserId );
-	String data = HttpSignUtil.signHttpSelect( params, "/memberAPI/cardCouponseApi/findReceiveToMallByBusUserId" );
-	if ( CommonUtil.isNotEmpty( data ) ) {
-	    return JSONArray.parseArray( data, Map.class );
-	}
-	return null;
+        Map< String,Object > params = new HashMap<>();
+        params.put( "busId", busUserId );
+        String data = HttpSignUtil.signHttpSelect( params, "/memberAPI/cardCouponseApi/findReceiveToMallByBusUserId" );
+        if ( CommonUtil.isNotEmpty( data ) ) {
+            return JSONArray.parseArray( data, Map.class );
+        }
+        return null;
     }
 
     @Override
     public boolean successPayBack( Map< String,Object > params ) {
-	Map< String,Object > resultMap = HttpSignUtil.signHttpInsertOrUpdate( params, "/memberAPI/cardCouponseApi/successPayBack" );
-	if ( CommonUtil.isNotEmpty( resultMap ) ) {
-	    int code = CommonUtil.toInteger( resultMap.get( "code" ) );
-	    if(code == 1){
-	       return true;
-	    }else{
-		throw new BusinessException( ResponseEnums.INTER_ERROR.getCode(),ResponseEnums.INTER_ERROR.getDesc() );
-	    }
-	}
-	throw new BusinessException( ResponseEnums.ERROR.getCode(),ResponseEnums.ERROR.getDesc() );
+        Map< String,Object > resultMap = HttpSignUtil.signHttpInsertOrUpdate( params, "/memberAPI/cardCouponseApi/successPayBack" );
+        if ( CommonUtil.isNotEmpty( resultMap ) ) {
+            int code = CommonUtil.toInteger( resultMap.get( "code" ) );
+            if ( code == 1 ) {
+                return true;
+            } else {
+                throw new BusinessException( ResponseEnums.INTER_ERROR.getCode(), ResponseEnums.INTER_ERROR.getDesc() );
+            }
+        }
+        throw new BusinessException( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
     }
 }
 

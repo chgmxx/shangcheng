@@ -16,7 +16,7 @@ import java.util.List;
  */
 @Getter
 @Setter
-public class AppletSubmitOrderShopDTO  {
+public class AppletSubmitOrderShopDTO {
 
     /**
      * 收货地址

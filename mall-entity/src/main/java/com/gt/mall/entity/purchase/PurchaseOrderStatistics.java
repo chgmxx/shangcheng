@@ -13,74 +13,73 @@ import java.util.Date;
 
 /**
  * <p>
- * 
+ * <p>
  * </p>
  *
  * @author yangqian
  * @since 2017-07-31
  */
 @Data
-@Accessors(chain = true)
-@TableName("purchase_order_statistics")
-public class PurchaseOrderStatistics extends Model<PurchaseOrderStatistics> {
+@Accessors( chain = true )
+@TableName( "purchase_order_statistics" )
+public class PurchaseOrderStatistics extends Model< PurchaseOrderStatistics > {
 
     private static final long serialVersionUID = 1L;
 
-	@TableId(value="id", type= IdType.AUTO)
-	private Integer id;
+    @TableId( value = "id", type = IdType.AUTO )
+    private Integer id;
     /**
      * 订单id
      */
-	@TableField("order_id")
-	private Integer orderId;
+    @TableField( "order_id" )
+    private Integer orderId;
     /**
      * 用户id
      */
-	@TableField("member_id")
-	private Integer memberId;
+    @TableField( "member_id" )
+    private Integer memberId;
 
-	/**
-	 * 用户名称
-	 */
-	@TableField("member_name")
-	private String memberName;
+    /**
+     * 用户名称
+     */
+    @TableField( "member_name" )
+    private String memberName;
 
-	/**
-	 * 用户头像
-	 */
-	@TableField("member_headimgurl")
-	private String memberHeadimgurl;
+    /**
+     * 用户头像
+     */
+    @TableField( "member_headimgurl" )
+    private String  memberHeadimgurl;
     /**
      * 浏览时间
      */
-	@TableField("look_date")
-	private Date lookDate;
+    @TableField( "look_date" )
+    private Date    lookDate;
     /**
      * 浏览的ip
      */
-	@TableField("look_ip")
-	private String lookIp;
+    @TableField( "look_ip" )
+    private String  lookIp;
     /**
      * 商家id
      */
-	@TableField("bus_id")
-	private Integer busId;
+    @TableField( "bus_id" )
+    private Integer busId;
 
+    @Override
+    protected Serializable pkVal() {
+        return this.id;
+    }
 
-	@Override
-	protected Serializable pkVal() {
-		return this.id;
-	}
-
-	@Override
-	public String toString() {
-		return "PurchaseOrderStatistics{" +
-			"id=" + id +
-			", orderId=" + orderId +
-			", memberId=" + memberId +
-			", lookDate=" + lookDate +
-			", lookIp=" + lookIp +
-			", busId=" + busId +
-			"}";
-	}
+    @Override
+    public String toString() {
+        return "PurchaseOrderStatistics{" +
+            "id=" + id +
+            ", orderId=" + orderId +
+            ", memberId=" + memberId +
+            ", lookDate=" + lookDate +
+            ", lookIp=" + lookIp +
+            ", busId=" + busId +
+            "}";
+    }
 }

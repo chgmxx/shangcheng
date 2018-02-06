@@ -47,8 +47,10 @@
         AND count_date >= #{endTime}
     </select>
     <select id="countLastMonthShop" resultType="java.util.Map">
-        SELECT SUM(sale_num) AS saleNum,SUM(sale_price) AS salePrice,SUM(sale_miprice) AS saleMiprice,SUM(sale_minum) AS saleMinum,SUM(sale_totalnum) AS saleTotalnum,SUM(sale_totalprice) AS saleTotalprice,
-        SUM(refund_num) AS refundNum,SUM(refund_price) AS refundPrice,SUM(refund_minum) AS refundMinum,SUM(refund_miprice) AS refundMiprice,SUM(refund_totalnum) AS refundTotalnum,SUM(refund_totalprice) AS refundTotalprice
+        SELECT SUM(sale_num) AS saleNum,SUM(sale_price) AS salePrice,SUM(sale_miprice) AS saleMiprice,SUM(sale_minum) AS saleMinum,SUM(sale_totalnum) AS
+        saleTotalnum,SUM(sale_totalprice) AS saleTotalprice,
+        SUM(refund_num) AS refundNum,SUM(refund_price) AS refundPrice,SUM(refund_minum) AS refundMinum,SUM(refund_miprice) AS refundMiprice,SUM(refund_totalnum) AS
+        refundTotalnum,SUM(refund_totalprice) AS refundTotalprice
         FROM t_mall_shop_daycount
         WHERE #{startTime} > count_date
         AND count_date >=　#{endTime}

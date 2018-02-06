@@ -70,20 +70,20 @@ public class MallSeckillJoin extends Model< MallSeckillJoin > {
 
     @Override
     protected Serializable pkVal() {
-	return this.id;
+        return this.id;
     }
 
     @Override
     public String toString() {
-	return "MallSeckillJoin{" +
-			"id=" + id +
-			", seckillId=" + seckillId +
-			", seckillUserId=" + seckillUserId +
-			", seckillPrice=" + seckillPrice +
-			", orderId=" + orderId +
-			", orderDetailId=" + orderDetailId +
-			", productId=" + productId +
-			", seckillTime=" + seckillTime +
-			"}";
+        return "MallSeckillJoin{" +
+            "id=" + id +
+            ", seckillId=" + seckillId +
+            ", seckillUserId=" + seckillUserId +
+            ", seckillPrice=" + seckillPrice +
+            ", orderId=" + orderId +
+            ", orderDetailId=" + orderDetailId +
+            ", productId=" + productId +
+            ", seckillTime=" + seckillTime +
+            "}";
     }
 }

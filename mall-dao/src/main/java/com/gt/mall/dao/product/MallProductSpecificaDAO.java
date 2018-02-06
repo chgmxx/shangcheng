@@ -16,7 +16,7 @@ import java.util.Map;
  */
 public interface MallProductSpecificaDAO extends BaseMapper< MallProductSpecifica > {
 
-    Map<String,Object> selectValueBySpecId(int specId);
+    Map< String,Object > selectValueBySpecId( int specId );
 
     /**
      * 通过商品id和商品规格查询商品规格

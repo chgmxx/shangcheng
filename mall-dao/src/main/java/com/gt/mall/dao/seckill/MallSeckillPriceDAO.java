@@ -15,7 +15,7 @@ import java.util.List;
  */
 public interface MallSeckillPriceDAO extends BaseMapper< MallSeckillPrice > {
 
-    List<MallSeckillPrice> selectPriceByGroupId(Integer SeckillId);
+    List< MallSeckillPrice > selectPriceByGroupId( Integer SeckillId );
 
-    int updateBySeckillId(MallSeckillPrice record);
+    int updateBySeckillId( MallSeckillPrice record );
 }

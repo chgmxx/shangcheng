@@ -1,14 +1,13 @@
 package com.gt.mall.service.web.product;
 
 import com.gt.api.bean.session.BusUser;
-import com.gt.mall.base.BaseService;
 import com.gt.api.bean.session.Member;
+import com.gt.mall.base.BaseService;
 import com.gt.mall.entity.order.MallOrder;
 import com.gt.mall.entity.order.MallOrderDetail;
 import com.gt.mall.entity.product.MallProduct;
 import com.gt.mall.utils.PageUtil;
 import com.gt.util.entity.param.fenbiFlow.BusFlow;
-import io.swagger.models.auth.In;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -26,10 +25,12 @@ public interface MallProductService extends BaseService< MallProduct > {
 
     /**
      * 统计各状态下的数量
+     *
      * @param params
+     *
      * @return
      */
-    Map< String,Object > countStatus(Map< String,Object > params);
+    Map< String,Object > countStatus( Map< String,Object > params );
 
     /**
      * 根据用户id来查询商品
@@ -84,7 +85,7 @@ public interface MallProductService extends BaseService< MallProduct > {
     /**
      * 根据门店id查询商品列表
      */
-    List< Map< String,Object > > selectProductByWxShop( Map< String,Object > params ) throws Exception;
+//    List< Map< String,Object > > selectProductByWxShop( Map< String,Object > params ) throws Exception;
 
     /**
      * 统计门店id里面的商品数量
@@ -199,7 +200,7 @@ public interface MallProductService extends BaseService< MallProduct > {
     /**
      * 根据流量id查询商品数量
      */
-    List< BusFlow > selectCountByFlowIds( int userId , Integer productId, Integer flowId);
+    List< BusFlow > selectCountByFlowIds( int userId, Integer productId, Integer flowId );
 
     /**
      * 根据erp的商品id查询

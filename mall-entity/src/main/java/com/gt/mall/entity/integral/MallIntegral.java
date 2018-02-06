@@ -83,23 +83,23 @@ public class MallIntegral extends Model< MallIntegral > {
 
     @Override
     protected Serializable pkVal() {
-	return this.id;
+        return this.id;
     }
 
     @Override
     public String toString() {
-	return "MallIntegral{" +
-			"id=" + id +
-			", productId=" + productId +
-			", money=" + money +
-			", startTime=" + startTime +
-			", endTime=" + endTime +
-			", type=" + type +
-			", userId=" + userId +
-			", shopId=" + shopId +
-			", createTime=" + createTime +
-			", isDelete=" + isDelete +
-			", isUse=" + isUse +
-			"}";
+        return "MallIntegral{" +
+            "id=" + id +
+            ", productId=" + productId +
+            ", money=" + money +
+            ", startTime=" + startTime +
+            ", endTime=" + endTime +
+            ", type=" + type +
+            ", userId=" + userId +
+            ", shopId=" + shopId +
+            ", createTime=" + createTime +
+            ", isDelete=" + isDelete +
+            ", isUse=" + isUse +
+            "}";
     }
 }

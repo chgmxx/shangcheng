@@ -19,22 +19,28 @@ public interface MallPresaleGiveDAO extends BaseMapper< MallPresaleGive > {
 
     /**
      * 获取用户的送礼设置
+     *
      * @param userId
+     *
      * @return
      */
-    List<MallPresaleGive> selectByUserId(Integer userId);
+    List< MallPresaleGive > selectByUserId( Integer userId );
 
     /**
      * 统计预售送礼的数量
+     *
      * @param params
+     *
      * @return
      */
-    int selectByCount(Map<String, Object> params);
+    int selectByCount( Map< String,Object > params );
 
     /**
      * 分页查询预售送礼
+     *
      * @param params
+     *
      * @return
      */
-    List<MallPresaleGive > selectByPage(Map<String, Object> params);
+    List< MallPresaleGive > selectByPage( Map< String,Object > params );
 }

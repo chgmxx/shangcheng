@@ -126,7 +126,7 @@
             and p.pf_start_time &lt; now() and p.pf_end_time &lt;= now()
         </if>
         <if test="shopId != null and shopId != ''">
-           and   p.shop_id = #{shopId}
+            and p.shop_id = #{shopId}
         </if>
         <if test="shoplist != null ">
             and

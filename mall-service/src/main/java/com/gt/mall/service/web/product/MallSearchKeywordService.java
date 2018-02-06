@@ -49,9 +49,9 @@ public interface MallSearchKeywordService extends BaseService< MallSearchKeyword
     /**
      * 新增搜索关键词
      *
-     * @param memberId 粉丝id
-     * @param shopId   店铺id
-     * @param searchName  搜索名称
+     * @param memberId   粉丝id
+     * @param shopId     店铺id
+     * @param searchName 搜索名称
      */
     public void insertSeachKeyWord( int memberId, int shopId, Object searchName );
 }

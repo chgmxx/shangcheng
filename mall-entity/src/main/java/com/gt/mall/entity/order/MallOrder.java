@@ -375,18 +375,18 @@ public class MallOrder extends Model< MallOrder > implements Cloneable {
 
     @Override
     protected Serializable pkVal() {
-	return this.id;
+        return this.id;
     }
 
     @Override
     public MallOrder clone() {
-	MallOrder mallOrder = null;
-	try {
-	    mallOrder = (MallOrder) super.clone();
-	} catch ( CloneNotSupportedException e ) {
-	    e.printStackTrace();
-	}
-	return mallOrder;
+        MallOrder mallOrder = null;
+        try {
+            mallOrder = (MallOrder) super.clone();
+        } catch ( CloneNotSupportedException e ) {
+            e.printStackTrace();
+        }
+        return mallOrder;
     }
 
 }

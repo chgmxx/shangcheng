@@ -82,23 +82,23 @@ public class MallSellerMallset extends Model< MallSellerMallset > {
 
     @Override
     protected Serializable pkVal() {
-	return this.id;
+        return this.id;
     }
 
     @Override
     public String toString() {
-	return "MallSellerMallset{" +
-			"id=" + id +
-			", shopId=" + shopId +
-			", mallName=" + mallName +
-			", contactNumber=" + contactNumber +
-			", qq=" + qq +
-			", mallHeadPath=" + mallHeadPath +
-			", bannerPath=" + bannerPath +
-			", mallIntroducation=" + mallIntroducation +
-			", isOpenOptional=" + isOpenOptional +
-			", saleMemberId=" + saleMemberId +
-			", busUserId=" + busUserId +
-			"}";
+        return "MallSellerMallset{" +
+            "id=" + id +
+            ", shopId=" + shopId +
+            ", mallName=" + mallName +
+            ", contactNumber=" + contactNumber +
+            ", qq=" + qq +
+            ", mallHeadPath=" + mallHeadPath +
+            ", bannerPath=" + bannerPath +
+            ", mallIntroducation=" + mallIntroducation +
+            ", isOpenOptional=" + isOpenOptional +
+            ", saleMemberId=" + saleMemberId +
+            ", busUserId=" + busUserId +
+            "}";
     }
 }

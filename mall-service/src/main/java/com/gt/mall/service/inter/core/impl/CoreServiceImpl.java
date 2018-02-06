@@ -23,16 +23,16 @@ public class CoreServiceImpl implements CoreService {
 
     @Override
     public Boolean payModel( int busId, String modelStyle ) {
-	Map< String,Object > params = new HashMap<>();
-	params.put( "busid", busId );
-	params.put( "modelStyle", modelStyle );
-	//判断商家信息 1是否过期 2公众号是否变更过
-	String result = HttpSignUtil.signHttpSelect( params, BUS_ADDER + "passModel", 4 );
-	if ( CommonUtil.isNotEmpty( result ) ) {
-	    if ( !result.equals( "0" ) ) {
-		throw new BusinessException( ResponseEnums.URL_GUOQI_ERROR.getCode(), ResponseEnums.URL_GUOQI_ERROR.getDesc() );
-	    }
-	}
-	return true;
+        Map< String,Object > params = new HashMap<>();
+        params.put( "busid", busId );
+        params.put( "modelStyle", modelStyle );
+        //判断商家信息 1是否过期 2公众号是否变更过
+        String result = HttpSignUtil.signHttpSelect( params, BUS_ADDER + "passModel", 4 );
+        if ( CommonUtil.isNotEmpty( result ) ) {
+            if ( !result.equals( "0" ) ) {
+                throw new BusinessException( ResponseEnums.URL_GUOQI_ERROR.getCode(), ResponseEnums.URL_GUOQI_ERROR.getDesc() );
+            }
+        }
+        return true;
     }
 }

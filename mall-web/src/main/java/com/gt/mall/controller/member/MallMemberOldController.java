@@ -37,15 +37,15 @@ public class MallMemberOldController extends AuthorizeOrLoginController {
     @SuppressWarnings( "rawtypes" )
     @RequestMapping( value = "/79B4DE7C/toUser" )
     public String toUser( HttpServletRequest request, HttpServletResponse response ) {
-	int userid = 0;
-	if ( CommonUtil.isNotEmpty( request.getParameter( "uId" ) ) ) {
-	    userid = CommonUtil.toInteger( request.getParameter( "uId" ) );
-	} else if ( CommonUtil.isNotEmpty( request.getParameter( "member_id" ) ) ) {
-	    int memberId = CommonUtil.toInteger( request.getParameter( "member_id" ) );
-	    Member member = memberService.findMemberById( memberId, null );
-	    userid = member.getBusid();
-	}
-	return "/my/center/" + userid;
+        int userid = 0;
+        if ( CommonUtil.isNotEmpty( request.getParameter( "uId" ) ) ) {
+            userid = CommonUtil.toInteger( request.getParameter( "uId" ) );
+        } else if ( CommonUtil.isNotEmpty( request.getParameter( "member_id" ) ) ) {
+            int memberId = CommonUtil.toInteger( request.getParameter( "member_id" ) );
+            Member member = memberService.findMemberById( memberId, null );
+            userid = member.getBusid();
+        }
+        return "/my/center/" + userid;
     }
 
 }

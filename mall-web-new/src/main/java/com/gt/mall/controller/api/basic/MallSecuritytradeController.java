@@ -61,19 +61,19 @@ public class MallSecuritytradeController extends BaseController {
     @ResponseBody
     @RequestMapping( value = "/add", method = RequestMethod.POST )
     public ServerResponse add( HttpServletRequest request, HttpServletResponse response ) {
-	try {
-	    BusUser user = MallSessionUtils.getLoginUser( request );
-	    MallPaySet set = new MallPaySet();
-	    set.setUserId( user.getId() );
-	    set = mallPaySetService.selectByUserId( set );
-	    set.setIsSecuritytrade( 1 );
-	    mallPaySetService.updateById( set );
-	} catch ( Exception e ) {
-	    logger.error( "保存退出担保交易信息异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
-	}
-	return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
+        try {
+            BusUser user = MallSessionUtils.getLoginUser( request );
+            MallPaySet set = new MallPaySet();
+            set.setUserId( user.getId() );
+            set = mallPaySetService.selectByUserId( set );
+            set.setIsSecuritytrade( 1 );
+            mallPaySetService.updateById( set );
+        } catch ( Exception e ) {
+            logger.error( "保存退出担保交易信息异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
+        }
+        return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
     }
 
     /**
@@ -83,35 +83,35 @@ public class MallSecuritytradeController extends BaseController {
     @ResponseBody
     @RequestMapping( value = "/isSecuritytrade", method = RequestMethod.POST )
     public ServerResponse isSecuritytrade( HttpServletRequest request, HttpServletResponse response ) {
-	Map< String,Object > result = new HashMap<>();
-	try {
-	    BusUser user = MallSessionUtils.getLoginUser( request );
-	    boolean isSecuritytrade = false;
-	    MallPaySet set = new MallPaySet();
-	    set.setUserId( user.getId() );
-	    set = mallPaySetService.selectByUserId( set );
-	    if ( CommonUtil.isNotEmpty( set ) ) {
-		if ( CommonUtil.isNotEmpty( set.getIsSecuritytrade() ) ) {
-		    if ( set.getIsSecuritytrade() == 1 ) {
-			isSecuritytrade = true;
+        Map< String,Object > result = new HashMap<>();
+        try {
+            BusUser user = MallSessionUtils.getLoginUser( request );
+            boolean isSecuritytrade = false;
+            MallPaySet set = new MallPaySet();
+            set.setUserId( user.getId() );
+            set = mallPaySetService.selectByUserId( set );
+            if ( CommonUtil.isNotEmpty( set ) ) {
+                if ( CommonUtil.isNotEmpty( set.getIsSecuritytrade() ) ) {
+                    if ( set.getIsSecuritytrade() == 1 ) {
+                        isSecuritytrade = true;
 
-			//申请中的退出担保交易信息
-			Wrapper< MallSecuritytradeQuit > quitWrapper = new EntityWrapper<>();
-			quitWrapper.and( "user_id= {0}", user.getId() );
-			quitWrapper.orderBy( "id", false );
-			MallSecuritytradeQuit securitytradeQuit = mallSecuritytradeQuitService.selectOne( quitWrapper );
-			result.put( "securitytradeQuit", securitytradeQuit );
-		    }
-		}
-	    }
-	    result.put( "isSecuritytrade", isSecuritytrade );
-	    result.put( "openDfPayUrl", PropertiesUtil.getDfPayDomain() + "html/manage/#/wallet/index" );
-	} catch ( Exception e ) {
-	    logger.error( "是否加入担保交易异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "是否加入担保交易异常" );
-	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
+                        //申请中的退出担保交易信息
+                        Wrapper< MallSecuritytradeQuit > quitWrapper = new EntityWrapper<>();
+                        quitWrapper.and( "user_id= {0}", user.getId() );
+                        quitWrapper.orderBy( "id", false );
+                        MallSecuritytradeQuit securitytradeQuit = mallSecuritytradeQuitService.selectOne( quitWrapper );
+                        result.put( "securitytradeQuit", securitytradeQuit );
+                    }
+                }
+            }
+            result.put( "isSecuritytrade", isSecuritytrade );
+            result.put( "openDfPayUrl", PropertiesUtil.getDfPayDomain() + "html/manage/#/wallet/index" );
+        } catch ( Exception e ) {
+            logger.error( "是否加入担保交易异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "是否加入担保交易异常" );
+        }
+        return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
     }
 
     /**
@@ -121,15 +121,15 @@ public class MallSecuritytradeController extends BaseController {
     @ResponseBody
     @RequestMapping( value = "/quitReasonMap", method = RequestMethod.POST )
     public ServerResponse quitReasonMap( HttpServletRequest request, HttpServletResponse response ) {
-	List< DictBean > typeMap = null;
-	try {
-	    typeMap = dictService.getDict( "1073" );
-	} catch ( Exception e ) {
-	    logger.error( "获取退出理由列表异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取退出理由列表异常" );
-	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), typeMap );
+        List< DictBean > typeMap = null;
+        try {
+            typeMap = dictService.getDict( "1073" );
+        } catch ( Exception e ) {
+            logger.error( "获取退出理由列表异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取退出理由列表异常" );
+        }
+        return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), typeMap );
     }
 
     /**
@@ -139,21 +139,21 @@ public class MallSecuritytradeController extends BaseController {
     @ResponseBody
     @RequestMapping( value = "/save", method = RequestMethod.POST )
     public ServerResponse saveOrUpdate( HttpServletRequest request, HttpServletResponse response,
-		    @ApiParam( name = "quitReasonId", value = "退出理由ID", required = true ) @RequestParam Integer quitReasonId,
-		    @ApiParam( name = "remark", value = "补充意见", required = false ) @RequestParam String remark ) {
-	try {
-	    MallSecuritytradeQuit quit = new MallSecuritytradeQuit();
-	    quit.setQuitReasonId( quitReasonId );
-	    quit.setRemark( remark );
-	    quit.setUserId( MallSessionUtils.getLoginUser( request ).getId() );
-	    quit.setCreateTime( new Date() );
-	    mallSecuritytradeQuitService.insert( quit );
-	} catch ( Exception e ) {
-	    logger.error( "保存退出担保交易信息异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
-	}
-	return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
+        @ApiParam( name = "quitReasonId", value = "退出理由ID", required = true ) @RequestParam Integer quitReasonId,
+        @ApiParam( name = "remark", value = "补充意见", required = false ) @RequestParam String remark ) {
+        try {
+            MallSecuritytradeQuit quit = new MallSecuritytradeQuit();
+            quit.setQuitReasonId( quitReasonId );
+            quit.setRemark( remark );
+            quit.setUserId( MallSessionUtils.getLoginUser( request ).getId() );
+            quit.setCreateTime( new Date() );
+            mallSecuritytradeQuitService.insert( quit );
+        } catch ( Exception e ) {
+            logger.error( "保存退出担保交易信息异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
+        }
+        return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
     }
 
     /**
@@ -163,38 +163,38 @@ public class MallSecuritytradeController extends BaseController {
     @ResponseBody
     @RequestMapping( value = "/updateStatus", method = RequestMethod.POST )
     public ServerResponse updateStatus( HttpServletRequest request, HttpServletResponse response,
-		    @ApiParam( name = "id", value = "退出申请ID", required = true ) @RequestParam Integer id,
-		    @ApiParam( name = "status", value = "类型 1通过 -1不通过", required = true ) @RequestParam Integer status,
-		    @ApiParam( name = "reason", value = "不通过理由", required = false ) @RequestParam String reason ) {
-	try {
-	    BusUser user = MallSessionUtils.getLoginUser( request );
-	    MallSecuritytradeQuit quit = mallSecuritytradeQuitService.selectById( id );
-	    quit.setCheckStatus( status );
-	    quit.setCheckTime( new Date() );
-	    if ( status == -1 ) {
-		quit.setRefuseReason( reason );
-	    }
-	    boolean flag = mallSecuritytradeQuitService.updateById( quit );
-	    if ( status == 1 ) {
-		MallPaySet set = new MallPaySet();
-		set.setUserId( user.getId() );
-		set = mallPaySetService.selectByUserId( set );
-		set.setIsSecuritytrade( 0 );
-		mallPaySetService.updateById( set );
-	    }
-	    if ( !flag ) {
-		return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "修改审核状态异常" );
-	    }
-	} catch ( BusinessException e ) {
-	    logger.error( "修改审核状态异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
-	} catch ( Exception e ) {
-	    logger.error( "修改审核状态异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "修改审核状态异常" );
-	}
-	return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
+        @ApiParam( name = "id", value = "退出申请ID", required = true ) @RequestParam Integer id,
+        @ApiParam( name = "status", value = "类型 1通过 -1不通过", required = true ) @RequestParam Integer status,
+        @ApiParam( name = "reason", value = "不通过理由", required = false ) @RequestParam String reason ) {
+        try {
+            BusUser user = MallSessionUtils.getLoginUser( request );
+            MallSecuritytradeQuit quit = mallSecuritytradeQuitService.selectById( id );
+            quit.setCheckStatus( status );
+            quit.setCheckTime( new Date() );
+            if ( status == -1 ) {
+                quit.setRefuseReason( reason );
+            }
+            boolean flag = mallSecuritytradeQuitService.updateById( quit );
+            if ( status == 1 ) {
+                MallPaySet set = new MallPaySet();
+                set.setUserId( user.getId() );
+                set = mallPaySetService.selectByUserId( set );
+                set.setIsSecuritytrade( 0 );
+                mallPaySetService.updateById( set );
+            }
+            if ( !flag ) {
+                return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "修改审核状态异常" );
+            }
+        } catch ( BusinessException e ) {
+            logger.error( "修改审核状态异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
+        } catch ( Exception e ) {
+            logger.error( "修改审核状态异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "修改审核状态异常" );
+        }
+        return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
     }
 
 }

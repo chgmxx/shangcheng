@@ -5,12 +5,12 @@ import com.gt.mall.entity.purchase.PurchaseLanguage;
 
 /**
  * <p>
- *  服务类
+ * 服务类
  * </p>
  *
  * @author yangqian
  * @since 2017-07-31
  */
-public interface PurchaseLanguageService extends BaseService<PurchaseLanguage > {
-	
+public interface PurchaseLanguageService extends BaseService< PurchaseLanguage > {
+
 }

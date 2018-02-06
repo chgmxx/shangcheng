@@ -28,12 +28,19 @@ public class MallProductDetailServiceImpl extends BaseServiceImpl< MallProductDe
 
     @Override
     public MallProductDetail selectByProductId( int productId ) {
-	Wrapper< MallProductDetail > detailWrapper = new EntityWrapper<>();
-	detailWrapper.where( "product_id = {0}", productId );
-	List< MallProductDetail > detailList = mallProductDetailDAO.selectList( detailWrapper );
-	if ( CommonUtil.isNotEmpty( detailList ) && detailList.size() > 0 ) {
-	    return detailList.get( 0 );
-	}
-	return null;
+        Wrapper< MallProductDetail > detailWrapper = new EntityWrapper<>();
+        detailWrapper.where( "product_id = {0}", productId );
+        List< MallProductDetail > detailList = mallProductDetailDAO.selectList( detailWrapper );
+        if ( CommonUtil.isNotEmpty( detailList ) && detailList.size() > 0 ) {
+            return detailList.get( 0 );
+        }
+        return null;
+    }
+
+    @Override
+    public List< MallProductDetail > selectByProductIds( List< Integer > productIds ) {
+        Wrapper< MallProductDetail > detailWrapper = new EntityWrapper<>();
+        detailWrapper.in( "product_id", productIds );
+        return mallProductDetailDAO.selectList( detailWrapper );
     }
 }

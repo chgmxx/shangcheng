@@ -21,7 +21,7 @@ import java.util.Map;
  * @since 2017-07-31
  */
 @Service
-public class PurchaseOrderDetailsServiceImpl extends BaseServiceImpl<PurchaseOrderDetailsDAO, PurchaseOrderDetails> implements PurchaseOrderDetailsService {
+public class PurchaseOrderDetailsServiceImpl extends BaseServiceImpl< PurchaseOrderDetailsDAO,PurchaseOrderDetails > implements PurchaseOrderDetailsService {
 
     @Autowired
     private MallImageAssociativeDAO imageAssociativeDAO;
@@ -30,11 +30,11 @@ public class PurchaseOrderDetailsServiceImpl extends BaseServiceImpl<PurchaseOrd
      * 根据详情信息里的商品id查询商品的图片
      */
     @Override
-    public List<Map<String, Object>> productImg(Integer productId) {
-        Map<String, Object> params = new HashMap<String, Object>();
-        params.put("assId", productId);
-        params.put("assType", 1);
-        return imageAssociativeDAO.selectByAssId(params);
+    public List< Map< String,Object > > productImg( Integer productId ) {
+        Map< String,Object > params = new HashMap< String,Object >();
+        params.put( "assId", productId );
+        params.put( "assType", 1 );
+        return imageAssociativeDAO.selectByAssId( params );
     }
 
 }

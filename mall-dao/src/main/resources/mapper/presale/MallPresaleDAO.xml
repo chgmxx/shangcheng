@@ -158,30 +158,30 @@
 
     <select id="selectByPresaleId" resultType="Map" parameterType="java.lang.Integer">
         SELECT
-            b.id,
-            b.product_id,
-            b.shop_id,
-            b.sale_start_time,
-            b.sale_end_time,
-            b.is_deposit,
-            b.deposit_percent,
-            b.user_id,
-            b.create_time,
-            b.is_delete,
-            b.is_use,
-            b.order_num,
-            c.image_url         AS imageUrl,
-            e.specifica_img_url AS specImageUrl,
-            p.is_specifica      AS isSpecifica,
-            p.pro_name          AS proName,
+        b.id,
+        b.product_id,
+        b.shop_id,
+        b.sale_start_time,
+        b.sale_end_time,
+        b.is_deposit,
+        b.deposit_percent,
+        b.user_id,
+        b.create_time,
+        b.is_delete,
+        b.is_use,
+        b.order_num,
+        c.image_url AS imageUrl,
+        e.specifica_img_url AS specImageUrl,
+        p.is_specifica AS isSpecifica,
+        p.pro_name AS proName,
         IF (p.is_specifica = 0, p.pro_price, d.inv_price)
-            AS proPrice, p.pro_stock_total AS proStockTotal
-            FROM t_mall_presale b
-            LEFT JOIN t_mall_product p ON b.product_id = p.id
-            LEFT JOIN ( SELECT ass_id, image_url FROM t_mall_image_associative WHERE ass_type=1 AND is_delete=0 AND is_main_images=1) c ON b.product_id=c.ass_id
-            LEFT JOIN ( SELECT product_id, specifica_img_id, inv_num, inv_price, id FROM t_mall_product_inventory WHERE is_default=1 AND is_delete=0) d ON b.product_id= d.product_id
-            LEFT JOIN t_mall_product_specifica e ON d.specifica_img_id=e.id
-            WHERE b.id = #{id}
+        AS proPrice, p.pro_stock_total AS proStockTotal
+        FROM t_mall_presale b
+        LEFT JOIN t_mall_product p ON b.product_id = p.id
+        LEFT JOIN ( SELECT ass_id, image_url FROM t_mall_image_associative WHERE ass_type=1 AND is_delete=0 AND is_main_images=1) c ON b.product_id=c.ass_id
+        LEFT JOIN ( SELECT product_id, specifica_img_id, inv_num, inv_price, id FROM t_mall_product_inventory WHERE is_default=1 AND is_delete=0) d ON b.product_id= d.product_id
+        LEFT JOIN t_mall_product_specifica e ON d.specifica_img_id=e.id
+        WHERE b.id = #{id}
     </select>
 
     <!-- 根据商品id查询预售信息 -->
@@ -260,9 +260,9 @@
     <select id="selectCountByPresaleId" parameterType="Map" resultType="java.lang.Integer">
         SELECT count(o.id) AS count
         FROM t_mall_presale p
-            LEFT JOIN t_mall_order o ON p.id = o.group_buy_id AND o.order_type = 5
+        LEFT JOIN t_mall_order o ON p.id = o.group_buy_id AND o.order_type = 5
         WHERE o.buyer_user_id = #{joinUserId}
-              AND p.id = #{presaleId} AND o.order_status > 1 AND o.order_status &lt; 5
+        AND p.id = #{presaleId} AND o.order_status > 1 AND o.order_status &lt; 5
     </select>
 
 

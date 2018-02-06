@@ -39,6 +39,7 @@ public interface MallProductSpecificaService extends BaseService< MallProductSpe
      * 批量保存商品规格
      */
     Map< String,Object > newSaveOrUpdateBatch( Object obj, int proId, boolean isUpdate );
+
     /**
      * 自定义商品规格
      *
@@ -171,6 +172,13 @@ public interface MallProductSpecificaService extends BaseService< MallProductSpe
      * @param productId 商品id
      */
     List< MallProductSpecifica > selectByProductId( Integer productId );
+
+    /**
+     * 根据商品id查询商品规格
+     *
+     * @param ids 商品id集合
+     */
+    public List< MallProductSpecifica > selectByProductIds( List< Integer > ids );
 
     /**
      * 根据商品和规格值id查询商品规格信息

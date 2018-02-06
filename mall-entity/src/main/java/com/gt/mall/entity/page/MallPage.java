@@ -99,26 +99,26 @@ public class MallPage extends Model< MallPage > {
 
     @Override
     protected Serializable pkVal() {
-	return this.id;
+        return this.id;
     }
 
     @Override
     public String toString() {
-	return "MallPage{" +
-			"id=" + id +
-			", pagName=" + pagName +
-			", pagDescript=" + pagDescript +
-			", pagTypeId=" + pagTypeId +
-			", pagCss=" + pagCss +
-			", pagData=" + pagData +
-			", pagUserId=" + pagUserId +
-			", pagStoId=" + pagStoId +
-			", pagCreateTime=" + pagCreateTime +
-			", pagIsMain=" + pagIsMain +
-			", pagHtml=" + pagHtml +
-			", codeUrl=" + codeUrl +
-                        ", visitorNum=" + visitorNum +
-                        ", viewsNum=" + viewsNum +
-			"}";
+        return "MallPage{" +
+            "id=" + id +
+            ", pagName=" + pagName +
+            ", pagDescript=" + pagDescript +
+            ", pagTypeId=" + pagTypeId +
+            ", pagCss=" + pagCss +
+            ", pagData=" + pagData +
+            ", pagUserId=" + pagUserId +
+            ", pagStoId=" + pagStoId +
+            ", pagCreateTime=" + pagCreateTime +
+            ", pagIsMain=" + pagIsMain +
+            ", pagHtml=" + pagHtml +
+            ", codeUrl=" + codeUrl +
+            ", visitorNum=" + visitorNum +
+            ", viewsNum=" + viewsNum +
+            "}";
     }
 }

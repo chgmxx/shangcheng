@@ -37,15 +37,15 @@ public class PhoneSellerOldController extends AuthorizeOrLoginController {
     @RequestMapping( value = "{saleMemberId}/79B4DE7C/mallIndex" )
     @AfterAnno( style = "9", remark = "微商城访问记录" )
     public String mallIndex( HttpServletRequest request, HttpServletResponse response, @PathVariable int saleMemberId, @RequestParam Map< String,Object > params ) {
-	int userid = 0;
-	if ( CommonUtil.isNotEmpty( params.get( "uId" ) ) ) {
-	    userid = CommonUtil.toInteger( params.get( "uId" ) );
-	}
-	if ( userid <= 0 ) {
-	    MallSellerMallset mallSet = mallSellerMallSetService.selectByMemberId( saleMemberId );
-	    userid = mallSet.getBusUserId();
-	}
-	return "redirect:" + PropertiesUtil.getPhoneWebHomeUrl() + "/seller/mallindex/" + userid + "/" + saleMemberId;
+        int userid = 0;
+        if ( CommonUtil.isNotEmpty( params.get( "uId" ) ) ) {
+            userid = CommonUtil.toInteger( params.get( "uId" ) );
+        }
+        if ( userid <= 0 ) {
+            MallSellerMallset mallSet = mallSellerMallSetService.selectByMemberId( saleMemberId );
+            userid = mallSet.getBusUserId();
+        }
+        return "redirect:" + PropertiesUtil.getPhoneWebHomeUrl() + "/seller/mallindex/" + userid + "/" + saleMemberId;
     }
 
     /**
@@ -55,16 +55,16 @@ public class PhoneSellerOldController extends AuthorizeOrLoginController {
     @RequestMapping( "{saleMemberId}/79B4DE7C/shoppingall" )
     @AfterAnno( style = "9", remark = "微商城访问记录" )
     public String shoppingall( HttpServletRequest request, HttpServletResponse response, @PathVariable int saleMemberId, @RequestParam Map< String,Object > params )
-		    throws Exception {
-	int userid = 0;
-	if ( CommonUtil.isNotEmpty( params.get( "uId" ) ) ) {
-	    userid = CommonUtil.toInteger( params.get( "uId" ) );
-	}
-	if ( userid <= 0 ) {
-	    MallSellerMallset mallSet = mallSellerMallSetService.selectByMemberId( saleMemberId );
-	    userid = mallSet.getBusUserId();
-	}
-	return "redirect:" + PropertiesUtil.getPhoneWebHomeUrl() + "/classify/0/" + userid + "/8/k=k/";
+        throws Exception {
+        int userid = 0;
+        if ( CommonUtil.isNotEmpty( params.get( "uId" ) ) ) {
+            userid = CommonUtil.toInteger( params.get( "uId" ) );
+        }
+        if ( userid <= 0 ) {
+            MallSellerMallset mallSet = mallSellerMallSetService.selectByMemberId( saleMemberId );
+            userid = mallSet.getBusUserId();
+        }
+        return "redirect:" + PropertiesUtil.getPhoneWebHomeUrl() + "/classify/0/" + userid + "/8/k=k/";
     }
 
 }

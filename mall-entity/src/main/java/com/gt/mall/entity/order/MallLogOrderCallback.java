@@ -63,16 +63,16 @@ public class MallLogOrderCallback extends Model< MallLogOrderCallback > {
 
     @Override
     protected Serializable pkVal() {
-	return this.id;
+        return this.id;
     }
 
     public MallLogOrderCallback() {
     }
 
     public MallLogOrderCallback( String orderNo, String logMessage, Integer logStatus, Date createTime ) {
-	this.orderNo = orderNo;
-	this.logMessage = logMessage;
-	this.logStatus = logStatus;
-	this.createTime = createTime;
+        this.orderNo = orderNo;
+        this.logMessage = logMessage;
+        this.logStatus = logStatus;
+        this.createTime = createTime;
     }
 }

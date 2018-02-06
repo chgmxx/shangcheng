@@ -22,12 +22,12 @@ public class WxAppletServiceImpl implements WxAppletService {
 
     @Override
     public MemberAppletOpenid memberAppletByMemIdAndStyle( MemberAppletByMemIdAndStyle applet ) {
-	RequestUtils< MemberAppletByMemIdAndStyle > requestUtils = new RequestUtils<>();
-	requestUtils.setReqdata( applet );
-	String result = HttpSignUtil.signHttpSelect( requestUtils, APPLET_URL + "memberAppletByMemIdAndStyle.do", 2 );
-	if ( CommonUtil.isNotEmpty( result ) ) {
-	    return JSONObject.toJavaObject( JSONObject.parseObject( result ), MemberAppletOpenid.class );
-	}
-	return null;
+        RequestUtils< MemberAppletByMemIdAndStyle > requestUtils = new RequestUtils<>();
+        requestUtils.setReqdata( applet );
+        String result = HttpSignUtil.signHttpSelect( requestUtils, APPLET_URL + "memberAppletByMemIdAndStyle.do", 2 );
+        if ( CommonUtil.isNotEmpty( result ) ) {
+            return JSONObject.toJavaObject( JSONObject.parseObject( result ), MemberAppletOpenid.class );
+        }
+        return null;
     }
 }

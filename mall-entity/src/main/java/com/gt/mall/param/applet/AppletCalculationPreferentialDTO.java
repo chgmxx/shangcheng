@@ -79,7 +79,7 @@ public class AppletCalculationPreferentialDTO implements Serializable {
     /**
      * 能使用粉币的商品总价
      */
-    private Double fenbiProMoney;
+    private Double  fenbiProMoney;
     /**
      * 能使用积分的商品数量
      */
@@ -87,12 +87,12 @@ public class AppletCalculationPreferentialDTO implements Serializable {
     /**
      * 能使用积分的商品总价
      */
-    private Double jifenProMoney;
+    private Double  jifenProMoney;
 
     /**
      * 版本号
      */
-    private String  version;
+    private String version;
 
     /**
      * 订单信息 json格式

@@ -52,31 +52,31 @@ public class MallOrderApiController {
     @ResponseBody
     @RequestMapping( value = "/scanLinePay", method = RequestMethod.POST )
     public ServerResponse scanLinePay( HttpServletRequest request, HttpServletResponse response, @RequestBody String param ) {
-	try {
-	    logger.info( "接收到的参数：" + param );
-	    Map< String,Object > params = JSONObject.parseObject( param );
-	    Member member = memberService.findMemberById( CommonUtil.toInteger( params.get( "memberId" ) ), null );
-	    WxPublicUsers wxPublicUsers = wxPublicUserService.selectByUserId( member.getBusid() );
-	    MallOrder order = new MallOrder();
-	    order.setOrderNo( "SC" + System.currentTimeMillis() );
-	    order.setOrderMoney( new BigDecimal( params.get( "totalFee" ).toString() ) );
-	    order.setOrderPayWay( 5 );//扫码支付
-	    if ( CommonUtil.isNotEmpty( wxPublicUsers ) ) {
-		order.setSellerUserId( wxPublicUsers.getId() );//公众号ID
-	    }
-	    order.setShopId( CommonUtil.toInteger( params.get( "shopId" ) ) );
-	    order.setOrderStatus( 1 );
-	    order.setCreateTime( new Date() );
-	    order.setPayTime( new Date() );
-	    order.setBuyerUserId( member.getId() );//买家ID
-	    order.setBusUserId( member.getBusid() );//商家ID
-	    mallOrderService.insert( order );
-	} catch ( Exception e ) {
-	    logger.error( "线下订单接口异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "线下订单接口异常" );
-	}
-	return ServerResponse.createBySuccessCode();
+        try {
+            logger.info( "接收到的参数：" + param );
+            Map< String,Object > params = JSONObject.parseObject( param );
+            Member member = memberService.findMemberById( CommonUtil.toInteger( params.get( "memberId" ) ), null );
+            WxPublicUsers wxPublicUsers = wxPublicUserService.selectByUserId( member.getBusid() );
+            MallOrder order = new MallOrder();
+            order.setOrderNo( "SC" + System.currentTimeMillis() );
+            order.setOrderMoney( new BigDecimal( params.get( "totalFee" ).toString() ) );
+            order.setOrderPayWay( 5 );//扫码支付
+            if ( CommonUtil.isNotEmpty( wxPublicUsers ) ) {
+                order.setSellerUserId( wxPublicUsers.getId() );//公众号ID
+            }
+            order.setShopId( CommonUtil.toInteger( params.get( "shopId" ) ) );
+            order.setOrderStatus( 1 );
+            order.setCreateTime( new Date() );
+            order.setPayTime( new Date() );
+            order.setBuyerUserId( member.getId() );//买家ID
+            order.setBusUserId( member.getBusid() );//商家ID
+            mallOrderService.insert( order );
+        } catch ( Exception e ) {
+            logger.error( "线下订单接口异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "线下订单接口异常" );
+        }
+        return ServerResponse.createBySuccessCode();
     }
 
     //    @ApiOperation( value = "订单支付成功回调", notes = "订单支付成功回调" )

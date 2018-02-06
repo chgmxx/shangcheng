@@ -57,7 +57,7 @@ public interface MemberPayService {
      * @param jifen    积分
      * @param fenbi    积分
      *
-     * @return code		code=0 成功
+     * @return code        code=0 成功
      */
     Map< String,Object > updateJifenAndFenBiByPinglu( Integer memberId, Integer jifen, Double fenbi );
 

@@ -166,38 +166,38 @@ public class MallOrderReturn extends Model< MallOrderReturn > {
 
     @Override
     protected Serializable pkVal() {
-	return this.id;
+        return this.id;
     }
 
     @Override
     public String toString() {
-	return "MallOrderReturn{" +
-			"id=" + id +
-			", orderId=" + orderId +
-			", orderDetailId=" + orderDetailId +
-			", returnNo='" + returnNo + '\'' +
-			", retHandlingWay=" + retHandlingWay +
-			", retReasonId=" + retReasonId +
-			", retReason='" + retReason + '\'' +
-			", retMoney=" + retMoney +
-			", retTelephone='" + retTelephone + '\'' +
-			", retRemark='" + retRemark + '\'' +
-			", imagesUrl='" + imagesUrl + '\'' +
-			", shopId=" + shopId +
-			", createTime=" + createTime +
-			", updateTime=" + updateTime +
-			", status=" + status +
-			", userId=" + userId +
-			", noReturnReason='" + noReturnReason + '\'' +
-			", returnAddress='" + returnAddress + '\'' +
-			", wlCompanyId=" + wlCompanyId +
-			", wlCompany='" + wlCompany + '\'' +
-			", wlNo='" + wlNo + '\'' +
-			", wlTelephone='" + wlTelephone + '\'' +
-			", wlRemark='" + wlRemark + '\'' +
-			", returnFenbi=" + returnFenbi +
-			", returnJifen=" + returnJifen +
-			", cargoStatus=" + cargoStatus +
-			'}';
+        return "MallOrderReturn{" +
+            "id=" + id +
+            ", orderId=" + orderId +
+            ", orderDetailId=" + orderDetailId +
+            ", returnNo='" + returnNo + '\'' +
+            ", retHandlingWay=" + retHandlingWay +
+            ", retReasonId=" + retReasonId +
+            ", retReason='" + retReason + '\'' +
+            ", retMoney=" + retMoney +
+            ", retTelephone='" + retTelephone + '\'' +
+            ", retRemark='" + retRemark + '\'' +
+            ", imagesUrl='" + imagesUrl + '\'' +
+            ", shopId=" + shopId +
+            ", createTime=" + createTime +
+            ", updateTime=" + updateTime +
+            ", status=" + status +
+            ", userId=" + userId +
+            ", noReturnReason='" + noReturnReason + '\'' +
+            ", returnAddress='" + returnAddress + '\'' +
+            ", wlCompanyId=" + wlCompanyId +
+            ", wlCompany='" + wlCompany + '\'' +
+            ", wlNo='" + wlNo + '\'' +
+            ", wlTelephone='" + wlTelephone + '\'' +
+            ", wlRemark='" + wlRemark + '\'' +
+            ", returnFenbi=" + returnFenbi +
+            ", returnJifen=" + returnJifen +
+            ", cargoStatus=" + cargoStatus +
+            '}';
     }
 }

@@ -28,9 +28,9 @@ public class MallLogisticsInfoServiceImpl extends BaseServiceImpl< MallLogistics
     @Override
     public List< MallLogisticsInfo > selectByOrderId( Integer orderId, String sn ) {
 
-	Wrapper< MallLogisticsInfo > wrapper = new EntityWrapper<>();
-	wrapper.where( "order_id = {0} and sn = {1}", orderId, sn );
+        Wrapper< MallLogisticsInfo > wrapper = new EntityWrapper<>();
+        wrapper.where( "order_id = {0} and sn = {1}", orderId, sn );
 
-	return mallLogisticsInfoDAO.selectList( wrapper );
+        return mallLogisticsInfoDAO.selectList( wrapper );
     }
 }

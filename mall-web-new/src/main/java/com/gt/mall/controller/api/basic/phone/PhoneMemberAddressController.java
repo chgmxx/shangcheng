@@ -55,27 +55,27 @@ public class PhoneMemberAddressController extends AuthorizeOrUcLoginController {
     @ResponseBody
     @PostMapping( value = "addressList", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse< List< PhoneOrderMemberAddressDTO > > addressList( HttpServletRequest request, HttpServletResponse response,
-		    @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO ) {
-	try {
-//	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
+        @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO ) {
+        try {
+            //	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
 
-	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
+            Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 
-	    //获取会员地址
-	    List< PhoneOrderMemberAddressDTO > addressList = mallMemberAddressService.getMemberAddressList( member.getId() );
+            //获取会员地址
+            List< PhoneOrderMemberAddressDTO > addressList = mallMemberAddressService.getMemberAddressList( member.getId() );
 
-	    return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), addressList, false );
-	} catch ( BusinessException e ) {
-	    logger.error( "手机端地址列表的接口异常：" + e.getCode() + "---" + e.getMessage() );
-	    if ( e.getCode() == ResponseEnums.NEED_LOGIN.getCode() ) {
-		return ErrorInfo.createByErrorCodeMessage( e.getCode(), e.getMessage(), e.getData() );
-	    }
-	    return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
-	} catch ( Exception e ) {
-	    logger.error( "手机端地址列表的接口异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorMessage( "查询我的地址失败" );
-	}
+            return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), addressList, false );
+        } catch ( BusinessException e ) {
+            logger.error( "手机端地址列表的接口异常：" + e.getCode() + "---" + e.getMessage() );
+            if ( e.getCode() == ResponseEnums.NEED_LOGIN.getCode() ) {
+                return ErrorInfo.createByErrorCodeMessage( e.getCode(), e.getMessage(), e.getData() );
+            }
+            return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
+        } catch ( Exception e ) {
+            logger.error( "手机端地址列表的接口异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorMessage( "查询我的地址失败" );
+        }
     }
 
     @ApiOperation( value = "手机端根据地址id查询地址的接口", notes = "进入编辑地址地址", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
@@ -83,24 +83,24 @@ public class PhoneMemberAddressController extends AuthorizeOrUcLoginController {
     @ResponseBody
     @PostMapping( value = "selectAddressById", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse< MemberAddress > selectAddressById( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO,
-		    Integer addressId ) {
-	try {
-//	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
+        Integer addressId ) {
+        try {
+            //	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
 
-	    MemberAddress memberAddress = memberAddressService.addreSelectId( CommonUtil.toInteger( addressId ) );
+            MemberAddress memberAddress = memberAddressService.addreSelectId( CommonUtil.toInteger( addressId ) );
 
-	    return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), memberAddress, false );
-	} catch ( BusinessException e ) {
-	    logger.error( "手机端根据地址id查询地址的接口异常：" + e.getCode() + "---" + e.getMessage() );
-	    if ( e.getCode() == ResponseEnums.NEED_LOGIN.getCode() ) {
-		return ErrorInfo.createByErrorCodeMessage( e.getCode(), e.getMessage(), e.getData() );
-	    }
-	    return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
-	} catch ( Exception e ) {
-	    logger.error( "手机端根据地址id查询地址的接口异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorMessage( "查询地址信息失败" );
-	}
+            return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), memberAddress, false );
+        } catch ( BusinessException e ) {
+            logger.error( "手机端根据地址id查询地址的接口异常：" + e.getCode() + "---" + e.getMessage() );
+            if ( e.getCode() == ResponseEnums.NEED_LOGIN.getCode() ) {
+                return ErrorInfo.createByErrorCodeMessage( e.getCode(), e.getMessage(), e.getData() );
+            }
+            return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
+        } catch ( Exception e ) {
+            logger.error( "手机端根据地址id查询地址的接口异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorMessage( "查询地址信息失败" );
+        }
     }
 
     @ApiOperation( value = "手机端查询省市区集合的接口", notes = "查询省市区集合", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
@@ -108,85 +108,85 @@ public class PhoneMemberAddressController extends AuthorizeOrUcLoginController {
     @ResponseBody
     @PostMapping( value = "getCityList", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse getCityList( HttpServletRequest request, HttpServletResponse response, Integer cityId ) {
-	try {
-	    List< Map > list;
-	    if ( CommonUtil.isNotEmpty( cityId ) && cityId > 0 ) {
-		//根据父类城市id查询城市集合
-		list = wxShopService.queryCityByParentId( cityId );
-	    } else {
-		//查询省份集合
-		list = wxShopService.queryCityByLevel( 2 );
-	    }
-	    return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), list, false );
-	} catch ( BusinessException be ) {
-	    return ErrorInfo.createByErrorCodeMessage( be.getCode(),be.getMessage(),be.getData() );
-	}  catch ( Exception e ) {
-	    logger.error( "手机端查询省市区的接口异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorMessage( "查询查询省市区失败" );
-	}
+        try {
+            List< Map > list;
+            if ( CommonUtil.isNotEmpty( cityId ) && cityId > 0 ) {
+                //根据父类城市id查询城市集合
+                list = wxShopService.queryCityByParentId( cityId );
+            } else {
+                //查询省份集合
+                list = wxShopService.queryCityByLevel( 2 );
+            }
+            return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), list, false );
+        } catch ( BusinessException be ) {
+            return ErrorInfo.createByErrorCodeMessage( be.getCode(), be.getMessage(), be.getData() );
+        } catch ( Exception e ) {
+            logger.error( "手机端查询省市区的接口异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorMessage( "查询查询省市区失败" );
+        }
     }
 
     @ApiOperation( value = "手机端保存地址的接口", notes = "保存地址信息", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     @ResponseBody
     @PostMapping( value = "saveAddress", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse saveAddress( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO,
-		    @RequestBody @Valid @ModelAttribute PhoneMemberAddressDTO memberAddress ) {
-	try {
-//	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
+        @RequestBody @Valid @ModelAttribute PhoneMemberAddressDTO memberAddress ) {
+        try {
+            //	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
 
-	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
+            Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 
-	    memberAddress.setDfMemberId( member.getId() );
+            memberAddress.setDfMemberId( member.getId() );
 
-	    MemberAddress address = JSONObject.parseObject( JSON.toJSONString( memberAddress ), MemberAddress.class );
-	    if ( CommonUtil.isEmpty( address.getMemHouseMember() ) ) {
-		address.setMemHouseMember( "" );
-	    }
-	    boolean flag = memberAddressService.addOrUpdateAddre( address );
-	    if ( !flag ) {
-		return ServerResponse.createByErrorMessage( "保存地址信息失败" );
-	    }
-	    return ServerResponse.createBySuccessCode();
-	} catch ( BusinessException e ) {
-	    logger.error( "手机端保存地址的接口异常：" + e.getCode() + "---" + e.getMessage() );
-	    if ( e.getCode() == ResponseEnums.NEED_LOGIN.getCode() ) {
-		return ErrorInfo.createByErrorCodeMessage( e.getCode(), e.getMessage(), e.getData() );
-	    }
-	    return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
-	} catch ( Exception e ) {
-	    logger.error( "手机端保存地址的接口异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorMessage( "保存地址信息失败" );
-	}
+            MemberAddress address = JSONObject.parseObject( JSON.toJSONString( memberAddress ), MemberAddress.class );
+            if ( CommonUtil.isEmpty( address.getMemHouseMember() ) ) {
+                address.setMemHouseMember( "" );
+            }
+            boolean flag = memberAddressService.addOrUpdateAddre( address );
+            if ( !flag ) {
+                return ServerResponse.createByErrorMessage( "保存地址信息失败" );
+            }
+            return ServerResponse.createBySuccessCode();
+        } catch ( BusinessException e ) {
+            logger.error( "手机端保存地址的接口异常：" + e.getCode() + "---" + e.getMessage() );
+            if ( e.getCode() == ResponseEnums.NEED_LOGIN.getCode() ) {
+                return ErrorInfo.createByErrorCodeMessage( e.getCode(), e.getMessage(), e.getData() );
+            }
+            return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
+        } catch ( Exception e ) {
+            logger.error( "手机端保存地址的接口异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorMessage( "保存地址信息失败" );
+        }
     }
 
     @ApiOperation( value = "设为默认地址的接口", notes = "设为默认地址", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     @ApiImplicitParams( { @ApiImplicitParam( name = "addressId", value = "地址id，必传", paramType = "query", dataType = "int", required = true ),
-		    @ApiImplicitParam( name = "upMemberId", value = "会员id，必传", paramType = "query", dataType = "int", required = true ) } )
+        @ApiImplicitParam( name = "upMemberId", value = "会员id，必传", paramType = "query", dataType = "int", required = true ) } )
     @ResponseBody
     @PostMapping( value = "defaultAddress", produces = MediaType.APPLICATION_JSON_UTF8_VALUE )
     public ServerResponse defaultAddress( HttpServletRequest request, HttpServletResponse response, @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO,
-		    Integer addressId, Integer upMemberId ) {
-	try {
-//	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
-	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
-	    boolean flag = memberAddressService.updateDefault( addressId, member.getId() );
-	    if ( !flag ) {
-		return ServerResponse.createByErrorMessage( "设为默认地址失败" );
-	    }
-	    return ServerResponse.createBySuccessCode();
-	} catch ( BusinessException e ) {
-	    logger.error( "设为默认地址的接口异常：" + e.getCode() + "---" + e.getMessage() );
-	    if ( e.getCode() == ResponseEnums.NEED_LOGIN.getCode() ) {
-		return ErrorInfo.createByErrorCodeMessage( e.getCode(), e.getMessage(), e.getData() );
-	    }
-	    return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
-	} catch ( Exception e ) {
-	    logger.error( "设为默认地址的接口异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorMessage( "设为默认地址失败" );
-	}
+        Integer addressId, Integer upMemberId ) {
+        try {
+            //	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
+            Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
+            boolean flag = memberAddressService.updateDefault( addressId, member.getId() );
+            if ( !flag ) {
+                return ServerResponse.createByErrorMessage( "设为默认地址失败" );
+            }
+            return ServerResponse.createBySuccessCode();
+        } catch ( BusinessException e ) {
+            logger.error( "设为默认地址的接口异常：" + e.getCode() + "---" + e.getMessage() );
+            if ( e.getCode() == ResponseEnums.NEED_LOGIN.getCode() ) {
+                return ErrorInfo.createByErrorCodeMessage( e.getCode(), e.getMessage(), e.getData() );
+            }
+            return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
+        } catch ( Exception e ) {
+            logger.error( "设为默认地址的接口异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorMessage( "设为默认地址失败" );
+        }
     }
 
 }

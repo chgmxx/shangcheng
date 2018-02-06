@@ -56,7 +56,7 @@ public class MallLogisticsInfo extends Model< MallLogisticsInfo > {
 
     @Override
     protected Serializable pkVal() {
-	return this.id;
+        return this.id;
     }
 
 }

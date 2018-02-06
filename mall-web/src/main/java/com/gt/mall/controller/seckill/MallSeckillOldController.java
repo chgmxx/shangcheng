@@ -38,15 +38,15 @@ public class MallSeckillOldController extends AuthorizeOrLoginController {
     @RequestMapping( "{shopid}/79B4DE7C/seckillall" )
     @AfterAnno( style = "9", remark = "微商城访问记录" )
     public String seckillall( HttpServletRequest request, HttpServletResponse response, @PathVariable int shopid, @RequestParam Map< String,Object > params ) throws Exception {
-	int userid = 0;
-	if ( CommonUtil.isNotEmpty( params.get( "uId" ) ) ) {
-	    userid = CommonUtil.toInteger( params.get( "uId" ) );
-	}
-	if ( userid <= 0 ) {
-	    MallStore mallStore = mallStoreService.selectById( shopid );
-	    userid = mallStore.getStoUserId();
-	}
-	return "redirect:" + PropertiesUtil.getPhoneWebHomeUrl() + "/classify/" + shopid + "/" + userid + "/3/k=k";
+        int userid = 0;
+        if ( CommonUtil.isNotEmpty( params.get( "uId" ) ) ) {
+            userid = CommonUtil.toInteger( params.get( "uId" ) );
+        }
+        if ( userid <= 0 ) {
+            MallStore mallStore = mallStoreService.selectById( shopid );
+            userid = mallStore.getStoUserId();
+        }
+        return "redirect:" + PropertiesUtil.getPhoneWebHomeUrl() + "/classify/" + shopid + "/" + userid + "/3/k=k";
     }
 
 }

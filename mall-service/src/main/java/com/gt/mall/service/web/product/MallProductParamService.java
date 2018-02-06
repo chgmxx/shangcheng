@@ -18,28 +18,29 @@ public interface MallProductParamService extends BaseService< MallProductParam >
 
     /**
      * 批量保存商品参数
-     *
      */
-    void saveOrUpdateBatch(Object obj, int proId,Map<String, Object> defaultMap,boolean isUpdate);
+    void saveOrUpdateBatch( Object obj, int proId, Map< String,Object > defaultMap, boolean isUpdate );
 
     /**
      * 批量保存商品参数
-     *
      */
-    void newSaveOrUpdateBatch(Object obj, int proId,boolean isUpdate);
+    void newSaveOrUpdateBatch( Object obj, int proId, boolean isUpdate );
 
     /**
      * 根据商品id来获取商品规格
-     *
-     * @Title: getSpecificaByProductId
      */
-    List<MallProductParam> getParamByProductId(Integer proId);
+    List< MallProductParam > getParamByProductId( Integer proId );
+
+    /**
+     * 根据商品id来获取商品规格
+     */
+    List< MallProductParam > getParamByProductIds( List< Integer > proId );
 
     /**
      * 同步商品参数
+     *
      * @return
      */
-    void copyProductParam(List<MallProductParam> paramList,int proId,int shopId,int userId) throws Exception;
-
+    void copyProductParam( List< MallProductParam > paramList, int proId, int shopId, int userId ) throws Exception;
 
 }

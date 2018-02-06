@@ -111,7 +111,7 @@ public interface MallPifaService extends BaseService< MallPifa > {
     /**
      * 搜索店铺下所有的批发商品
      */
-    PageUtil searchPifaAll( PhoneSearchProductDTO searchProductDTO, Member member);
+    PageUtil searchPifaAll( PhoneSearchProductDTO searchProductDTO, Member member );
 
     /**
      * 获取商品的批发信息

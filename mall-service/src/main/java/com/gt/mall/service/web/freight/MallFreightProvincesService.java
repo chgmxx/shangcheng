@@ -11,6 +11,6 @@ import com.gt.mall.entity.freight.MallFreightProvinces;
  * @author yangqian
  * @since 2017-07-20
  */
-public interface MallFreightProvincesService extends BaseService<MallFreightProvinces> {
+public interface MallFreightProvincesService extends BaseService< MallFreightProvinces > {
 
 }

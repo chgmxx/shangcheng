@@ -77,9 +77,11 @@ public interface MallStoreDAO extends BaseMapper< MallStore > {
 
     /**
      * 根据用户id查询门店信息
+     *
      * @param userId
+     *
      * @return
      */
-    List<Map<String, Object>> selectWxShopByUserId(int userId);
+    List< Map< String,Object > > selectWxShopByUserId( int userId );
 
 }

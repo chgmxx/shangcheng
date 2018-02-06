@@ -52,16 +52,16 @@
         </if>
         order by i.create_time desc
     </select>
-    <select id="selectAppletImageById"  resultType="Map" parameterType="java.lang.Integer">
-    SELECT i.id, i.pro_id AS proId, i.image_url AS imageUrl, i.type, i.bus_user_id AS busUserId,  i.create_time AS createTime,
-    i.is_delete AS isDelete, i.is_show AS isShow, c.image_url AS proUrl,e.specifica_img_url AS specImageUrl,p.is_specifica AS isSpecifica,p.pro_name AS proName
-    ,IF(p.is_specifica = 0 ,p.pro_price,d.inv_price) AS proPrice ,p.pro_stock_total AS proStockTotal
-    FROM t_mall_applet_image i
-    LEFT JOIN t_mall_product p ON i.`pro_id` = p.id
-    LEFT JOIN (SELECT ass_id,image_url FROM t_mall_image_associative WHERE ass_type=1 AND is_delete=0 AND is_main_images=1) c ON i.pro_id=c.ass_id
-    LEFT JOIN (SELECT product_id,specifica_img_id,inv_num,inv_price,id FROM t_mall_product_inventory WHERE is_default=1 AND is_delete=0)d ON i.pro_id=d.product_id
-    LEFT JOIN t_mall_product_specifica e ON d.specifica_img_id=e.id
-    WHERE i.id = #{id}
+    <select id="selectAppletImageById" resultType="Map" parameterType="java.lang.Integer">
+        SELECT i.id, i.pro_id AS proId, i.image_url AS imageUrl, i.type, i.bus_user_id AS busUserId, i.create_time AS createTime,
+        i.is_delete AS isDelete, i.is_show AS isShow, c.image_url AS proUrl,e.specifica_img_url AS specImageUrl,p.is_specifica AS isSpecifica,p.pro_name AS proName
+        ,IF(p.is_specifica = 0 ,p.pro_price,d.inv_price) AS proPrice ,p.pro_stock_total AS proStockTotal
+        FROM t_mall_applet_image i
+        LEFT JOIN t_mall_product p ON i.`pro_id` = p.id
+        LEFT JOIN (SELECT ass_id,image_url FROM t_mall_image_associative WHERE ass_type=1 AND is_delete=0 AND is_main_images=1) c ON i.pro_id=c.ass_id
+        LEFT JOIN (SELECT product_id,specifica_img_id,inv_num,inv_price,id FROM t_mall_product_inventory WHERE is_default=1 AND is_delete=0)d ON i.pro_id=d.product_id
+        LEFT JOIN t_mall_product_specifica e ON d.specifica_img_id=e.id
+        WHERE i.id = #{id}
     </select>
 
 </mapper>

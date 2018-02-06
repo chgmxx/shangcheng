@@ -23,11 +23,11 @@
     <sql id="Base_Column_List">
         id, is_name_required , is_company_required , is_telephone_required , is_validate_required ,
         is_remark_required , integral_reward , consume_money , withdrawal_type , withdrawal_lowest_money,
-         withdrawal_multiple , seller_remark , bus_user_id
+        withdrawal_multiple , seller_remark , bus_user_id
     </sql>
     <select id="selectByBusUserId" parameterType="com.gt.mall.entity.seller.MallSellerSet" resultMap="BaseResultMap">
         select
-        <include refid="Base_Column_List" />
+        <include refid="Base_Column_List"/>
         from t_mall_seller_set
         where bus_user_id = #{busUserId,jdbcType=INTEGER}
     </select>

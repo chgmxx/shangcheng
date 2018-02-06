@@ -141,7 +141,7 @@
             limit 1
         </where>
     </select>
-    <select id="selectSalePricerByUserId"  parameterType="Map" resultType="Map">
+    <select id="selectSalePricerByUserId" parameterType="Map" resultType="Map">
         SELECT
         s.id,
         s.`member_id`,

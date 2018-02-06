@@ -38,15 +38,15 @@ public class MallAuctionOldController extends AuthorizeOrLoginController {
     @RequestMapping( "{shopid}/79B4DE7C/auctionall" )
     @AfterAnno( style = "9", remark = "微商城访问记录" )
     public String auctionall( HttpServletRequest request, HttpServletResponse response, @PathVariable int shopid, @RequestParam Map< String,Object > params ) throws Exception {
-	int userid = 0;
-	if ( CommonUtil.isNotEmpty( params.get( "uId" ) ) ) {
-	    userid = CommonUtil.toInteger( params.get( "uId" ) );
-	}
-	if ( userid <= 0 ) {
-	    MallStore mallStore = mallStoreService.selectById( shopid );
-	    userid = mallStore.getStoUserId();
-	}
-	return "redirect:" + PropertiesUtil.getPhoneWebHomeUrl() + "/classify/" + shopid + "/" + userid + "/4/k=k";
+        int userid = 0;
+        if ( CommonUtil.isNotEmpty( params.get( "uId" ) ) ) {
+            userid = CommonUtil.toInteger( params.get( "uId" ) );
+        }
+        if ( userid <= 0 ) {
+            MallStore mallStore = mallStoreService.selectById( shopid );
+            userid = mallStore.getStoUserId();
+        }
+        return "redirect:" + PropertiesUtil.getPhoneWebHomeUrl() + "/classify/" + shopid + "/" + userid + "/4/k=k";
     }
 
     /**
@@ -55,12 +55,12 @@ public class MallAuctionOldController extends AuthorizeOrLoginController {
     @RequestMapping( "{id}/{shopid}/{aId}/79B4DE7C/auctiondetail" )
     @AfterAnno( style = "9", remark = "微商城访问记录" )
     public String auctiondetail( HttpServletRequest request, HttpServletResponse response, @PathVariable int id, @PathVariable int shopid, @PathVariable int aId,
-		    @RequestParam Map< String,Object > params ) throws Exception {
-	int userid = 0;
-	if ( CommonUtil.isNotEmpty( params.get( "uId" ) ) ) {
-	    userid = CommonUtil.toInteger( params.get( "uId" ) );
-	}
-	return "redirect:" + PropertiesUtil.getPhoneWebHomeUrl() + "/goods/details/" + shopid + "/" + userid + "/4/" + id + "/" + aId;
+        @RequestParam Map< String,Object > params ) throws Exception {
+        int userid = 0;
+        if ( CommonUtil.isNotEmpty( params.get( "uId" ) ) ) {
+            userid = CommonUtil.toInteger( params.get( "uId" ) );
+        }
+        return "redirect:" + PropertiesUtil.getPhoneWebHomeUrl() + "/goods/details/" + shopid + "/" + userid + "/4/" + id + "/" + aId;
 
     }
 

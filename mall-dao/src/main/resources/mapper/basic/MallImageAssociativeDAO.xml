@@ -49,7 +49,7 @@
             SELECT
             @@IDENTITY
         </selectKey>
-        <foreach collection="list" item="item" index="index" separator=";" >
+        <foreach collection="list" item="item" index="index" separator=";">
             insert into t_mall_image_associative
             <trim prefix="(" suffix=")" suffixOverrides=",">
                 <if test="item.id != null">
@@ -100,7 +100,7 @@
         </foreach>
     </insert>
     <!-- 批量修改 -->
-    <update id="updateBatchImage" parameterType="java.util.List" >
+    <update id="updateBatchImage" parameterType="java.util.List">
         <foreach collection="list" index="index" item="item" open="" separator=";" close="">
             update t_mall_image_associative
             <set>

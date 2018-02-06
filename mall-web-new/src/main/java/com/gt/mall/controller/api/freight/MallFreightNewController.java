@@ -74,24 +74,24 @@ public class MallFreightNewController extends BaseController {
     @ApiImplicitParams( @ApiImplicitParam( name = "curPage", value = "页数", paramType = "query", required = false, dataType = "int" ) )
     @RequestMapping( value = "/list", method = RequestMethod.POST )
     public ServerResponse list( HttpServletRequest request, HttpServletResponse response, Integer curPage ) {
-	Map< String,Object > result = new HashMap<>();
-	try {
-	    BusUser user = MallSessionUtils.getLoginUser( request );
-	    Map< String,Object > params = new HashMap<>();
-	    params.put( "curPage", curPage );
-	    List< Map< String,Object > > shoplist = storeService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
-	    if ( shoplist != null && shoplist.size() > 0 ) {
-		params.put( "shoplist", shoplist );
-		PageUtil freightPage = freightService.selectFreightByShopId( shoplist, params );
-		result.put( "page", freightPage );
-	    }
-	    result.put( "videourl", Constants.VIDEO_URL + 80 );
-	} catch ( Exception e ) {
-	    logger.error( "物流列表异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "物流列表异常" );
-	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
+        Map< String,Object > result = new HashMap<>();
+        try {
+            BusUser user = MallSessionUtils.getLoginUser( request );
+            Map< String,Object > params = new HashMap<>();
+            params.put( "curPage", curPage );
+            List< Map< String,Object > > shoplist = storeService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
+            if ( shoplist != null && shoplist.size() > 0 ) {
+                params.put( "shoplist", shoplist );
+                PageUtil freightPage = freightService.selectFreightByShopId( shoplist, params );
+                result.put( "page", freightPage );
+            }
+            result.put( "videourl", Constants.VIDEO_URL + 80 );
+        } catch ( Exception e ) {
+            logger.error( "物流列表异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "物流列表异常" );
+        }
+        return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
     }
 
     /**
@@ -101,16 +101,16 @@ public class MallFreightNewController extends BaseController {
     @ResponseBody
     @RequestMapping( value = "/freightInfo", method = RequestMethod.POST )
     public ServerResponse freightInfo( HttpServletRequest request, HttpServletResponse response,
-		    @ApiParam( name = "id", value = "物流ID", required = true ) @RequestParam Integer id ) {
-	MallFreight freight = null;
-	try {
-	    freight = freightService.selectFreightById( id );
-	} catch ( Exception e ) {
-	    logger.error( "获取物流信息异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取物流信息异常" );
-	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), freight );
+        @ApiParam( name = "id", value = "物流ID", required = true ) @RequestParam Integer id ) {
+        MallFreight freight = null;
+        try {
+            freight = freightService.selectFreightById( id );
+        } catch ( Exception e ) {
+            logger.error( "获取物流信息异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取物流信息异常" );
+        }
+        return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), freight );
     }
 
     /**
@@ -120,16 +120,16 @@ public class MallFreightNewController extends BaseController {
     @ResponseBody
     @RequestMapping( value = "/getFreightByShopId", method = RequestMethod.POST )
     public ServerResponse getFreightByShopId( HttpServletRequest request, HttpServletResponse response,
-		    @ApiParam( name = "shopId", value = "店铺ID", required = true ) @RequestParam Integer shopId ) {
-	List< MallFreight > freight = null;
-	try {
-	    freight = freightService.selectFreightByShopId( shopId );
-	} catch ( Exception e ) {
-	    logger.error( "根据店铺ID获取物流信息异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "根据店铺ID获取物流信息异常" );
-	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), freight );
+        @ApiParam( name = "shopId", value = "店铺ID", required = true ) @RequestParam Integer shopId ) {
+        List< MallFreight > freight = null;
+        try {
+            freight = freightService.selectFreightByShopId( shopId );
+        } catch ( Exception e ) {
+            logger.error( "根据店铺ID获取物流信息异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "根据店铺ID获取物流信息异常" );
+        }
+        return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), freight );
     }
 
     /**
@@ -139,19 +139,19 @@ public class MallFreightNewController extends BaseController {
     @ResponseBody
     @RequestMapping( value = "/expressList", method = RequestMethod.POST )
     public ServerResponse expressList( HttpServletRequest request, HttpServletResponse response ) {
-	List< DictBean > list = null;
-	try {
-	    //查询物流公司
-	    list = dictService.getDict( "1092" );
-	    /*for ( Map map2 : list ) {
+        List< DictBean > list = null;
+        try {
+            //查询物流公司
+            list = dictService.getDict( "1092" );
+        /*for ( Map map2 : list ) {
 		map.put( map2.get( "item_key" ).toString(), map2.get( "item_value" ) );
 	    }*/
-	} catch ( Exception e ) {
-	    logger.error( "获取物流快递公司息异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取物流快递公司异常" );
-	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), list );
+        } catch ( Exception e ) {
+            logger.error( "获取物流快递公司息异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取物流快递公司异常" );
+        }
+        return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), list );
     }
 
     /**
@@ -182,23 +182,23 @@ public class MallFreightNewController extends BaseController {
     @SysLogAnnotation( description = "保存物流信息", op_function = "2" )
     @RequestMapping( value = "/save", method = RequestMethod.POST )
     public ServerResponse saveOrUpdate( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
-	try {
-	    BusUser user = MallSessionUtils.getLoginUser( request );
+        try {
+            BusUser user = MallSessionUtils.getLoginUser( request );
 
-	    boolean flag = freightService.newEditFreight( params, user.getId() );
-	    if ( !flag ) {
-		return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "保存物流信息异常" );
-	    }
-	} catch ( BusinessException e ) {
-	    logger.error( "保存物流信息异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
-	} catch ( Exception e ) {
-	    logger.error( "保存物流信息异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
-	}
-	return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
+            boolean flag = freightService.newEditFreight( params, user.getId() );
+            if ( !flag ) {
+                return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "保存物流信息异常" );
+            }
+        } catch ( BusinessException e ) {
+            logger.error( "保存物流信息异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
+        } catch ( Exception e ) {
+            logger.error( "保存物流信息异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
+        }
+        return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
     }
 
     /**
@@ -209,28 +209,28 @@ public class MallFreightNewController extends BaseController {
     @SysLogAnnotation( description = "删除物流信息", op_function = "4" )
     @RequestMapping( value = "/delete", method = RequestMethod.POST )
     public ServerResponse delete( HttpServletRequest request, HttpServletResponse response,
-		    @ApiParam( name = "ids", value = "物流ID集合,用逗号隔开", required = true ) @RequestParam String ids ) throws IOException {
-	try {
-	    BusUser user = MallSessionUtils.getLoginUser( request );
-	    String id[] = ids.toString().split( "," );
+        @ApiParam( name = "ids", value = "物流ID集合,用逗号隔开", required = true ) @RequestParam String ids ) throws IOException {
+        try {
+            BusUser user = MallSessionUtils.getLoginUser( request );
+            String id[] = ids.toString().split( "," );
 
-	    Map< String,Object > params = new HashMap<>();
-	    params.put( "ids", id );
-	    // 删除物流信息
-	    boolean flag = freightService.deleteFreight( params );
-	    if ( !flag ) {
-		return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "删除物流信息异常" );
-	    }
-	} catch ( BusinessException e ) {
-	    logger.error( "删除物流信息异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
-	} catch ( Exception e ) {
-	    logger.error( "删除物流信息异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "删除物流异常" );
-	}
-	return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
+            Map< String,Object > params = new HashMap<>();
+            params.put( "ids", id );
+            // 删除物流信息
+            boolean flag = freightService.deleteFreight( params );
+            if ( !flag ) {
+                return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "删除物流信息异常" );
+            }
+        } catch ( BusinessException e ) {
+            logger.error( "删除物流信息异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
+        } catch ( Exception e ) {
+            logger.error( "删除物流信息异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "删除物流异常" );
+        }
+        return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
     }
 
     /***************************************上门自提*************************************************/
@@ -240,27 +240,27 @@ public class MallFreightNewController extends BaseController {
     @ApiImplicitParams( @ApiImplicitParam( name = "curPage", value = "页数", paramType = "query", required = false, dataType = "int" ) )
     @RequestMapping( value = "/take/list", method = RequestMethod.POST )
     public ServerResponse takeList( HttpServletRequest request, HttpServletResponse response, Integer curPage ) {
-	Map< String,Object > result = new HashMap<>();
-	try {
-	    BusUser user = MallSessionUtils.getLoginUser( request );
-	    MallPaySet paySet = new MallPaySet();
-	    paySet.setUserId( user.getId() );
-	    MallPaySet set = paySetService.selectByUserId( paySet );
-	    result.put( "isTakeTheir", set.getIsTakeTheir() );
-	    if ( set.getIsTakeTheir() == 1 ) {
-		Map< String,Object > params = new HashMap<>();
-		params.put( "userId", user.getId() );
-		params.put( "curPage", curPage );
-		PageUtil page = takeTheirService.selectByUserId( params );
-		result.put( "page", page );
-	    }
+        Map< String,Object > result = new HashMap<>();
+        try {
+            BusUser user = MallSessionUtils.getLoginUser( request );
+            MallPaySet paySet = new MallPaySet();
+            paySet.setUserId( user.getId() );
+            MallPaySet set = paySetService.selectByUserId( paySet );
+            result.put( "isTakeTheir", set.getIsTakeTheir() );
+            if ( set.getIsTakeTheir() == 1 ) {
+                Map< String,Object > params = new HashMap<>();
+                params.put( "userId", user.getId() );
+                params.put( "curPage", curPage );
+                PageUtil page = takeTheirService.selectByUserId( params );
+                result.put( "page", page );
+            }
 
-	} catch ( Exception e ) {
-	    logger.error( "物流列表异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "物流列表异常" );
-	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
+        } catch ( Exception e ) {
+            logger.error( "物流列表异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "物流列表异常" );
+        }
+        return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
     }
 
     /**
@@ -270,19 +270,19 @@ public class MallFreightNewController extends BaseController {
     @ResponseBody
     @RequestMapping( value = "/take/takeInfo", method = RequestMethod.POST )
     public ServerResponse takeInfo( HttpServletRequest request, HttpServletResponse response, @ApiParam( name = "id", value = "自提ID", required = true ) @RequestParam Integer id ) {
-	MallTakeTheir takeTheir = null;
-	try {
-	    BusUser user = MallSessionUtils.getLoginUser( request );
-	    Map< String,Object > params = new HashMap<>();
-	    params.put( "id", id );
-	    params.put( "userId", user.getId() );
-	    takeTheir = takeTheirService.selectById( params );
-	} catch ( Exception e ) {
-	    logger.error( "获取物流信息异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取物流信息异常" );
-	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), takeTheir );
+        MallTakeTheir takeTheir = null;
+        try {
+            BusUser user = MallSessionUtils.getLoginUser( request );
+            Map< String,Object > params = new HashMap<>();
+            params.put( "id", id );
+            params.put( "userId", user.getId() );
+            takeTheir = takeTheirService.selectById( params );
+        } catch ( Exception e ) {
+            logger.error( "获取物流信息异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取物流信息异常" );
+        }
+        return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), takeTheir );
     }
 
     /**
@@ -293,23 +293,23 @@ public class MallFreightNewController extends BaseController {
     @SysLogAnnotation( description = "保存自提信息", op_function = "2" )
     @RequestMapping( value = "/take/save", method = RequestMethod.POST )
     public ServerResponse takeSave( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
-	try {
-	    BusUser user = MallSessionUtils.getLoginUser( request );
+        try {
+            BusUser user = MallSessionUtils.getLoginUser( request );
 
-	    boolean flag = takeTheirService.newEditTake( params, user );
-	    if ( !flag ) {
-		return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "保存自提信息异常" );
-	    }
-	} catch ( BusinessException e ) {
-	    logger.error( "保存自提信息异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
-	} catch ( Exception e ) {
-	    logger.error( "保存自提信息异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
-	}
-	return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
+            boolean flag = takeTheirService.newEditTake( params, user );
+            if ( !flag ) {
+                return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "保存自提信息异常" );
+            }
+        } catch ( BusinessException e ) {
+            logger.error( "保存自提信息异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
+        } catch ( Exception e ) {
+            logger.error( "保存自提信息异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
+        }
+        return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
     }
 
     /**
@@ -320,22 +320,22 @@ public class MallFreightNewController extends BaseController {
     @SysLogAnnotation( description = "上门自提开启/关闭", op_function = "2" )
     @RequestMapping( value = "/take/setTakeTheir", method = RequestMethod.POST )
     public ServerResponse fltakeSave( HttpServletRequest request, HttpServletResponse response,
-		    @ApiParam( name = "status", value = "状态 0关闭 1开启", required = true ) @RequestParam Integer status ) {
-	try {
-	    BusUser user = MallSessionUtils.getLoginUser( request );
-	    MallPaySet querySet = new MallPaySet();
-	    querySet.setUserId( user.getId() );
-	    MallPaySet set = mallPaySetService.selectByUserId( querySet );
-	    if ( set != null ) {
-		set.setIsTakeTheir( status );
-		mallPaySetService.updateById( set );
-	    }
-	} catch ( Exception e ) {
-	    logger.error( "上门自提开启/关闭异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
-	}
-	return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
+        @ApiParam( name = "status", value = "状态 0关闭 1开启", required = true ) @RequestParam Integer status ) {
+        try {
+            BusUser user = MallSessionUtils.getLoginUser( request );
+            MallPaySet querySet = new MallPaySet();
+            querySet.setUserId( user.getId() );
+            MallPaySet set = mallPaySetService.selectByUserId( querySet );
+            if ( set != null ) {
+                set.setIsTakeTheir( status );
+                mallPaySetService.updateById( set );
+            }
+        } catch ( Exception e ) {
+            logger.error( "上门自提开启/关闭异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
+        }
+        return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
     }
 
     /**
@@ -346,25 +346,25 @@ public class MallFreightNewController extends BaseController {
     @SysLogAnnotation( description = "删除自提信息", op_function = "4" )
     @RequestMapping( value = "/take/delete", method = RequestMethod.POST )
     public ServerResponse takeDelete( HttpServletRequest request, HttpServletResponse response,
-		    @ApiParam( name = "id", value = "自提ID", required = true ) @RequestParam String id ) {
-	try {
-	    MallTakeTheir takeTheir = takeTheirService.selectById( id );
-	    if ( takeTheir != null ) {
-		takeTheir.setIsDelete( 1 );
-		boolean flag = takeTheirService.updateById( takeTheir );
-		if ( !flag ) {
-		    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "删除自提信息异常" );
-		}
-	    }
-	} catch ( BusinessException e ) {
-	    logger.error( "删除自提信息异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
-	} catch ( Exception e ) {
-	    logger.error( "删除自提信息异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "删除自提信息异常" );
-	}
-	return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
+        @ApiParam( name = "id", value = "自提ID", required = true ) @RequestParam String id ) {
+        try {
+            MallTakeTheir takeTheir = takeTheirService.selectById( id );
+            if ( takeTheir != null ) {
+                takeTheir.setIsDelete( 1 );
+                boolean flag = takeTheirService.updateById( takeTheir );
+                if ( !flag ) {
+                    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "删除自提信息异常" );
+                }
+            }
+        } catch ( BusinessException e ) {
+            logger.error( "删除自提信息异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
+        } catch ( Exception e ) {
+            logger.error( "删除自提信息异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "删除自提信息异常" );
+        }
+        return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
     }
 }

@@ -33,13 +33,13 @@ public class GlobalDefaultExceptionHandler {
     // 统一异常处理 页面跳转
     @ExceptionHandler( value = Exception.class )
     public ModelAndView defaultErrorHandlerModel( HttpServletRequest request, Exception e ) {
-	ModelAndView modelAndView = new ModelAndView();
-	modelAndView.addObject( "ex", e );
-	modelAndView.addObject( "url", request.getRequestURL() );
-	modelAndView.setViewName( DEFAULT_ERROR_VIEW );
-	logger.error( e.getMessage() );
-	e.printStackTrace();
-	return modelAndView;
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.addObject( "ex", e );
+        modelAndView.addObject( "url", request.getRequestURL() );
+        modelAndView.setViewName( DEFAULT_ERROR_VIEW );
+        logger.error( e.getMessage() );
+        e.printStackTrace();
+        return modelAndView;
     }
 
     // 页面
@@ -47,14 +47,14 @@ public class GlobalDefaultExceptionHandler {
     @ResponseBody
     @ExceptionHandler( value = BusinessException.class )
     public ErrorInfo< String > defaultErrorHandlerModel( HttpServletRequest request, BusinessException e ) {
-	logger.error( "错误：" + e.getCode() + "---" + e.getMessage() + "---" + e.getData() );
-	return ErrorInfo.createByErrorCodeMessage( e.getCode(), e.getMessage(), e.getData() );
+        logger.error( "错误：" + e.getCode() + "---" + e.getMessage() + "---" + e.getData() );
+        return ErrorInfo.createByErrorCodeMessage( e.getCode(), e.getMessage(), e.getData() );
     }
 
     // 统一异常处理 Ajax请求
     @ResponseBody
     @ExceptionHandler( value = ResponseEntityException.class )
     public ErrorInfo< String > defaultErrorHandler( HttpServletRequest request, ResponseEntityException e ) {
-	return ErrorInfo.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), e.getMessage(), request.getRequestURL().toString() );
+        return ErrorInfo.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), e.getMessage(), request.getRequestURL().toString() );
     }
 }

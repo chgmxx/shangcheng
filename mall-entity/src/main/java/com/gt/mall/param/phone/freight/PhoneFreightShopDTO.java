@@ -42,6 +42,4 @@ public class PhoneFreightShopDTO implements Serializable {
      */
     private double totalProductWeight;
 
-
-
 }

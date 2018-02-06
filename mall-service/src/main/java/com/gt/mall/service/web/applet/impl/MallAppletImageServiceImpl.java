@@ -40,83 +40,83 @@ public class MallAppletImageServiceImpl extends BaseServiceImpl< MallAppletImage
 
     @Override
     public PageUtil selectImageByShopId( Map< String,Object > params ) {
-	int pageSize = 10;
+        int pageSize = 10;
 
-	int curPage = CommonUtil.isEmpty( params.get( "curPage" ) ) ? 1 : CommonUtil.toInteger( params.get( "curPage" ) );
-	params.put( "curPage", curPage );
-	int count = mallAppletImageDAO.selectByCount( params );
+        int curPage = CommonUtil.isEmpty( params.get( "curPage" ) ) ? 1 : CommonUtil.toInteger( params.get( "curPage" ) );
+        params.put( "curPage", curPage );
+        int count = mallAppletImageDAO.selectByCount( params );
 
-	PageUtil page = new PageUtil( curPage, pageSize, count, "mApplet/index.do" );
-	int firstNum = pageSize * ( ( page.getCurPage() <= 0 ? 1 : page.getCurPage() ) - 1 );
-	params.put( "firstNum", firstNum );// 起始页
-	params.put( "maxNum", pageSize );// 每页显示商品的数量
+        PageUtil page = new PageUtil( curPage, pageSize, count, "mApplet/index.do" );
+        int firstNum = pageSize * ( ( page.getCurPage() <= 0 ? 1 : page.getCurPage() ) - 1 );
+        params.put( "firstNum", firstNum );// 起始页
+        params.put( "maxNum", pageSize );// 每页显示商品的数量
 
-	if ( count > 0 ) {// 判断拍卖是否有数据
-	    List< MallAppletImage > AuctionList = mallAppletImageDAO.selectByPage( params );
-	    page.setSubList( AuctionList );
-	}
+        if ( count > 0 ) {// 判断拍卖是否有数据
+            List< MallAppletImage > AuctionList = mallAppletImageDAO.selectByPage( params );
+            page.setSubList( AuctionList );
+        }
 
-	return page;
+        return page;
     }
 
     @Override
     public Map< String,Object > selectImageById( Integer id ) {
-	Map< String,Object > imageMaps = mallAppletImageDAO.selectAppletImageById( id );
-	return imageMaps;
+        Map< String,Object > imageMaps = mallAppletImageDAO.selectAppletImageById( id );
+        return imageMaps;
     }
 
     @Override
     public boolean editImage( Map< String,Object > params, int userId ) {
-	if ( CommonUtil.isNotEmpty( params ) ) {
-	    MallAppletImage appletImage = JSONObject.parseObject( JSON.toJSONString( params ), MallAppletImage.class );
-	    if ( appletImage.getType() == 1 && CommonUtil.isEmpty( appletImage.getProId() ) ) {
-		throw new BusinessException( ResponseEnums.ERROR.getCode(), "商品不能为空" );
-	    }
-	    if ( CommonUtil.isEmpty( appletImage.getImageUrl() ) ) {
-		throw new BusinessException( ResponseEnums.ERROR.getCode(), "图片不能为空" );
-	    }
-	    if ( CommonUtil.isNotEmpty( appletImage ) ) {
-		int count = 0;
-		if ( CommonUtil.isNotEmpty( appletImage.getId() ) ) {
-		    MallAppletImage mallAppletImage = mallAppletImageDAO.selectById( appletImage.getId() );
-		    mallAppletImage.setImageUrl( appletImage.getImageUrl() );
-		    mallAppletImage.setType( appletImage.getType() );
-		    if ( mallAppletImage.getType() == 1 ) {
-			mallAppletImage.setProId( appletImage.getProId() );
-		    } else {
-			mallAppletImage.setProId( null );
-		    }
-		    count = mallAppletImageDAO.updateAllColumnById( mallAppletImage );
-		} else {
-		    appletImage.setCreateTime( new Date() );
-		    appletImage.setBusUserId( userId );
-		    count = mallAppletImageDAO.insert( appletImage );
-		}
-		if ( count > 0 ) {
-		    return true;
-		}
-	    }
-	}
-	return false;
+        if ( CommonUtil.isNotEmpty( params ) ) {
+            MallAppletImage appletImage = JSONObject.parseObject( JSON.toJSONString( params ), MallAppletImage.class );
+            if ( appletImage.getType() == 1 && CommonUtil.isEmpty( appletImage.getProId() ) ) {
+                throw new BusinessException( ResponseEnums.ERROR.getCode(), "商品不能为空" );
+            }
+            if ( CommonUtil.isEmpty( appletImage.getImageUrl() ) ) {
+                throw new BusinessException( ResponseEnums.ERROR.getCode(), "图片不能为空" );
+            }
+            if ( CommonUtil.isNotEmpty( appletImage ) ) {
+                int count = 0;
+                if ( CommonUtil.isNotEmpty( appletImage.getId() ) ) {
+                    MallAppletImage mallAppletImage = mallAppletImageDAO.selectById( appletImage.getId() );
+                    mallAppletImage.setImageUrl( appletImage.getImageUrl() );
+                    mallAppletImage.setType( appletImage.getType() );
+                    if ( mallAppletImage.getType() == 1 ) {
+                        mallAppletImage.setProId( appletImage.getProId() );
+                    } else {
+                        mallAppletImage.setProId( null );
+                    }
+                    count = mallAppletImageDAO.updateAllColumnById( mallAppletImage );
+                } else {
+                    appletImage.setCreateTime( new Date() );
+                    appletImage.setBusUserId( userId );
+                    count = mallAppletImageDAO.insert( appletImage );
+                }
+                if ( count > 0 ) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     @Override
     public boolean deleteImage( Map< String,Object > params ) {
-	int id = CommonUtil.toInteger( params.get( "id" ) );
-	int type = CommonUtil.toInteger( params.get( "type" ) );
-	MallAppletImage images = new MallAppletImage();
-	images.setId( id );
-	if ( type == -1 ) {
-	    images.setIsDelete( 1 );
-	} else if ( type == -2 ) {
-	    images.setIsShow( 0 );
-	} else {
-	    images.setIsShow( 1 );
-	}
-	int count = mallAppletImageDAO.updateById( images );
-	if ( count > 0 ) {
-	    return true;
-	}
-	return false;
+        int id = CommonUtil.toInteger( params.get( "id" ) );
+        int type = CommonUtil.toInteger( params.get( "type" ) );
+        MallAppletImage images = new MallAppletImage();
+        images.setId( id );
+        if ( type == -1 ) {
+            images.setIsDelete( 1 );
+        } else if ( type == -2 ) {
+            images.setIsShow( 0 );
+        } else {
+            images.setIsShow( 1 );
+        }
+        int count = mallAppletImageDAO.updateById( images );
+        if ( count > 0 ) {
+            return true;
+        }
+        return false;
     }
 }

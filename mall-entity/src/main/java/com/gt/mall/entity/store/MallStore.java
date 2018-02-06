@@ -161,39 +161,39 @@ public class MallStore extends Model< MallStore > {
 
     @Override
     protected Serializable pkVal() {
-	return this.id;
+        return this.id;
     }
 
     @Override
     public String toString() {
-	return "MallStore{" +
-			"id=" + id +
-			", stoName=" + stoName +
-			", stoPhone=" + stoPhone +
-			", stoLinkman=" + stoLinkman +
-			", stoStatus=" + stoStatus +
-			", stoPid=" + stoPid +
-			", stoUserId=" + stoUserId +
-			", stoIsMain=" + stoIsMain +
-			", stoAddress=" + stoAddress +
-			", stoQrCode=" + stoQrCode +
-			", stoBranchId=" + stoBranchId +
-			", stoIsMemberDiscount=" + stoIsMemberDiscount +
-			", stoHouseMember=" + stoHouseMember +
-			", stoCreateTime=" + stoCreateTime +
-			", stoCreatePerson=" + stoCreatePerson +
-			", stoProvince=" + stoProvince +
-			", stoCity=" + stoCity +
-			", stoLongitude=" + stoLongitude +
-			", stoLatitude=" + stoLatitude +
-			", stoPicture=" + stoPicture +
-			", isDelete=" + isDelete +
-			", stoArea=" + stoArea +
-			", wxShopId=" + wxShopId +
-			", stoIsSms=" + stoIsSms +
-			", stoSmsTelephone=" + stoSmsTelephone +
-			", stoQqCustomer=" + stoQqCustomer +
-			", stoHeadImg=" + stoHeadImg +
-			"}";
+        return "MallStore{" +
+            "id=" + id +
+            ", stoName=" + stoName +
+            ", stoPhone=" + stoPhone +
+            ", stoLinkman=" + stoLinkman +
+            ", stoStatus=" + stoStatus +
+            ", stoPid=" + stoPid +
+            ", stoUserId=" + stoUserId +
+            ", stoIsMain=" + stoIsMain +
+            ", stoAddress=" + stoAddress +
+            ", stoQrCode=" + stoQrCode +
+            ", stoBranchId=" + stoBranchId +
+            ", stoIsMemberDiscount=" + stoIsMemberDiscount +
+            ", stoHouseMember=" + stoHouseMember +
+            ", stoCreateTime=" + stoCreateTime +
+            ", stoCreatePerson=" + stoCreatePerson +
+            ", stoProvince=" + stoProvince +
+            ", stoCity=" + stoCity +
+            ", stoLongitude=" + stoLongitude +
+            ", stoLatitude=" + stoLatitude +
+            ", stoPicture=" + stoPicture +
+            ", isDelete=" + isDelete +
+            ", stoArea=" + stoArea +
+            ", wxShopId=" + wxShopId +
+            ", stoIsSms=" + stoIsSms +
+            ", stoSmsTelephone=" + stoSmsTelephone +
+            ", stoQqCustomer=" + stoQqCustomer +
+            ", stoHeadImg=" + stoHeadImg +
+            "}";
     }
 }

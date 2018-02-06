@@ -25,65 +25,65 @@
     </resultMap>
     <resultMap id="AucShopResultMap" type="com.gt.mall.entity.auction.MallAuctionMargin">
 
-        <id column="id" jdbcType="INTEGER" property="id" />
-        <result column="auc_id" jdbcType="INTEGER" property="aucId" />
-        <result column="pro_id" jdbcType="INTEGER" property="proId" />
-        <result column="pro_specifica_ids" jdbcType="VARCHAR" property="proSpecificaIds" />
-        <result column="pro_name" jdbcType="VARCHAR" property="proName" />
-        <result column="pro_img_url" jdbcType="VARCHAR" property="proImgUrl" />
-        <result column="auc_no" jdbcType="VARCHAR" property="aucNo" />
-        <result column="margin_money" jdbcType="DECIMAL" property="marginMoney" />
-        <result column="margin_status" jdbcType="TINYINT" property="marginStatus" />
-        <result column="pay_way" jdbcType="TINYINT" property="payWay" />
-        <result column="pay_time" jdbcType="TIMESTAMP" property="payTime" />
-        <result column="pay_no" jdbcType="VARCHAR" property="payNo" />
-        <result column="return_no" jdbcType="VARCHAR" property="returnNo" />
-        <result column="return_time" jdbcType="TIMESTAMP" property="returnTime" />
-        <result column="is_return" jdbcType="TINYINT" property="isReturn" />
-        <result column="no_return_reason" jdbcType="VARCHAR" property="noReturnReason" />
-        <result column="user_id" jdbcType="INTEGER" property="userId" />
-        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-        <result column="shop_id" jdbcType="INTEGER" property="shopId" />
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="auc_id" jdbcType="INTEGER" property="aucId"/>
+        <result column="pro_id" jdbcType="INTEGER" property="proId"/>
+        <result column="pro_specifica_ids" jdbcType="VARCHAR" property="proSpecificaIds"/>
+        <result column="pro_name" jdbcType="VARCHAR" property="proName"/>
+        <result column="pro_img_url" jdbcType="VARCHAR" property="proImgUrl"/>
+        <result column="auc_no" jdbcType="VARCHAR" property="aucNo"/>
+        <result column="margin_money" jdbcType="DECIMAL" property="marginMoney"/>
+        <result column="margin_status" jdbcType="TINYINT" property="marginStatus"/>
+        <result column="pay_way" jdbcType="TINYINT" property="payWay"/>
+        <result column="pay_time" jdbcType="TIMESTAMP" property="payTime"/>
+        <result column="pay_no" jdbcType="VARCHAR" property="payNo"/>
+        <result column="return_no" jdbcType="VARCHAR" property="returnNo"/>
+        <result column="return_time" jdbcType="TIMESTAMP" property="returnTime"/>
+        <result column="is_return" jdbcType="TINYINT" property="isReturn"/>
+        <result column="no_return_reason" jdbcType="VARCHAR" property="noReturnReason"/>
+        <result column="user_id" jdbcType="INTEGER" property="userId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="shop_id" jdbcType="INTEGER" property="shopId"/>
     </resultMap>
     <resultMap id="pageResultMap" type="com.gt.mall.entity.auction.MallAuctionMargin">
-        <id column="id" jdbcType="INTEGER" property="id" />
-        <result column="auc_id" jdbcType="INTEGER" property="aucId" />
-        <result column="pro_id" jdbcType="INTEGER" property="proId" />
-        <result column="pro_name" jdbcType="VARCHAR" property="proName" />
-        <result column="pro_img_url" jdbcType="VARCHAR" property="proImgUrl" />
-        <result column="auc_no" jdbcType="VARCHAR" property="aucNo" />
-        <result column="margin_money" jdbcType="DECIMAL" property="marginMoney" />
-        <result column="margin_status" jdbcType="TINYINT" property="marginStatus" />
-        <result column="pay_way" jdbcType="TINYINT" property="payWay" />
-        <result column="pay_time" jdbcType="TIMESTAMP" property="payTime" />
-        <result column="return_time" jdbcType="TIMESTAMP" property="returnTime" />
-        <result column="is_return" jdbcType="TINYINT" property="isReturn" />
-        <result column="user_id" jdbcType="INTEGER" property="userId" />
-        <result column="shopName" jdbcType="VARCHAR" property="shopName" />
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="auc_id" jdbcType="INTEGER" property="aucId"/>
+        <result column="pro_id" jdbcType="INTEGER" property="proId"/>
+        <result column="pro_name" jdbcType="VARCHAR" property="proName"/>
+        <result column="pro_img_url" jdbcType="VARCHAR" property="proImgUrl"/>
+        <result column="auc_no" jdbcType="VARCHAR" property="aucNo"/>
+        <result column="margin_money" jdbcType="DECIMAL" property="marginMoney"/>
+        <result column="margin_status" jdbcType="TINYINT" property="marginStatus"/>
+        <result column="pay_way" jdbcType="TINYINT" property="payWay"/>
+        <result column="pay_time" jdbcType="TIMESTAMP" property="payTime"/>
+        <result column="return_time" jdbcType="TIMESTAMP" property="returnTime"/>
+        <result column="is_return" jdbcType="TINYINT" property="isReturn"/>
+        <result column="user_id" jdbcType="INTEGER" property="userId"/>
+        <result column="shopName" jdbcType="VARCHAR" property="shopName"/>
         <result column="auctionStatus" jdbcType="INTEGER" property="auctionStatus"/>
         <result column="auc_type" jdbcType="INTEGER" property="aucType"/>
-        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
     </resultMap>
     <resultMap id="MarginMap" type="com.gt.mall.entity.auction.MallAuctionMargin">
-        <id column="id" jdbcType="INTEGER" property="id" />
-        <result column="auc_id" jdbcType="INTEGER" property="aucId" />
-        <result column="pro_id" jdbcType="INTEGER" property="proId" />
-        <result column="pro_specifica_ids" jdbcType="VARCHAR" property="proSpecificaIds" />
-        <result column="pro_name" jdbcType="VARCHAR" property="proName" />
-        <result column="pro_img_url" jdbcType="VARCHAR" property="proImgUrl" />
-        <result column="auc_no" jdbcType="VARCHAR" property="aucNo" />
-        <result column="margin_money" jdbcType="DECIMAL" property="marginMoney" />
-        <result column="margin_status" jdbcType="TINYINT" property="marginStatus" />
-        <result column="pay_way" jdbcType="TINYINT" property="payWay" />
-        <result column="pay_time" jdbcType="TIMESTAMP" property="payTime" />
-        <result column="pay_no" jdbcType="VARCHAR" property="payNo" />
-        <result column="return_no" jdbcType="VARCHAR" property="returnNo" />
-        <result column="return_time" jdbcType="TIMESTAMP" property="returnTime" />
-        <result column="is_return" jdbcType="TINYINT" property="isReturn" />
-        <result column="no_return_reason" jdbcType="VARCHAR" property="noReturnReason" />
-        <result column="user_id" jdbcType="INTEGER" property="userId" />
-        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-        <result column="aucType" jdbcType="INTEGER" property="aucType" />
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="auc_id" jdbcType="INTEGER" property="aucId"/>
+        <result column="pro_id" jdbcType="INTEGER" property="proId"/>
+        <result column="pro_specifica_ids" jdbcType="VARCHAR" property="proSpecificaIds"/>
+        <result column="pro_name" jdbcType="VARCHAR" property="proName"/>
+        <result column="pro_img_url" jdbcType="VARCHAR" property="proImgUrl"/>
+        <result column="auc_no" jdbcType="VARCHAR" property="aucNo"/>
+        <result column="margin_money" jdbcType="DECIMAL" property="marginMoney"/>
+        <result column="margin_status" jdbcType="TINYINT" property="marginStatus"/>
+        <result column="pay_way" jdbcType="TINYINT" property="payWay"/>
+        <result column="pay_time" jdbcType="TIMESTAMP" property="payTime"/>
+        <result column="pay_no" jdbcType="VARCHAR" property="payNo"/>
+        <result column="return_no" jdbcType="VARCHAR" property="returnNo"/>
+        <result column="return_time" jdbcType="TIMESTAMP" property="returnTime"/>
+        <result column="is_return" jdbcType="TINYINT" property="isReturn"/>
+        <result column="no_return_reason" jdbcType="VARCHAR" property="noReturnReason"/>
+        <result column="user_id" jdbcType="INTEGER" property="userId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="aucType" jdbcType="INTEGER" property="aucType"/>
         <result column="shopId" jdbcType="INTEGER" property="shopId"/>
     </resultMap>
     <!-- 通用查询结果列 -->
@@ -103,9 +103,9 @@
         s.sto_name as shopName,
         case
         when a.is_use = -1 then -2<!--已失效  -->
-        when a.auc_start_time > now() and   a.auc_end_time > now() then 0<!--未开始  -->
-        when a.auc_start_time &lt;= now() and now() &lt; a.auc_end_time  then 1<!-- 进行中 -->
-        when a.auc_start_time &lt; now()  and a.auc_end_time &lt;= now() then -1<!-- 已结束 -->
+        when a.auc_start_time > now() and a.auc_end_time > now() then 0<!--未开始  -->
+        when a.auc_start_time &lt;= now() and now() &lt; a.auc_end_time then 1<!-- 进行中 -->
+        when a.auc_start_time &lt; now() and a.auc_end_time &lt;= now() then -1<!-- 已结束 -->
         end auctionStatus
     </sql>
     <sql id="Margin_Column_List">
@@ -114,7 +114,7 @@
         m.user_id, m.create_time,a.auc_type as aucType,a.shop_id as shopId
     </sql>
     <select id="selectByCount" resultType="java.lang.Integer">
-        select  count(g.id)
+        select count(g.id)
         from t_mall_auction_margin g
         LEFT JOIN t_mall_auction a ON g.`auc_id`=a.id
         <where>
@@ -126,7 +126,8 @@
         </where>
     </select>
     <select id="selectByPage" parameterType="Map" resultMap="pageResultMap">
-        select  <include refid="page_Column_List" />
+        select
+        <include refid="page_Column_List"/>
         from t_mall_auction_margin g
         LEFT JOIN t_mall_auction a ON g.`auc_id`=a.id
         LEFT JOIN t_mall_store s ON a.shop_id = s.id
@@ -147,14 +148,14 @@
     </select>
     <select id="selectByAucNo" parameterType="java.lang.String" resultMap="AucShopResultMap">
         select
-        <include refid="AucShop_Column_List" />
+        <include refid="AucShop_Column_List"/>
         from t_mall_auction_margin m
-        LEFT JOIN t_mall_auction a ON  m.auc_id = a.id
+        LEFT JOIN t_mall_auction a ON m.auc_id = a.id
         where m.auc_no = #{aucNo}
     </select>
     <select id="selectByMargin" parameterType="com.gt.mall.entity.auction.MallAuctionMargin" resultMap="BaseResultMap">
         select
-        <include refid="Base_Column_List" />
+        <include refid="Base_Column_List"/>
         from t_mall_auction_margin m
         where m.auc_id = #{aucId}
         <if test="userId != null and userId != ''">
@@ -162,7 +163,8 @@
         </if>
     </select>
     <select id="selectListByMargin" parameterType="com.gt.mall.entity.auction.MallAuctionMargin" resultMap="MarginMap">
-        select <include refid="Margin_Column_List" />
+        select
+        <include refid="Margin_Column_List"/>
         from t_mall_auction_margin m
         left join t_mall_auction a on a.id=m.auc_id
         where 1=1
@@ -185,11 +187,11 @@
     </select>
     <select id="selectMarginByEnd" resultType="java.util.Map">
         select m.id, m.auc_id, m.pro_id, m.pro_name, m.pro_img_url, m.auc_no, m.margin_money, m.margin_status, m.pay_way, m.pay_time, m.return_time, m.is_return,m.user_id,
-		o.id as order_id,o.order_status,a.auc_type,a.auc_end_time,a.shop_id,m.create_time
+        o.id as order_id,o.order_status,a.auc_type,a.auc_end_time,a.shop_id,m.create_time
         from t_mall_auction_margin m
         LEFT JOIN t_mall_auction a ON m.`auc_id`=a.id
         left join t_mall_order o on o.order_type=4 and o.group_buy_id = a.id and o.order_status > 1
-        WHERE a.auc_start_time &lt; now()  and a.auc_end_time &lt;= now()  and m.margin_status=1
+        WHERE a.auc_start_time &lt; now() and a.auc_end_time &lt;= now() and m.margin_status=1
         group by m.id
     </select>
 

@@ -28,62 +28,64 @@ public class PayServiceImpl implements PayService {
 
     private static final String PAY_URL = "/8A5DA52E/payApi/6F6D9AD2/79B4DE7C/";
 
+    private static final String REFUND_URL = "/8A5DA52E/orderApi/79B4DE7C/";
+
     private static final String WX_APPLET_PAY_URL = "/wxPay/79B4DE7C/";
 
     private static final String WALLET_REFUND = "/8A5DA52E/orderApi/79B4DE7C/";
 
     @Override
     public Map< String,Object > payapi( SubQrPayParams payParams ) throws Exception {
-	KeysUtil keyUtil = new KeysUtil();
-	String params = keyUtil.getEncString( JSONObject.toJSONString( payParams ) );
-	return HttpSignUtil.signHttpInsertOrUpdate( params, PAY_URL + "payapi.do", 2 );
+        KeysUtil keyUtil = new KeysUtil();
+        String params = keyUtil.getEncString( JSONObject.toJSONString( payParams ) );
+        return HttpSignUtil.signHttpInsertOrUpdate( params, PAY_URL + "payapi.do", 2 );
     }
 
     @Override
     public Map< String,Object > wxmemberPayRefund( WxmemberPayRefund refund ) {
-	RequestUtils< WxmemberPayRefund > requestUtils = new RequestUtils<>();
-	requestUtils.setReqdata( refund );
-	return HttpSignUtil.signHttpInsertOrUpdate( requestUtils, PAY_URL + "wxmemberPayRefund.do", 2, 1 );
+        RequestUtils< WxmemberPayRefund > requestUtils = new RequestUtils<>();
+        requestUtils.setReqdata( refund );
+        return HttpSignUtil.signHttpInsertOrUpdate( requestUtils, PAY_URL + "wxmemberPayRefund.do", 2, 1 );
     }
 
     @Override
     public Map< String,Object > walletRefund( TRefundOrder refundOrder ) {
-	RequestUtils< TRefundOrder > requestUtils = new RequestUtils<>();
-	requestUtils.setReqdata( refundOrder );
-	return HttpSignUtil.signHttpInsertOrUpdate( requestUtils, PAY_URL + "codepay", 2, 1 );
+        RequestUtils< TRefundOrder > requestUtils = new RequestUtils<>();
+        requestUtils.setReqdata( refundOrder );
+        return HttpSignUtil.signHttpInsertOrUpdate( requestUtils, REFUND_URL + "refund", 5, 1 );
     }
 
     @Override
     public EnterprisePaymentResult enterprisePayment( ApiEnterprisePayment payment ) {
-	RequestUtils< ApiEnterprisePayment > requestUtils = new RequestUtils<>();
-	requestUtils.setReqdata( payment );
-	Map resultMap = HttpSignUtil.signHttpInsertOrUpdate( requestUtils, PAY_URL + "enterprisePayment.do", 2 );
-	if ( CommonUtil.toInteger( resultMap.get( "code" ) ) == 1 ) {
-	    if ( CommonUtil.isEmpty( resultMap.get( "data" ) ) ) {return null;}
-	    return JSONObject.toJavaObject( JSONObject.parseObject( resultMap.get( "data" ).toString() ), EnterprisePaymentResult.class );
-	}
-	return null;
+        RequestUtils< ApiEnterprisePayment > requestUtils = new RequestUtils<>();
+        requestUtils.setReqdata( payment );
+        Map resultMap = HttpSignUtil.signHttpInsertOrUpdate( requestUtils, PAY_URL + "enterprisePayment.do", 2 );
+        if ( CommonUtil.toInteger( resultMap.get( "code" ) ) == 1 ) {
+            if ( CommonUtil.isEmpty( resultMap.get( "data" ) ) ) {return null;}
+            return JSONObject.toJavaObject( JSONObject.parseObject( resultMap.get( "data" ).toString() ), EnterprisePaymentResult.class );
+        }
+        return null;
     }
 
     @Override
     public PayWay getPayWay( Integer busId ) {
-	RequestUtils< Integer > requestUtils = new RequestUtils<>();
-	requestUtils.setReqdata( busId );
-	Map resultMap = HttpSignUtil.signHttpInsertOrUpdate( requestUtils, PAY_URL + "getPayWay.do", 2 );
-	if ( CommonUtil.toInteger( resultMap.get( "code" ) ) == 1 ) {
-	    if ( CommonUtil.isEmpty( resultMap.get( "data" ) ) ) {return null;}
-	    return JSONObject.toJavaObject( JSONObject.parseObject( resultMap.get( "data" ).toString() ), PayWay.class );
-	}
-	return null;
+        RequestUtils< Integer > requestUtils = new RequestUtils<>();
+        requestUtils.setReqdata( busId );
+        Map resultMap = HttpSignUtil.signHttpInsertOrUpdate( requestUtils, PAY_URL + "getPayWay.do", 2 );
+        if ( CommonUtil.toInteger( resultMap.get( "code" ) ) == 1 ) {
+            if ( CommonUtil.isEmpty( resultMap.get( "data" ) ) ) {return null;}
+            return JSONObject.toJavaObject( JSONObject.parseObject( resultMap.get( "data" ).toString() ), PayWay.class );
+        }
+        return null;
     }
 
     @Override
     public Map< String,Object > commonpayVerApplet2_0( SubQrPayParams subQrPayParams ) throws Exception {
-	KeysUtil keyUtil = new KeysUtil();
-	String params = keyUtil.getEncString( JSONObject.toJSONString( subQrPayParams ) );
-	Map< String,Object > map = new HashMap<>();
-	map.put( "obj", params );
-	return HttpSignUtil.signHttpInsertOrUpdate( map, WX_APPLET_PAY_URL + "commonpayVerApplet2_0.do", 2 );
+        KeysUtil keyUtil = new KeysUtil();
+        String params = keyUtil.getEncString( JSONObject.toJSONString( subQrPayParams ) );
+        Map< String,Object > map = new HashMap<>();
+        map.put( "obj", params );
+        return HttpSignUtil.signHttpInsertOrUpdate( map, WX_APPLET_PAY_URL + "commonpayVerApplet2_0.do", 2 );
     }
 
 }

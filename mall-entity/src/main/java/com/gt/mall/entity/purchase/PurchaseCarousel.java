@@ -12,56 +12,55 @@ import java.io.Serializable;
 
 /**
  * <p>
- * 
+ * <p>
  * </p>
  *
  * @author yangqian
  * @since 2017-07-31
  */
 @Data
-@Accessors(chain = true)
-@TableName("purchase_carousel")
-public class PurchaseCarousel extends Model<PurchaseCarousel> {
+@Accessors( chain = true )
+@TableName( "purchase_carousel" )
+public class PurchaseCarousel extends Model< PurchaseCarousel > {
 
     private static final long serialVersionUID = 1L;
 
-	@TableId(value="id", type= IdType.AUTO)
-	private Integer id;
+    @TableId( value = "id", type = IdType.AUTO )
+    private Integer id;
     /**
      * 轮播图图片地址
      */
-	@TableField("carousel_img")
-	private String carouselImg;
+    @TableField( "carousel_img" )
+    private String  carouselImg;
     /**
      * 轮播图跳转链接地址
      */
-	@TableField("carousel_url")
-	private String carouselUrl;
+    @TableField( "carousel_url" )
+    private String  carouselUrl;
     /**
      * 商家id
      */
-	@TableField("bus_id")
-	private Integer busId;
+    @TableField( "bus_id" )
+    private Integer busId;
     /**
      * 订单id
      */
-	@TableField("order_id")
-	private Integer orderId;
+    @TableField( "order_id" )
+    private Integer orderId;
 
+    @Override
+    protected Serializable pkVal() {
+        return this.id;
+    }
 
-	@Override
-	protected Serializable pkVal() {
-		return this.id;
-	}
-
-	@Override
-	public String toString() {
-		return "PurchaseCarousel{" +
-			"id=" + id +
-			", carouselImg=" + carouselImg +
-			", carouselUrl=" + carouselUrl +
-			", busId=" + busId +
-			", orderId=" + orderId +
-			"}";
-	}
+    @Override
+    public String toString() {
+        return "PurchaseCarousel{" +
+            "id=" + id +
+            ", carouselImg=" + carouselImg +
+            ", carouselUrl=" + carouselUrl +
+            ", busId=" + busId +
+            ", orderId=" + orderId +
+            "}";
+    }
 }

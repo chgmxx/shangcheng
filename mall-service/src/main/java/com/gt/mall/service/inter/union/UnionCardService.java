@@ -18,7 +18,7 @@ public interface UnionCardService {
      */
     UnionDiscountResult consumeUnionDiscount( UnionCardDiscountParam param );
 
-//    /**
+    //    /**
     //     * 绑定联盟卡，获取手机验证码
     //     *
     //     * @return 验证码

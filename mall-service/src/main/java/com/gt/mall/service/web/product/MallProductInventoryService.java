@@ -31,6 +31,10 @@ public interface MallProductInventoryService extends BaseService< MallProductInv
      * 通过商品id查询商品库存
      */
     List< MallProductInventory > getInventByProductId( int proId );
+    /**
+     * 通过商品id查询商品库存
+     */
+    List< MallProductInventory > getInventByProductIds( List<Integer> productId );
 
     /**
      * 查询默认显示的库存

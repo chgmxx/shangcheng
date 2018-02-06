@@ -127,32 +127,32 @@ public class MallShopCart extends Model< MallShopCart > {
 
     @Override
     protected Serializable pkVal() {
-	return this.id;
+        return this.id;
     }
 
     @Override
     public String toString() {
-	return "MallShopCart{" +
-			"id=" + id +
-			", productId=" + productId +
-			", shopId=" + shopId +
-			", productSpecificas=" + productSpecificas +
-			", productNum=" + productNum +
-			", productMessage=" + productMessage +
-			", userId=" + userId +
-			", createTime=" + createTime +
-			", productSpeciname=" + productSpeciname +
-			", price=" + price +
-			", primaryPrice=" + primaryPrice +
-			", proCode=" + proCode +
-			", userType=" + userType +
-			", discount=" + discount +
-			", proSpecStr=" + proSpecStr +
-			", proType=" + proType +
-			", saleMemberId=" + saleMemberId +
-			", commission=" + commission +
-			", isCheck=" + isCheck +
-			", busUserId=" + busUserId +
-			"}";
+        return "MallShopCart{" +
+            "id=" + id +
+            ", productId=" + productId +
+            ", shopId=" + shopId +
+            ", productSpecificas=" + productSpecificas +
+            ", productNum=" + productNum +
+            ", productMessage=" + productMessage +
+            ", userId=" + userId +
+            ", createTime=" + createTime +
+            ", productSpeciname=" + productSpeciname +
+            ", price=" + price +
+            ", primaryPrice=" + primaryPrice +
+            ", proCode=" + proCode +
+            ", userType=" + userType +
+            ", discount=" + discount +
+            ", proSpecStr=" + proSpecStr +
+            ", proType=" + proType +
+            ", saleMemberId=" + saleMemberId +
+            ", commission=" + commission +
+            ", isCheck=" + isCheck +
+            ", busUserId=" + busUserId +
+            "}";
     }
 }

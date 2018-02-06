@@ -36,14 +36,14 @@ public class PurchaseContractOrder extends Model< PurchaseContractOrder > {
 
     @Override
     protected Serializable pkVal() {
-	return null;
+        return null;
     }
 
     @Override
     public String toString() {
-	return "PurchaseContractOrder{" +
-			"contractId=" + contractId +
-			", orderId=" + orderId +
-			"}";
+        return "PurchaseContractOrder{" +
+            "contractId=" + contractId +
+            ", orderId=" + orderId +
+            "}";
     }
 }

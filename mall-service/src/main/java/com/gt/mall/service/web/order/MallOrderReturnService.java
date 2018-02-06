@@ -22,11 +22,10 @@ import java.util.List;
  */
 public interface MallOrderReturnService extends BaseService< MallOrderReturn > {
 
-
     /**
      * 申请退款
      */
-    boolean addOrderReturn( MallOrderReturn orderReturn ,Member member);
+    boolean addOrderReturn( MallOrderReturn orderReturn, Member member );
 
     /**
      * 系统退款（不是买家申请的）
@@ -71,19 +70,22 @@ public interface MallOrderReturnService extends BaseService< MallOrderReturn > {
      */
     PhoneReturnResult returnDetail( Integer returnId );
 
-
     /**
      * 根据订单id和订单详情id查询退款信息
-     * @param orderId 订单id
+     *
+     * @param orderId       订单id
      * @param orderDetailId 订单详情id
+     *
      * @return 退款信息
      */
-    MallOrderReturn selectByOrderDetailId(Integer orderId,Integer orderDetailId);
+    MallOrderReturn selectByOrderDetailId( Integer orderId, Integer orderDetailId );
 
     /**
      * 获取退货物流信息
+     *
      * @param returnId 退款id
+     *
      * @return 物流信息
      */
-    PhoneReturnWuLiuResult getReturnWuLiu(Integer returnId);
+    PhoneReturnWuLiuResult getReturnWuLiu( Integer returnId );
 }

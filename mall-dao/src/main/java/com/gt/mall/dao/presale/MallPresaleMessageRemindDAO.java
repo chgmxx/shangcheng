@@ -15,8 +15,10 @@ public interface MallPresaleMessageRemindDAO extends BaseMapper< MallPresaleMess
 
     /**
      * 查询消息提醒信息
+     *
      * @param message
+     *
      * @return
      */
-    MallPresaleMessageRemind selectByPresale(MallPresaleMessageRemind message);
+    MallPresaleMessageRemind selectByPresale( MallPresaleMessageRemind message );
 }

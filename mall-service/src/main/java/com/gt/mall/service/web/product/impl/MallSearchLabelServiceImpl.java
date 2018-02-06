@@ -26,6 +26,6 @@ public class MallSearchLabelServiceImpl extends BaseServiceImpl< MallSearchLabel
 
     @Override
     public List< Map< String,Object > > selectByUser( Map< String,Object > map ) {
-	return mallSearchLabelDAO.selectByUser( map );
+        return mallSearchLabelDAO.selectByUser( map );
     }
 }

@@ -26,94 +26,94 @@ public class FenBiFlowServiceImpl implements FenBiFlowService {
 
     @Override
     public FenBiCount getFenbiSurplus( FenbiSurplus fenbiSurplus ) {
-	RequestUtils< FenbiSurplus > requestUtils = new RequestUtils<>();
-	requestUtils.setReqdata( fenbiSurplus );
-	String result = HttpSignUtil.signHttpSelect( requestUtils, FLOW_URL + "getFenbiSurplus.do", 2 );
-	if ( CommonUtil.isNotEmpty( result ) ) {
-	    return JSONObject.toJavaObject( JSONObject.parseObject( result ), FenBiCount.class );
-	}
-	return null;
+        RequestUtils< FenbiSurplus > requestUtils = new RequestUtils<>();
+        requestUtils.setReqdata( fenbiSurplus );
+        String result = HttpSignUtil.signHttpSelect( requestUtils, FLOW_URL + "getFenbiSurplus.do", 2 );
+        if ( CommonUtil.isNotEmpty( result ) ) {
+            return JSONObject.toJavaObject( JSONObject.parseObject( result ), FenBiCount.class );
+        }
+        return null;
     }
 
     @Override
     public FenbiFlowRecord getFenbiFlowRecord( FenbiSurplus fenbiSurplus ) {
-	RequestUtils< FenbiSurplus > requestUtils = new RequestUtils<>();
-	requestUtils.setReqdata( fenbiSurplus );
-	String result = HttpSignUtil.signHttpSelect( requestUtils, FLOW_URL + "getFenbiFlowRecord.do", 2 );
-	if ( CommonUtil.isNotEmpty( result ) ) {
-	    return JSONObject.toJavaObject( JSONObject.parseObject( result ), FenbiFlowRecord.class );
-	}
-	return null;
+        RequestUtils< FenbiSurplus > requestUtils = new RequestUtils<>();
+        requestUtils.setReqdata( fenbiSurplus );
+        String result = HttpSignUtil.signHttpSelect( requestUtils, FLOW_URL + "getFenbiFlowRecord.do", 2 );
+        if ( CommonUtil.isNotEmpty( result ) ) {
+            return JSONObject.toJavaObject( JSONObject.parseObject( result ), FenbiFlowRecord.class );
+        }
+        return null;
     }
 
     @Override
     public BusFlowInfo getFlowInfoById( int flowId ) {
-	RequestUtils< Integer > requestUtils = new RequestUtils<>();
-	requestUtils.setReqdata( flowId );
-	String result = HttpSignUtil.signHttpSelect( requestUtils, FLOW_URL + "getFlowInfoById.do", 2 );
-	if ( CommonUtil.isNotEmpty( result ) ) {
-	    return JSONObject.toJavaObject( JSONObject.parseObject( result ), BusFlowInfo.class );
-	}
-	return null;
+        RequestUtils< Integer > requestUtils = new RequestUtils<>();
+        requestUtils.setReqdata( flowId );
+        String result = HttpSignUtil.signHttpSelect( requestUtils, FLOW_URL + "getFlowInfoById.do", 2 );
+        if ( CommonUtil.isNotEmpty( result ) ) {
+            return JSONObject.toJavaObject( JSONObject.parseObject( result ), BusFlowInfo.class );
+        }
+        return null;
     }
 
     @Override
     public List< BusFlow > getBusFlowsByUserId( int busUserId ) {
-	RequestUtils< Integer > requestUtils = new RequestUtils<>();
-	requestUtils.setReqdata( busUserId );
-	String result = HttpSignUtil.signHttpSelect( requestUtils, FLOW_URL + "getBusFlowsByUserId.do", 2 );
-	if ( CommonUtil.isNotEmpty( result ) ) {
-	    return JSONArray.parseArray( result, BusFlow.class );
-	}
-	return null;
+        RequestUtils< Integer > requestUtils = new RequestUtils<>();
+        requestUtils.setReqdata( busUserId );
+        String result = HttpSignUtil.signHttpSelect( requestUtils, FLOW_URL + "getBusFlowsByUserId.do", 2 );
+        if ( CommonUtil.isNotEmpty( result ) ) {
+            return JSONArray.parseArray( result, BusFlow.class );
+        }
+        return null;
     }
 
     @Override
     public Map< String,Object > saveFenbiFlowRecord( WsFenbiFlowRecord fenbiFlowRecord ) {
-	RequestUtils< WsFenbiFlowRecord > requestUtils = new RequestUtils<>();
-	requestUtils.setReqdata( fenbiFlowRecord );
-	return HttpSignUtil.signHttpInsertOrUpdate( requestUtils, FLOW_URL + "saveFenbiFlowRecord.do", 2 );
+        RequestUtils< WsFenbiFlowRecord > requestUtils = new RequestUtils<>();
+        requestUtils.setReqdata( fenbiFlowRecord );
+        return HttpSignUtil.signHttpInsertOrUpdate( requestUtils, FLOW_URL + "saveFenbiFlowRecord.do", 2 );
     }
 
     @Override
     public FenbiFlowRecord getFenbiFlowRecordById( int recordId ) {
-	RequestUtils< Integer > requestUtils = new RequestUtils<>();
-	requestUtils.setReqdata( recordId );
-	String result = HttpSignUtil.signHttpSelect( requestUtils, FLOW_URL + "getFenbiFlowRecordById.do", 2 );
-	if ( CommonUtil.isNotEmpty( result ) ) {
-	    return JSONObject.toJavaObject( JSONObject.parseObject( result ), FenbiFlowRecord.class );
-	}
-	return null;
+        RequestUtils< Integer > requestUtils = new RequestUtils<>();
+        requestUtils.setReqdata( recordId );
+        String result = HttpSignUtil.signHttpSelect( requestUtils, FLOW_URL + "getFenbiFlowRecordById.do", 2 );
+        if ( CommonUtil.isNotEmpty( result ) ) {
+            return JSONObject.toJavaObject( JSONObject.parseObject( result ), FenbiFlowRecord.class );
+        }
+        return null;
     }
 
     @Override
     public boolean rollbackFenbiFlowRecord( int recordId ) {
-	RequestUtils< Integer > requestUtils = new RequestUtils<>();
-	requestUtils.setReqdata( recordId );
-	Map< String,Object > resultMap = HttpSignUtil.signHttpInsertOrUpdate( requestUtils, FLOW_URL + "rollbackFenbiFlowRecord.do", 2 );
-	return CommonUtil.toInteger( resultMap.get( "code" ) ) == 1;
+        RequestUtils< Integer > requestUtils = new RequestUtils<>();
+        requestUtils.setReqdata( recordId );
+        Map< String,Object > resultMap = HttpSignUtil.signHttpInsertOrUpdate( requestUtils, FLOW_URL + "rollbackFenbiFlowRecord.do", 2 );
+        return CommonUtil.toInteger( resultMap.get( "code" ) ) == 1;
     }
 
     @Override
     public boolean adcServices( AdcServicesInfo adcServicesInfo ) {
-	RequestUtils< AdcServicesInfo > requestUtils = new RequestUtils<>();
-	requestUtils.setReqdata( adcServicesInfo );
-	Map< String,Object > resultMap = HttpSignUtil.signHttpInsertOrUpdate( requestUtils, FLOW_URL + "adcServices.do", 2 );
-	return CommonUtil.toInteger( resultMap.get( "code" ) ) == 1;
+        RequestUtils< AdcServicesInfo > requestUtils = new RequestUtils<>();
+        requestUtils.setReqdata( adcServicesInfo );
+        Map< String,Object > resultMap = HttpSignUtil.signHttpInsertOrUpdate( requestUtils, FLOW_URL + "adcServices.do", 2 );
+        return CommonUtil.toInteger( resultMap.get( "code" ) ) == 1;
     }
 
     @Override
     public Map getMobileInfo( ReqGetMobileInfo reqGetMobileInfo ) {
-	RequestUtils< ReqGetMobileInfo > requestUtils = new RequestUtils<>();
-	requestUtils.setReqdata( reqGetMobileInfo );
-	return HttpSignUtil.signHttpInsertOrUpdate( requestUtils, FLOW_URL + "getMobileInfo.do", 2 );
+        RequestUtils< ReqGetMobileInfo > requestUtils = new RequestUtils<>();
+        requestUtils.setReqdata( reqGetMobileInfo );
+        return HttpSignUtil.signHttpInsertOrUpdate( requestUtils, FLOW_URL + "getMobileInfo.do", 2 );
     }
 
     @Override
     public boolean updaterecUseCountVer2( UpdateFenbiReduce updateFenbiReduce ) {
-	RequestUtils< UpdateFenbiReduce > requestUtils = new RequestUtils<>();
-	requestUtils.setReqdata( updateFenbiReduce );
-	Map< String,Object > resultMap = HttpSignUtil.signHttpInsertOrUpdate( requestUtils, FLOW_URL + "updaterecUseCountVer2.do", 2 );
-	return CommonUtil.toInteger( resultMap.get( "code" ) ) == 1;
+        RequestUtils< UpdateFenbiReduce > requestUtils = new RequestUtils<>();
+        requestUtils.setReqdata( updateFenbiReduce );
+        Map< String,Object > resultMap = HttpSignUtil.signHttpInsertOrUpdate( requestUtils, FLOW_URL + "updaterecUseCountVer2.do", 2 );
+        return CommonUtil.toInteger( resultMap.get( "code" ) ) == 1;
     }
 }

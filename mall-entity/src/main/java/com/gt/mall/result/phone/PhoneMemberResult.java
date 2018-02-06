@@ -54,6 +54,4 @@ public class PhoneMemberResult {
     @ApiModelProperty( name = "isLogin", value = "是否登陆" )
     private int isLogin = 0;
 
-
-
 }

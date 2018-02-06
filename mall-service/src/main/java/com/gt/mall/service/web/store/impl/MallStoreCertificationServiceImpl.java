@@ -40,61 +40,61 @@ public class MallStoreCertificationServiceImpl extends BaseServiceImpl< MallStor
 
     @Override
     public MallStoreCertification selectByStoreId( Integer storeId ) {
-	MallStoreCertification storeCert = mallStoreCertificationDAO.selectByStoreId( storeId );
-	if ( storeCert != null ) {
-	    List< DictBean > categoryMap = dictService.getDict( "K002" );
-	    if ( categoryMap != null && categoryMap.size() > 0 ) {
-		for ( DictBean dictBean : categoryMap ) {
-		    if ( dictBean.getItem_key().toString().equals( storeCert.getStoCategory().toString() ) ) {
-			String value = dictBean.getItem_value();
-			net.sf.json.JSONObject foorerObj = net.sf.json.JSONObject.fromObject( value );
-			dictBean.setValue( foorerObj.get( "title" ).toString() );
+        MallStoreCertification storeCert = mallStoreCertificationDAO.selectByStoreId( storeId );
+        if ( storeCert != null ) {
+            List< DictBean > categoryMap = dictService.getDict( "K002" );
+            if ( categoryMap != null && categoryMap.size() > 0 ) {
+                for ( DictBean dictBean : categoryMap ) {
+                    if ( dictBean.getItem_key().toString().equals( storeCert.getStoCategory().toString() ) ) {
+                        String value = dictBean.getItem_value();
+                        net.sf.json.JSONObject foorerObj = net.sf.json.JSONObject.fromObject( value );
+                        dictBean.setValue( foorerObj.get( "title" ).toString() );
 
-			storeCert.setStoCategoryName( foorerObj.get( "title" ).toString() );
-			break;
-		    }
-		}
-	    }
-	}
-	return storeCert;
+                        storeCert.setStoCategoryName( foorerObj.get( "title" ).toString() );
+                        break;
+                    }
+                }
+            }
+        }
+        return storeCert;
     }
 
     @Override
     public Map< String,Object > getStoreServiceByShopId( Integer shopId, Integer userId ) {
-	Map< String,Object > result = new HashMap<>();
-	Integer auth = memberAuthService.getMemberAuth( userId );
-	if ( CommonUtil.isNotEmpty( auth ) ) {
-	    if ( auth == 2 ) {
-		result.put( "stoType", "企业认证" );
-	    } else if ( auth == 3 ) {
-		result.put( "stoType", "个人认证" );
-	    }
-	}
-	MallStoreCertification certification = mallStoreCertificationDAO.selectByStoreId( shopId );
-	if ( certification != null ) {
-	    List< DictBean > categoryMap = dictService.getDict( "K002" );
-	    for ( DictBean dictBean : categoryMap ) {
-		String key = dictBean.getItem_key();
-		String value = dictBean.getItem_value();
-		JSONObject foorerObj = JSONObject.fromObject( value );
-		if ( CommonUtil.isNotEmpty( certification.getStoCategory() ) && certification.getStoCategory().toString().equals( key.toString() ) ) {
-		    result.put( "categoryName", foorerObj.get( "title" ).toString() );
-		    break;
-		}
-	    }
-	}
-	result.put( "isSecuritytrade", false );
-	MallPaySet set = new MallPaySet();
-	set.setUserId( userId );
-	set = mallPaySetService.selectByUserId( set );
-	if ( CommonUtil.isNotEmpty( set ) ) {
-	    if ( CommonUtil.isNotEmpty( set.getIsSecuritytrade() ) ) {
-		if ( set.getIsSecuritytrade() == 1 ) {
-		    result.put( "isSecuritytrade", true );
-		}
-	    }
-	}
-	return result;
+        Map< String,Object > result = new HashMap<>();
+        Integer auth = memberAuthService.getMemberAuth( userId );
+        if ( CommonUtil.isNotEmpty( auth ) ) {
+            if ( auth == 2 ) {
+                result.put( "stoType", "企业认证" );
+            } else if ( auth == 3 ) {
+                result.put( "stoType", "个人认证" );
+            }
+        }
+        MallStoreCertification certification = mallStoreCertificationDAO.selectByStoreId( shopId );
+        if ( certification != null ) {
+            List< DictBean > categoryMap = dictService.getDict( "K002" );
+            for ( DictBean dictBean : categoryMap ) {
+                String key = dictBean.getItem_key();
+                String value = dictBean.getItem_value();
+                JSONObject foorerObj = JSONObject.fromObject( value );
+                if ( CommonUtil.isNotEmpty( certification.getStoCategory() ) && certification.getStoCategory().toString().equals( key.toString() ) ) {
+                    result.put( "categoryName", foorerObj.get( "title" ).toString() );
+                    break;
+                }
+            }
+        }
+        result.put( "isSecuritytrade", false );
+        MallPaySet set = new MallPaySet();
+        set.setUserId( userId );
+        set = mallPaySetService.selectByUserId( set );
+        if ( CommonUtil.isNotEmpty( set ) ) {
+            if ( CommonUtil.isNotEmpty( set.getIsSecuritytrade() ) ) {
+                if ( set.getIsSecuritytrade() == 1 ) {
+                    result.put( "isSecuritytrade", true );
+                }
+            }
+        }
+        return result;
     }
 
 }

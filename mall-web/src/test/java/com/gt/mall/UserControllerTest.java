@@ -16,7 +16,7 @@ public class UserControllerTest extends BasicTest {
 
     @Test
     public void user() {
-	mallQuartzNewService.orderCallback();
+        mallQuartzNewService.orderCallback();
     }
 
     @Test

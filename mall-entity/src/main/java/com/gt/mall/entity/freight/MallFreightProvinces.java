@@ -55,18 +55,18 @@ public class MallFreightProvinces extends Model< MallFreightProvinces > {
 
     @Override
     protected Serializable pkVal() {
-	return this.id;
+        return this.id;
     }
 
     @Override
     public String toString() {
-	return "MallFreightProvinces{" +
-			"id=" + id +
-			", freightId=" + freightId +
-			", freightDetailId=" + freightDetailId +
-			", provinceId=" + provinceId +
-			", provinceName=" + provinceName +
-			", isDelete=" + isDelete +
-			"}";
+        return "MallFreightProvinces{" +
+            "id=" + id +
+            ", freightId=" + freightId +
+            ", freightDetailId=" + freightDetailId +
+            ", provinceId=" + provinceId +
+            ", provinceName=" + provinceName +
+            ", isDelete=" + isDelete +
+            "}";
     }
 }

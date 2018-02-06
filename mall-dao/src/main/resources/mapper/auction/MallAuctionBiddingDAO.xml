@@ -26,10 +26,10 @@
 
     <update id="updateBidByAucId">
         UPDATE t_mall_auction_bidding SET auc_status = #{aucStatus,jdbcType=TINYINT},
-            order_id = #{orderId,jdbcType=INTEGER},
-            order_detail_id = #{orderDetailId,jdbcType=INTEGER}
+        order_id = #{orderId,jdbcType=INTEGER},
+        order_detail_id = #{orderDetailId,jdbcType=INTEGER}
         WHERE auc_id = #{aucId,jdbcType=INTEGER} AND pro_id = #{proId,jdbcType=INTEGER}
-              AND user_id = #{userId,jdbcType=INTEGER}
+        AND user_id = #{userId,jdbcType=INTEGER}
     </update>
     <select id="selectCountByBuyId" resultType="java.lang.Integer">
         SELECT count(d.det_pro_num) AS cont
@@ -96,8 +96,9 @@
         </if>
     </select>
 
-    <select id="selectListByBidding" parameterType="com.gt.mall.entity.auction.MallAuctionBidding"  resultMap="BaseResultMap">
-        select <include refid="Base_Column_List"/>
+    <select id="selectListByBidding" parameterType="com.gt.mall.entity.auction.MallAuctionBidding" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
         from t_mall_auction_bidding b
         where b.auc_id = #{aucId}
         <if test="userId != null and userId != ''">

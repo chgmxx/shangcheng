@@ -58,28 +58,28 @@ public class PhonePifaNewController extends AuthorizeOrUcLoginController {
     @ResponseBody
     @RequestMapping( value = "getPfApplyRemark", method = RequestMethod.POST )
     public ServerResponse< Map< String,Object > > pfApplyRemark( HttpServletRequest request, HttpServletResponse response,
-		    @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO ) {
-	Map< String,Object > result = new HashMap<>();
-	try {
-	    coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "7" ) );////判断活动是否已经过期
+        @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO ) {
+        Map< String,Object > result = new HashMap<>();
+        try {
+            coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "7" ) );////判断活动是否已经过期
 
-	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
-	    //	    userLogin( request, response, loginDTO );
+            Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
+            //	    userLogin( request, response, loginDTO );
 
-	    MallPaySet set = mallPaySetService.selectByMember( member );
-	    if ( CommonUtil.isNotEmpty( set ) ) {
-		if ( CommonUtil.isNotEmpty( set.getPfApplyRemark() ) ) {
-		    result.put( "pfApplayRemark", set.getPfApplyRemark() );
-		}
-	    }
-	} catch ( BusinessException be ) {
-	    return ErrorInfo.createByErrorCodeMessage( be.getCode(), be.getMessage(), be.getData() );
-	} catch ( Exception e ) {
-	    logger.error( "获取批发商申请说明信息异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取批发商申请说明信息异常" );
-	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, false );
+            MallPaySet set = mallPaySetService.selectByMember( member );
+            if ( CommonUtil.isNotEmpty( set ) ) {
+                if ( CommonUtil.isNotEmpty( set.getPfApplyRemark() ) ) {
+                    result.put( "pfApplayRemark", set.getPfApplyRemark() );
+                }
+            }
+        } catch ( BusinessException be ) {
+            return ErrorInfo.createByErrorCodeMessage( be.getCode(), be.getMessage(), be.getData() );
+        } catch ( Exception e ) {
+            logger.error( "获取批发商申请说明信息异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取批发商申请说明信息异常" );
+        }
+        return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, false );
     }
 
     /**
@@ -90,51 +90,51 @@ public class PhonePifaNewController extends AuthorizeOrUcLoginController {
     @ResponseBody
     @RequestMapping( value = "addWholesaler", method = RequestMethod.POST )
     public ServerResponse< Map< String,Object > > addWholesaler( HttpServletRequest request, HttpServletResponse response,
-		    @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO, PhoneAddPifaApplyDTO pifaApplyDTO, String code ) {
-	try {
-	    //	    userLogin( request, response, loginDTO );
+        @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO, PhoneAddPifaApplyDTO pifaApplyDTO, String code ) {
+        try {
+            //	    userLogin( request, response, loginDTO );
 
-	    if ( CommonUtil.isEmpty( code ) ) {
-		return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "请输入验证码" );
-	    } else {
-		String jedCode = JedisUtil.get( Constants.REDIS_KEY + code );
-		if ( CommonUtil.isEmpty( jedCode ) ) {
-		    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "验证码超时或错误" );
-		}
-	    }
+            if ( CommonUtil.isEmpty( code ) ) {
+                return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "请输入验证码" );
+            } else {
+                String jedCode = JedisUtil.get( Constants.REDIS_KEY + code );
+                if ( CommonUtil.isEmpty( jedCode ) ) {
+                    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "验证码超时或错误" );
+                }
+            }
 
-	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
-	    MallPifaApply pifaApply = new MallPifaApply();
-	    EntityDtoConverter converter = new EntityDtoConverter();
-	    converter.entityConvertDto( pifaApplyDTO, pifaApply );
+            Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
+            MallPifaApply pifaApply = new MallPifaApply();
+            EntityDtoConverter converter = new EntityDtoConverter();
+            converter.entityConvertDto( pifaApplyDTO, pifaApply );
 
-	    pifaApply.setMemberId( member.getId() );
-	    pifaApply.setBusUserId( member.getBusid() );
-	    pifaApply.setCreateTime( new Date() );
-	    int count = 0;
-	    //查询是否添加批发商
-	    MallPifaApply isMallPifaApply = mallPifaService.selectByPifaApply( pifaApply );
-	    if ( CommonUtil.isEmpty( isMallPifaApply ) ) {
-		count = mallPifaService.addWholesaler( pifaApply );//添加批发商
-	    } else {
-		if ( !isMallPifaApply.getStatus().toString().equals( "1" ) ) {
-		    pifaApply.setId( isMallPifaApply.getId() );
-		    pifaApply.setStatus( 0 );
-		    count = mallPifaService.updateWholesaleApplay( pifaApply );
-		} else {
-		    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "您的批发商申请已经通过，无需再次提交申请" );
-		}
-	    }
-	    if ( count > 0 ) {
-		JedisUtil.del( Constants.REDIS_KEY + code );//申请批发商成功，删除验证码
-	    }
+            pifaApply.setMemberId( member.getId() );
+            pifaApply.setBusUserId( member.getBusid() );
+            pifaApply.setCreateTime( new Date() );
+            int count = 0;
+            //查询是否添加批发商
+            MallPifaApply isMallPifaApply = mallPifaService.selectByPifaApply( pifaApply );
+            if ( CommonUtil.isEmpty( isMallPifaApply ) ) {
+                count = mallPifaService.addWholesaler( pifaApply );//添加批发商
+            } else {
+                if ( !isMallPifaApply.getStatus().toString().equals( "1" ) ) {
+                    pifaApply.setId( isMallPifaApply.getId() );
+                    pifaApply.setStatus( 0 );
+                    count = mallPifaService.updateWholesaleApplay( pifaApply );
+                } else {
+                    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "您的批发商申请已经通过，无需再次提交申请" );
+                }
+            }
+            if ( count > 0 ) {
+                JedisUtil.del( Constants.REDIS_KEY + code );//申请批发商成功，删除验证码
+            }
 
-	} catch ( Exception e ) {
-	    logger.error( "添加批发商异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "添加批发商异常" );
-	}
-	return ServerResponse.createBySuccessCode();
+        } catch ( Exception e ) {
+            logger.error( "添加批发商异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "添加批发商异常" );
+        }
+        return ServerResponse.createBySuccessCode();
     }
 
     /**
@@ -144,25 +144,25 @@ public class PhonePifaNewController extends AuthorizeOrUcLoginController {
     @ResponseBody
     @RequestMapping( value = "sendMsg", method = RequestMethod.POST )
     public ServerResponse sendMsg( HttpServletRequest request, HttpServletResponse response,
-		    @ApiParam( name = "mobile", value = "手机号码", required = true ) @RequestParam String mobile,
-		    @ApiParam( name = "busId", value = "商家ID", required = true ) @RequestParam Integer busId,
-		    @ApiParam( name = "areaCode", value = "手机区号" ) @RequestParam String areaCode ) {
-	try {
-	    Member member = MallSessionUtils.getLoginMember( request, busId );
-	    String no = CommonUtil.getPhoneCode();
-	    JedisUtil.set( Constants.REDIS_KEY + no, no, 5 * 60 );
-	    logger.info( "批发商短信验证码：" + no );
+        @ApiParam( name = "mobile", value = "手机号码", required = true ) @RequestParam String mobile,
+        @ApiParam( name = "busId", value = "商家ID", required = true ) @RequestParam Integer busId,
+        @ApiParam( name = "areaCode", value = "手机区号" ) @RequestParam String areaCode ) {
+        try {
+            Member member = MallSessionUtils.getLoginMember( request, busId );
+            String no = CommonUtil.getPhoneCode();
+            JedisUtil.set( Constants.REDIS_KEY + no, no, 5 * 60 );
+            logger.info( "批发商短信验证码：" + no );
 
-	    boolean result = mallCommonService.getValCode( areaCode, mobile, member.getBusid(), no, Constants.APPLY_PIFA_CODE_MODEL_ID );
-	    if ( !result ) {
-		return ServerResponse.createBySuccessCodeMessage( ResponseEnums.ERROR.getCode(), "发送短信验证码异常" );
-	    }
-	} catch ( Exception e ) {
-	    logger.error( "获取短信验证码异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取短信验证码异常" );
-	}
-	return ServerResponse.createBySuccessCode();
+            boolean result = mallCommonService.getValCode( areaCode, mobile, member.getBusid(), no, Constants.APPLY_PIFA_CODE_MODEL_ID );
+            if ( !result ) {
+                return ServerResponse.createBySuccessCodeMessage( ResponseEnums.ERROR.getCode(), "发送短信验证码异常" );
+            }
+        } catch ( Exception e ) {
+            logger.error( "获取短信验证码异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取短信验证码异常" );
+        }
+        return ServerResponse.createBySuccessCode();
     }
 
 }

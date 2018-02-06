@@ -93,7 +93,7 @@ redis:
  host: 113.106.202.51
  port: 6381
  password: GT@123456
- database: 0
+ database: 3
 
 ### 设置 Redis session 共享
 redisSession:
@@ -113,7 +113,7 @@ web:
  #素材库路径
  materialUrl: https://nb.suc.deeptel.com.cn/common/material.do
  #多粉二维码关注
- duofenTwoCodeUrl: http://maint.deeptel.com.cn/upload/image/2/gh_32251ec4c8e9/1/1514860509267.jpg
+ duofenTwoCodeUrl: http://maint.duofriend.com/image/2/gh_62411898dc94/1/1497264013623.jpg
  #多粉的公众号id（用作给商家发送消息模板）
  duofenPublicId: 4466
 

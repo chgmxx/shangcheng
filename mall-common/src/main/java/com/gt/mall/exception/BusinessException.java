@@ -6,15 +6,15 @@ package com.gt.mall.exception;
 public class BusinessException extends SystemException {
 
     public BusinessException( String message ) {
-	super( message );
+        super( message );
     }
 
     public BusinessException( int code, String message ) {
-	super( code, message );
+        super( code, message );
     }
 
     public BusinessException( int code, String message, String data ) {
-	super( code, message, data );
+        super( code, message, data );
     }
 
 }

@@ -69,21 +69,21 @@ public class MallSecuritytradeQuit extends Model< MallSecuritytradeQuit > {
 
     @Override
     protected Serializable pkVal() {
-	return this.id;
+        return this.id;
     }
 
     @Override
     public String toString() {
         return "MallSecuritytradeQuit{" +
-                        "id=" + id +
-                        ", quitReasonId=" + quitReasonId +
-                        ", remark=" + remark +
-                        ", refuseReason=" + refuseReason +
-                        ", userId=" + userId +
-                        ", createTime=" + createTime +
-                        ", checkStatus=" + checkStatus +
-                        ", checkTime=" + checkTime +
-                        "}";
+            "id=" + id +
+            ", quitReasonId=" + quitReasonId +
+            ", remark=" + remark +
+            ", refuseReason=" + refuseReason +
+            ", userId=" + userId +
+            ", createTime=" + createTime +
+            ", checkStatus=" + checkStatus +
+            ", checkTime=" + checkTime +
+            "}";
     }
 
 }

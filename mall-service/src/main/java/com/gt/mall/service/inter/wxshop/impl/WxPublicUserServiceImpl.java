@@ -35,111 +35,111 @@ public class WxPublicUserServiceImpl implements WxPublicUserService {
 
     @Override
     public WxPublicUsers selectByUserId( int busUserId ) {
-	String key = Constants.REDIS_KEY + "wx_public_userid_" + busUserId;
-	if ( JedisUtil.exists( key ) ) {
-	    Object obj = JedisUtil.get( key );
-	    if ( CommonUtil.isNotEmpty( obj ) ) {
-		return JSONObject.toJavaObject( JSONObject.parseObject( obj.toString() ), WxPublicUsers.class );
-	    }
-	}
-	RequestUtils< Integer > requestUtils = new RequestUtils<>();
-	requestUtils.setReqdata( busUserId );
-	String result = HttpSignUtil.signHttpSelect( requestUtils, WS_SHOP_URL + "selectByUserId.do", 2 );
-	if ( CommonUtil.isNotEmpty( result ) ) {
-	    JedisUtil.set( key, result, Constants.REDIS_SECONDS );
-	    return JSONObject.toJavaObject( JSONObject.parseObject( result ), WxPublicUsers.class );
-	}
-	return null;
+        String key = Constants.REDIS_KEY + "wx_public_userid_" + busUserId;
+        if ( JedisUtil.exists( key ) ) {
+            Object obj = JedisUtil.get( key );
+            if ( CommonUtil.isNotEmpty( obj ) ) {
+                return JSONObject.toJavaObject( JSONObject.parseObject( obj.toString() ), WxPublicUsers.class );
+            }
+        }
+        RequestUtils< Integer > requestUtils = new RequestUtils<>();
+        requestUtils.setReqdata( busUserId );
+        String result = HttpSignUtil.signHttpSelect( requestUtils, WS_SHOP_URL + "selectByUserId.do", 2 );
+        if ( CommonUtil.isNotEmpty( result ) ) {
+            JedisUtil.set( key, result, Constants.REDIS_SECONDS );
+            return JSONObject.toJavaObject( JSONObject.parseObject( result ), WxPublicUsers.class );
+        }
+        return null;
     }
 
     @Override
     public WxPublicUsers selectById( int id ) {
-	String key = Constants.REDIS_KEY + "wx_public_id_" + id;
-	if ( JedisUtil.exists( key ) ) {
-	    Object obj = JedisUtil.get( key );
-	    if ( CommonUtil.isNotEmpty( obj ) ) {
-		return JSONObject.toJavaObject( JSONObject.parseObject( obj.toString() ), WxPublicUsers.class );
-	    }
-	}
-	RequestUtils< Integer > requestUtils = new RequestUtils<>();
-	requestUtils.setReqdata( id );
-	String result = HttpSignUtil.signHttpSelect( requestUtils, WS_SHOP_URL + "selectById.do", 2 );
-	if ( CommonUtil.isNotEmpty( result ) ) {
-	    JedisUtil.set( key, result, Constants.REDIS_SECONDS );
-	    return JSONObject.toJavaObject( JSONObject.parseObject( result ), WxPublicUsers.class );
-	}
-	return null;
+        String key = Constants.REDIS_KEY + "wx_public_id_" + id;
+        if ( JedisUtil.exists( key ) ) {
+            Object obj = JedisUtil.get( key );
+            if ( CommonUtil.isNotEmpty( obj ) ) {
+                return JSONObject.toJavaObject( JSONObject.parseObject( obj.toString() ), WxPublicUsers.class );
+            }
+        }
+        RequestUtils< Integer > requestUtils = new RequestUtils<>();
+        requestUtils.setReqdata( id );
+        String result = HttpSignUtil.signHttpSelect( requestUtils, WS_SHOP_URL + "selectById.do", 2 );
+        if ( CommonUtil.isNotEmpty( result ) ) {
+            JedisUtil.set( key, result, Constants.REDIS_SECONDS );
+            return JSONObject.toJavaObject( JSONObject.parseObject( result ), WxPublicUsers.class );
+        }
+        return null;
     }
 
     @Override
     public WxPublicUsers selectByMemberId( int memberId ) {
-	String key = Constants.REDIS_KEY + "wx_public_memberid_" + memberId;
-	if ( JedisUtil.exists( key ) ) {
-	    Object obj = JedisUtil.get( key );
-	    if ( CommonUtil.isNotEmpty( obj ) ) {
-		return JSONObject.toJavaObject( JSONObject.parseObject( obj.toString() ), WxPublicUsers.class );
-	    }
-	}
-	RequestUtils< Integer > requestUtils = new RequestUtils<>();
-	requestUtils.setReqdata( memberId );
-	String result = HttpSignUtil.signHttpSelect( requestUtils, WS_SHOP_URL + "selectByMemberId.do", 2 );
-	if ( CommonUtil.isNotEmpty( result ) ) {
-	    JedisUtil.set( key, result, Constants.REDIS_SECONDS );
-	    return JSONObject.toJavaObject( JSONObject.parseObject( result ), WxPublicUsers.class );
-	}
-	return null;
+        String key = Constants.REDIS_KEY + "wx_public_memberid_" + memberId;
+        if ( JedisUtil.exists( key ) ) {
+            Object obj = JedisUtil.get( key );
+            if ( CommonUtil.isNotEmpty( obj ) ) {
+                return JSONObject.toJavaObject( JSONObject.parseObject( obj.toString() ), WxPublicUsers.class );
+            }
+        }
+        RequestUtils< Integer > requestUtils = new RequestUtils<>();
+        requestUtils.setReqdata( memberId );
+        String result = HttpSignUtil.signHttpSelect( requestUtils, WS_SHOP_URL + "selectByMemberId.do", 2 );
+        if ( CommonUtil.isNotEmpty( result ) ) {
+            JedisUtil.set( key, result, Constants.REDIS_SECONDS );
+            return JSONObject.toJavaObject( JSONObject.parseObject( result ), WxPublicUsers.class );
+        }
+        return null;
     }
 
     @Override
     public String qrcodeCreateFinal( QrcodeCreateFinal createFinal ) {
-	RequestUtils< QrcodeCreateFinal > requestUtils = new RequestUtils<>();
-	requestUtils.setReqdata( createFinal );
-	String result = HttpSignUtil.signHttpSelect( requestUtils, WS_SHOP_URL + "newqrcodeCreateFinal.do", 2 );
-	if ( CommonUtil.isNotEmpty( result ) ) {
-	    return result;
-	}
-	return null;
+        RequestUtils< QrcodeCreateFinal > requestUtils = new RequestUtils<>();
+        requestUtils.setReqdata( createFinal );
+        String result = HttpSignUtil.signHttpSelect( requestUtils, WS_SHOP_URL + "newqrcodeCreateFinal.do", 2 );
+        if ( CommonUtil.isNotEmpty( result ) ) {
+            return result;
+        }
+        return null;
     }
 
     @Override
     public boolean sendWxMsgTemplate( SendWxMsgTemplate template ) {
-	RequestUtils< SendWxMsgTemplate > requestUtils = new RequestUtils<>();
-	requestUtils.setReqdata( template );
-	Map< String,Object > resultMap = HttpSignUtil.signHttpInsertOrUpdate( requestUtils, WS_SHOP_URL + "sendWxMsgTemplate.do", 2 );
-	return CommonUtil.toInteger( resultMap.get( "code" ) ) == 1;
+        RequestUtils< SendWxMsgTemplate > requestUtils = new RequestUtils<>();
+        requestUtils.setReqdata( template );
+        Map< String,Object > resultMap = HttpSignUtil.signHttpInsertOrUpdate( requestUtils, WS_SHOP_URL + "sendWxMsgTemplate.do", 2 );
+        return CommonUtil.toInteger( resultMap.get( "code" ) ) == 1;
     }
 
     @Override
     public List< Map > selectTempObjByBusId( int busUserId ) {
-	RequestUtils< Integer > requestUtils = new RequestUtils<>();
-	requestUtils.setReqdata( busUserId );
-	String result = HttpSignUtil.signHttpSelect( requestUtils, WS_SHOP_URL + "selectTempObjByBusId.do", 2 );
-	if ( CommonUtil.isNotEmpty( result ) ) {
-	    return JSONArray.parseArray( result, Map.class );
-	}
-	return null;
+        RequestUtils< Integer > requestUtils = new RequestUtils<>();
+        requestUtils.setReqdata( busUserId );
+        String result = HttpSignUtil.signHttpSelect( requestUtils, WS_SHOP_URL + "selectTempObjByBusId.do", 2 );
+        if ( CommonUtil.isNotEmpty( result ) ) {
+            return JSONArray.parseArray( result, Map.class );
+        }
+        return null;
     }
 
     @Override
     public ApiWxApplet selectBybusIdAndindustry( BusIdAndindustry busIdAndindustry ) {
-	RequestUtils< BusIdAndindustry > requestUtils = new RequestUtils<>();
-	requestUtils.setReqdata( busIdAndindustry );
-	String result = HttpSignUtil.signHttpSelect( requestUtils, WS_SHOP_URL + "selectBybusIdAndindustry.do", 2 );
-	if ( CommonUtil.isNotEmpty( result ) ) {
-	    return JSONObject.toJavaObject( JSONObject.parseObject( result ), ApiWxApplet.class );
-	}
-	return null;
+        RequestUtils< BusIdAndindustry > requestUtils = new RequestUtils<>();
+        requestUtils.setReqdata( busIdAndindustry );
+        String result = HttpSignUtil.signHttpSelect( requestUtils, WS_SHOP_URL + "selectBybusIdAndindustry.do", 2 );
+        if ( CommonUtil.isNotEmpty( result ) ) {
+            return JSONObject.toJavaObject( JSONObject.parseObject( result ), ApiWxApplet.class );
+        }
+        return null;
     }
 
     @Override
     public WxJsSdkResult wxjssdk( WxJsSdk wxJsSdk ) {
-	RequestUtils< WxJsSdk > requestUtils = new RequestUtils<>();
-	requestUtils.setReqdata( wxJsSdk );
-	String result = HttpSignUtil.signHttpSelect( requestUtils, SHARE_URL + "wxjssdk.do", 2 );
-	if ( CommonUtil.isNotEmpty( result ) ) {
-	    return JSONObject.toJavaObject( JSONObject.parseObject( result ), WxJsSdkResult.class );
-	}
-	return null;
+        RequestUtils< WxJsSdk > requestUtils = new RequestUtils<>();
+        requestUtils.setReqdata( wxJsSdk );
+        String result = HttpSignUtil.signHttpSelect( requestUtils, SHARE_URL + "wxjssdk.do", 2 );
+        if ( CommonUtil.isNotEmpty( result ) ) {
+            return JSONObject.toJavaObject( JSONObject.parseObject( result ), WxJsSdkResult.class );
+        }
+        return null;
     }
 
 }

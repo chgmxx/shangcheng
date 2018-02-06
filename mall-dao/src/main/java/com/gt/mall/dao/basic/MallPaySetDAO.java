@@ -11,7 +11,7 @@ import com.gt.mall.entity.basic.MallPaySet;
  * @author yangqian
  * @since 2017-07-20
  */
-public interface MallPaySetDAO extends BaseMapper<MallPaySet> {
+public interface MallPaySetDAO extends BaseMapper< MallPaySet > {
 
     /**
      * 通过用户 查询商城交易支付设置
@@ -19,6 +19,6 @@ public interface MallPaySetDAO extends BaseMapper<MallPaySet> {
      * @param set userId：用户Id
      * @return 商城交易支付设置
      */
-//    MallPaySet selectByUserId(MallPaySet set);
+    //    MallPaySet selectByUserId(MallPaySet set);
 
 }

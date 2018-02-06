@@ -17,7 +17,7 @@ import java.util.List;
 @ApiModel( value = "PhoneToOrderShopResult", description = "店铺（进入提交订单页面返回结果）" )
 @Getter
 @Setter
-public class PhoneToOrderShopResult  {
+public class PhoneToOrderShopResult {
 
     @ApiModelProperty( name = "shopId", value = "店铺id" )
     private int shopId;

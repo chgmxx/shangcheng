@@ -91,7 +91,7 @@ public class MallPifa extends Model< MallPifa > {
     private String shopName;
 
     @TableField( exist = false )
-    private List<MallPifaPrice> priceList;
+    private List< MallPifaPrice > priceList;
 
     @TableField( exist = false )
     private Long times;//剩余时间
@@ -110,23 +110,23 @@ public class MallPifa extends Model< MallPifa > {
 
     @Override
     protected Serializable pkVal() {
-	return this.id;
+        return this.id;
     }
 
     @Override
     public String toString() {
-	return "MallPifa{" +
-			"id=" + id +
-			", productId=" + productId +
-			", pfPrice=" + pfPrice +
-			", pfStartTime=" + pfStartTime +
-			", pfEndTime=" + pfEndTime +
-			", userId=" + userId +
-			", shopId=" + shopId +
-			", createTime=" + createTime +
-			", isDelete=" + isDelete +
-			", isUse=" + isUse +
-			", pfType=" + pfType +
-			"}";
+        return "MallPifa{" +
+            "id=" + id +
+            ", productId=" + productId +
+            ", pfPrice=" + pfPrice +
+            ", pfStartTime=" + pfStartTime +
+            ", pfEndTime=" + pfEndTime +
+            ", userId=" + userId +
+            ", shopId=" + shopId +
+            ", createTime=" + createTime +
+            ", isDelete=" + isDelete +
+            ", isUse=" + isUse +
+            ", pfType=" + pfType +
+            "}";
     }
 }

@@ -1,6 +1,5 @@
 package com.gt.mall.utils;
 
-import org.apache.commons.lang.time.DateUtils;
 import org.springframework.util.StringUtils;
 
 import java.text.DateFormat;
@@ -57,20 +56,20 @@ public class DateTimeKit {
     private static final Map< Integer,String > weekMap;
 
     static {
-	weekMap = new HashMap< Integer,String >();
-	weekMap.put( 2, "周一" );
-	weekMap.put( 3, "周二" );
-	weekMap.put( 4, "周三" );
-	weekMap.put( 5, "周四" );
-	weekMap.put( 6, "周五" );
-	weekMap.put( 7, "周六" );
-	weekMap.put( 1, "周日" );
+        weekMap = new HashMap< Integer,String >();
+        weekMap.put( 2, "周一" );
+        weekMap.put( 3, "周二" );
+        weekMap.put( 4, "周三" );
+        weekMap.put( 5, "周四" );
+        weekMap.put( 6, "周五" );
+        weekMap.put( 7, "周六" );
+        weekMap.put( 1, "周日" );
     }
 
     public static final String MMDDHHMMSS = "MMddHHmmss";
 
     public java.sql.Timestamp getTimestamp() {
-	return new java.sql.Timestamp( new Date().getTime() );
+        return new java.sql.Timestamp( new Date().getTime() );
     }
 
     /**
@@ -79,7 +78,7 @@ public class DateTimeKit {
      * @return 当前日期
      */
     public static String getDateIsLink() {
-	return getDateTime( yyyyMMddHHmmssms );
+        return getDateTime( yyyyMMddHHmmssms );
     }
 
     /**
@@ -88,7 +87,7 @@ public class DateTimeKit {
      * @return 当前日期时间
      */
     public static Date getNow() {
-	return Calendar.getInstance().getTime();
+        return Calendar.getInstance().getTime();
     }
 
     /**
@@ -97,12 +96,12 @@ public class DateTimeKit {
      * @return 返回时间类型 yyyy-MM-dd HH:mm:ss
      */
     public static Date getNowDate() {
-	Date currentTime = new Date();
-	SimpleDateFormat formatter = new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" );
-	String dateString = formatter.format( currentTime );
-	ParsePosition pos = new ParsePosition( 8 );
-	Date currentTime_2 = formatter.parse( dateString, pos );
-	return currentTime_2;
+        Date currentTime = new Date();
+        SimpleDateFormat formatter = new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" );
+        String dateString = formatter.format( currentTime );
+        ParsePosition pos = new ParsePosition( 8 );
+        Date currentTime_2 = formatter.parse( dateString, pos );
+        return currentTime_2;
     }
 
     /**
@@ -111,12 +110,12 @@ public class DateTimeKit {
      * @return返回短时间格式 yyyy-MM-dd
      */
     public static Date getNowDateShort() {
-	Date currentTime = new Date();
-	SimpleDateFormat formatter = new SimpleDateFormat( "yyyy-MM-dd" );
-	String dateString = formatter.format( currentTime );
-	ParsePosition pos = new ParsePosition( 8 );
-	Date currentTime_2 = formatter.parse( dateString, pos );
-	return currentTime_2;
+        Date currentTime = new Date();
+        SimpleDateFormat formatter = new SimpleDateFormat( "yyyy-MM-dd" );
+        String dateString = formatter.format( currentTime );
+        ParsePosition pos = new ParsePosition( 8 );
+        Date currentTime_2 = formatter.parse( dateString, pos );
+        return currentTime_2;
     }
 
     /**
@@ -126,16 +125,16 @@ public class DateTimeKit {
      * @return返回短时间格式 HH:mm:ss
      */
     public static Date getNowDateSmallShort() {
-	Date currentTime = new Date();
-	SimpleDateFormat formatter = new SimpleDateFormat( "HH:mm:ss" );
-	String dateString = formatter.format( currentTime );
-	Date currentTime_2 = null;
-	try {
-	    currentTime_2 = formatter.parse( dateString );
-	} catch ( ParseException e ) {
-	    e.printStackTrace();
-	}
-	return currentTime_2;
+        Date currentTime = new Date();
+        SimpleDateFormat formatter = new SimpleDateFormat( "HH:mm:ss" );
+        String dateString = formatter.format( currentTime );
+        Date currentTime_2 = null;
+        try {
+            currentTime_2 = formatter.parse( dateString );
+        } catch ( ParseException e ) {
+            e.printStackTrace();
+        }
+        return currentTime_2;
     }
 
     /**
@@ -144,7 +143,7 @@ public class DateTimeKit {
      * @return 当前日期
      */
     public static String getDate() {
-	return getDateTime( DEFAULT_DATE_FORMAT );
+        return getDateTime( DEFAULT_DATE_FORMAT );
     }
 
     /**
@@ -153,7 +152,7 @@ public class DateTimeKit {
      * @return 当前日期及时间
      */
     public static String getDateTime() {
-	return getDateTime( DEFAULT_DATETIME_FORMAT );
+        return getDateTime( DEFAULT_DATETIME_FORMAT );
     }
 
     /**
@@ -164,8 +163,8 @@ public class DateTimeKit {
      * @return 当前日期及时间
      */
     public static String getDateTime( String pattern ) {
-	Date datetime = Calendar.getInstance().getTime();
-	return getDateTime( datetime, pattern );
+        Date datetime = Calendar.getInstance().getTime();
+        return getDateTime( datetime, pattern );
     }
 
     /**
@@ -177,11 +176,11 @@ public class DateTimeKit {
      * @return 日期时间字符串
      */
     public static String getDateTime( Date date, String pattern ) {
-	if ( null == pattern || "".equals( pattern ) ) {
-	    pattern = DEFAULT_DATETIME_FORMAT;
-	}
-	SimpleDateFormat dateFormat = new SimpleDateFormat( pattern );
-	return dateFormat.format( date );
+        if ( null == pattern || "".equals( pattern ) ) {
+            pattern = DEFAULT_DATETIME_FORMAT;
+        }
+        SimpleDateFormat dateFormat = new SimpleDateFormat( pattern );
+        return dateFormat.format( date );
     }
 
     /**
@@ -190,7 +189,7 @@ public class DateTimeKit {
      * @return 当前年份
      */
     public static int getCurrentYear() {
-	return Calendar.getInstance().get( Calendar.YEAR );
+        return Calendar.getInstance().get( Calendar.YEAR );
     }
 
     /**
@@ -199,8 +198,8 @@ public class DateTimeKit {
      * @return 当前月份
      */
     public static int getCurrentMonth() {
-	// 用get得到的月份数比实际的小1，需要加上
-	return Calendar.getInstance().get( Calendar.MONTH ) + 1;
+        // 用get得到的月份数比实际的小1，需要加上
+        return Calendar.getInstance().get( Calendar.MONTH ) + 1;
     }
 
     /**
@@ -209,7 +208,7 @@ public class DateTimeKit {
      * @return 当前日
      */
     public static int getCurrentDay() {
-	return Calendar.getInstance().get( Calendar.DATE );
+        return Calendar.getInstance().get( Calendar.DATE );
     }
 
     /**
@@ -220,7 +219,7 @@ public class DateTimeKit {
      * @return 增加以后的日期
      */
     public static Date addDays( int days ) {
-	return add( getNow(), days, Calendar.DATE );
+        return add( getNow(), days, Calendar.DATE );
     }
 
     /**
@@ -232,7 +231,7 @@ public class DateTimeKit {
      * @return 增加以后的日期
      */
     public static Date addDays( Date date, int days ) {
-	return add( date, days, Calendar.DATE );
+        return add( date, days, Calendar.DATE );
     }
 
     /**
@@ -243,7 +242,7 @@ public class DateTimeKit {
      * @return 增加以后的日期
      */
     public static Date addMonths( int months ) {
-	return add( getNow(), months, Calendar.MONTH );
+        return add( getNow(), months, Calendar.MONTH );
     }
 
     /**
@@ -252,7 +251,7 @@ public class DateTimeKit {
      * @return 增加以后的日期
      */
     public static Date addSenconds( int seconds ) {
-	return add( getNow(), seconds, Calendar.SECOND );
+        return add( getNow(), seconds, Calendar.SECOND );
     }
 
     /**
@@ -264,7 +263,7 @@ public class DateTimeKit {
      * @return 增加以后的日期
      */
     public static Date addMonths( Date date, int months ) {
-	return add( date, months, Calendar.MONTH );
+        return add( date, months, Calendar.MONTH );
     }
 
     /**
@@ -277,12 +276,12 @@ public class DateTimeKit {
      * @return 增加以后的日期
      */
     private static Date add( Date date, int amount, int field ) {
-	Calendar calendar = Calendar.getInstance();
+        Calendar calendar = Calendar.getInstance();
 
-	calendar.setTime( date );
-	calendar.add( field, amount );
+        calendar.setTime( date );
+        calendar.add( field, amount );
 
-	return calendar.getTime();
+        return calendar.getTime();
     }
 
     /**
@@ -294,7 +293,7 @@ public class DateTimeKit {
      * @return 两个日期相差天数
      */
     public static long diffDays( Date one, Date two ) {
-	return ( one.getTime() - two.getTime() ) / ( 24 * 60 * 60 * 1000 );
+        return ( one.getTime() - two.getTime() ) / ( 24 * 60 * 60 * 1000 );
     }
 
     /**
@@ -307,19 +306,19 @@ public class DateTimeKit {
      */
     public static int diffMonths( Date one, Date two ) {
 
-	Calendar calendar = Calendar.getInstance();
+        Calendar calendar = Calendar.getInstance();
 
-	// 得到第一个日期的年分和月份数
-	calendar.setTime( one );
-	int yearOne = calendar.get( Calendar.YEAR );
-	int monthOne = calendar.get( Calendar.MONDAY );
+        // 得到第一个日期的年分和月份数
+        calendar.setTime( one );
+        int yearOne = calendar.get( Calendar.YEAR );
+        int monthOne = calendar.get( Calendar.MONDAY );
 
-	// 得到第二个日期的年份和月份
-	calendar.setTime( two );
-	int yearTwo = calendar.get( Calendar.YEAR );
-	int monthTwo = calendar.get( Calendar.MONDAY );
+        // 得到第二个日期的年份和月份
+        calendar.setTime( two );
+        int yearTwo = calendar.get( Calendar.YEAR );
+        int monthTwo = calendar.get( Calendar.MONDAY );
 
-	return ( yearOne - yearTwo ) * 12 + ( monthOne - monthTwo );
+        return ( yearOne - yearTwo ) * 12 + ( monthOne - monthTwo );
     }
 
     /**
@@ -332,19 +331,19 @@ public class DateTimeKit {
      * @return 解析后的日期
      */
     public static Date parse( String datestr, String pattern ) {
-	Date date = null;
-	if ( null == pattern || "".equals( pattern ) ) {
-	    pattern = DEFAULT_DATE_FORMAT;
-	}
+        Date date = null;
+        if ( null == pattern || "".equals( pattern ) ) {
+            pattern = DEFAULT_DATE_FORMAT;
+        }
 
-	try {
-	    SimpleDateFormat dateFormat = new SimpleDateFormat( pattern );
-	    date = dateFormat.parse( datestr );
-	} catch ( ParseException e ) {
-	    e.printStackTrace();
-	}
+        try {
+            SimpleDateFormat dateFormat = new SimpleDateFormat( pattern );
+            date = dateFormat.parse( datestr );
+        } catch ( ParseException e ) {
+            e.printStackTrace();
+        }
 
-	return date;
+        return date;
     }
 
     /**
@@ -353,7 +352,7 @@ public class DateTimeKit {
      * @return 本月最后一天的日期
      */
     public static Date getMonthLastDay() {
-	return getMonthLastDay( getNow() );
+        return getMonthLastDay( getNow() );
     }
 
     /**
@@ -365,59 +364,59 @@ public class DateTimeKit {
      */
     public static Date getMonthLastDay( Date date ) {
 
-	Calendar calendar = Calendar.getInstance();
-	calendar.setTime( date );
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime( date );
 
-	// 将日期设置为下一月第一天
-	calendar.set( calendar.get( Calendar.YEAR ),
-			calendar.get( Calendar.MONTH ) + 1, 1 );
+        // 将日期设置为下一月第一天
+        calendar.set( calendar.get( Calendar.YEAR ),
+            calendar.get( Calendar.MONTH ) + 1, 1 );
 
-	// 减去1天，得到的即本月的最后一天
-	calendar.add( Calendar.DATE, -1 );
+        // 减去1天，得到的即本月的最后一天
+        calendar.add( Calendar.DATE, -1 );
 
-	return calendar.getTime();
+        return calendar.getTime();
     }
 
     public static String getDay() {
-	String day = "";
-	int d = DateTimeKit.getNow().getDay();
-	if ( d == 0 ) {
-	    day = "星期日";
-	} else if ( d == 1 ) {
-	    day = "星期一";
-	} else if ( d == 2 ) {
-	    day = "星期二";
-	} else if ( d == 3 ) {
-	    day = "星期三";
-	} else if ( d == 4 ) {
-	    day = "星期四";
-	} else if ( d == 5 ) {
-	    day = "星期五";
-	} else if ( d == 6 ) {
-	    day = "星期六";
-	}
-	return day;
+        String day = "";
+        int d = DateTimeKit.getNow().getDay();
+        if ( d == 0 ) {
+            day = "星期日";
+        } else if ( d == 1 ) {
+            day = "星期一";
+        } else if ( d == 2 ) {
+            day = "星期二";
+        } else if ( d == 3 ) {
+            day = "星期三";
+        } else if ( d == 4 ) {
+            day = "星期四";
+        } else if ( d == 5 ) {
+            day = "星期五";
+        } else if ( d == 6 ) {
+            day = "星期六";
+        }
+        return day;
     }
 
     public static String getDayToEnglish() {
-	String day = "";
-	int d = DateTimeKit.getNow().getDay();
-	if ( d == 0 ) {
-	    day = "SUNDAY";
-	} else if ( d == 1 ) {
-	    day = "MONDAY";
-	} else if ( d == 2 ) {
-	    day = "TUESDAY";
-	} else if ( d == 3 ) {
-	    day = "WEDNESDAY";
-	} else if ( d == 4 ) {
-	    day = "THURSDAY";
-	} else if ( d == 5 ) {
-	    day = "FRIDAY";
-	} else if ( d == 6 ) {
-	    day = "SUNDAY";
-	}
-	return day;
+        String day = "";
+        int d = DateTimeKit.getNow().getDay();
+        if ( d == 0 ) {
+            day = "SUNDAY";
+        } else if ( d == 1 ) {
+            day = "MONDAY";
+        } else if ( d == 2 ) {
+            day = "TUESDAY";
+        } else if ( d == 3 ) {
+            day = "WEDNESDAY";
+        } else if ( d == 4 ) {
+            day = "THURSDAY";
+        } else if ( d == 5 ) {
+            day = "FRIDAY";
+        } else if ( d == 6 ) {
+            day = "SUNDAY";
+        }
+        return day;
     }
 
     /**
@@ -430,17 +429,17 @@ public class DateTimeKit {
      * @return Date 日期
      */
     public static Date parseDate( String dateStr, String format ) {
-	try {
-	    DateFormat dateFormat = new SimpleDateFormat( format );
-	    String dt = dateStr.replaceAll( "-", "/" );
-	    if ( ( !dt.equals( "" ) ) && ( dt.length() < format.length() ) ) {
-		dt += format.substring( dt.length() ).replaceAll( "[YyMmDdHhSs]",
-				"0" );
-	    }
-	    return (Date) dateFormat.parse( dt );
-	} catch ( Exception e ) {
-	}
-	return null;
+        try {
+            DateFormat dateFormat = new SimpleDateFormat( format );
+            String dt = dateStr.replaceAll( "-", "/" );
+            if ( ( !dt.equals( "" ) ) && ( dt.length() < format.length() ) ) {
+                dt += format.substring( dt.length() ).replaceAll( "[YyMmDdHhSs]",
+                    "0" );
+            }
+            return (Date) dateFormat.parse( dt );
+        } catch ( Exception e ) {
+        }
+        return null;
     }
 
     /**
@@ -451,7 +450,7 @@ public class DateTimeKit {
      * @return Date
      */
     public static Date parseDate( String dateStr ) {
-	return parseDate( dateStr, "yyyy/MM/dd" );
+        return parseDate( dateStr, "yyyy/MM/dd" );
     }
 
     /**
@@ -463,16 +462,16 @@ public class DateTimeKit {
      * @return 返回字符型日期
      */
     public static String format( Date date, String format ) {
-	String result = "";
-	try {
-	    if ( date != null ) {
-		DateFormat dateFormat = new SimpleDateFormat( format );
-		return dateFormat.format( date );
-	    }
-	} catch ( Exception e ) {
-	    e.printStackTrace();
-	}
-	return null;
+        String result = "";
+        try {
+            if ( date != null ) {
+                DateFormat dateFormat = new SimpleDateFormat( format );
+                return dateFormat.format( date );
+            }
+        } catch ( Exception e ) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     /**
@@ -483,7 +482,7 @@ public class DateTimeKit {
      * @return 时间
      */
     public static String format( Date date ) {
-	return format( date, "yyyy-MM-dd" );
+        return format( date, "yyyy-MM-dd" );
     }
 
     /**
@@ -494,9 +493,9 @@ public class DateTimeKit {
      * @return 返回年份
      */
     public static int getYear( Date date ) {
-	Calendar calendar = Calendar.getInstance();
-	calendar.setTime( date );
-	return calendar.get( Calendar.YEAR );
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime( date );
+        return calendar.get( Calendar.YEAR );
     }
 
     /**
@@ -507,9 +506,9 @@ public class DateTimeKit {
      * @return 返回月份
      */
     public static int getMonth( Date date ) {
-	Calendar calendar = Calendar.getInstance();
-	calendar.setTime( date );
-	return calendar.get( Calendar.MONTH ) + 1;
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime( date );
+        return calendar.get( Calendar.MONTH ) + 1;
     }
 
     /**
@@ -520,9 +519,9 @@ public class DateTimeKit {
      * @return 返回日份
      */
     public static int getDay( Date date ) {
-	Calendar calendar = Calendar.getInstance();
-	calendar.setTime( date );
-	return calendar.get( Calendar.DAY_OF_MONTH );
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime( date );
+        return calendar.get( Calendar.DAY_OF_MONTH );
     }
 
     /**
@@ -533,9 +532,9 @@ public class DateTimeKit {
      * @return 返回小时
      */
     public static int getHour( Date date ) {
-	Calendar calendar = Calendar.getInstance();
-	calendar.setTime( date );
-	return calendar.get( Calendar.HOUR_OF_DAY );
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime( date );
+        return calendar.get( Calendar.HOUR_OF_DAY );
     }
 
     /**
@@ -546,9 +545,9 @@ public class DateTimeKit {
      * @return 返回分钟
      */
     public static int getMinute( Date date ) {
-	Calendar calendar = Calendar.getInstance();
-	calendar.setTime( date );
-	return calendar.get( Calendar.MINUTE );
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime( date );
+        return calendar.get( Calendar.MINUTE );
     }
 
     /**
@@ -559,9 +558,9 @@ public class DateTimeKit {
      * @return 返回秒钟
      */
     public static int getSecond( Date date ) {
-	Calendar calendar = Calendar.getInstance();
-	calendar.setTime( date );
-	return calendar.get( Calendar.SECOND );
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime( date );
+        return calendar.get( Calendar.SECOND );
     }
 
     /**
@@ -572,9 +571,9 @@ public class DateTimeKit {
      * @return 返回毫秒
      */
     public static long getMillis( Date date ) {
-	Calendar calendar = Calendar.getInstance();
-	calendar.setTime( date );
-	return calendar.getTimeInMillis();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime( date );
+        return calendar.getTimeInMillis();
     }
 
     /**
@@ -585,7 +584,7 @@ public class DateTimeKit {
      * @return 返回字符型日期 yyyy/MM/dd 格式
      */
     public static String getDate( Date date ) {
-	return format( date, "yyyy/MM/dd" );
+        return format( date, "yyyy/MM/dd" );
     }
 
     /**
@@ -596,7 +595,7 @@ public class DateTimeKit {
      * @return 返回字符型时间 HH:mm:ss 格式
      */
     public static String getTime( Date date ) {
-	return format( date, "HH:mm:ss" );
+        return format( date, "HH:mm:ss" );
     }
 
     /**
@@ -607,7 +606,7 @@ public class DateTimeKit {
      * @return 返回字符型日期时间 yyyy/MM/dd HH:mm:ss 格式
      */
     public static String getDateTime( Date date ) {
-	return format( date, "yyyy/MM/dd HH:mm:ss" );
+        return format( date, "yyyy/MM/dd HH:mm:ss" );
     }
 
     /**
@@ -619,10 +618,10 @@ public class DateTimeKit {
      * @return 返回相加后的日期
      */
     public static Date addDate( Date date, int day ) {
-	Calendar calendar = Calendar.getInstance();
-	long millis = getMillis( date ) + ( (long) day ) * 24 * 3600 * 1000;
-	calendar.setTimeInMillis( millis );
-	return calendar.getTime();
+        Calendar calendar = Calendar.getInstance();
+        long millis = getMillis( date ) + ( (long) day ) * 24 * 3600 * 1000;
+        calendar.setTimeInMillis( millis );
+        return calendar.getTime();
     }
 
     /**
@@ -634,7 +633,7 @@ public class DateTimeKit {
      * @return 返回相减后的日期
      */
     public static int diffDate( Date date, Date date1 ) {
-	return (int) ( ( getMillis( date ) - getMillis( date1 ) ) / ( 24 * 3600 * 1000 ) );
+        return (int) ( ( getMillis( date ) - getMillis( date1 ) ) / ( 24 * 3600 * 1000 ) );
     }
 
     /**
@@ -645,8 +644,8 @@ public class DateTimeKit {
      * @return String yyyy-MM-dd 格式
      */
     public static String getMonthBegin( String strdate ) {
-	date = parseDate( strdate );
-	return format( date, "yyyy-MM" ) + "-01";
+        date = parseDate( strdate );
+        return format( date, "yyyy-MM" ) + "-01";
     }
 
     /**
@@ -657,12 +656,12 @@ public class DateTimeKit {
      * @return String 日期字符串 yyyy-MM-dd格式
      */
     public static String getMonthEnd( String strdate ) {
-	date = parseDate( getMonthBegin( strdate ) );
-	Calendar calendar = Calendar.getInstance();
-	calendar.setTime( date );
-	calendar.add( Calendar.MONTH, 1 );
-	calendar.add( Calendar.DAY_OF_YEAR, -1 );
-	return formatDate( calendar.getTime() );
+        date = parseDate( getMonthBegin( strdate ) );
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime( date );
+        calendar.add( Calendar.MONTH, 1 );
+        calendar.add( Calendar.DAY_OF_YEAR, -1 );
+        return formatDate( calendar.getTime() );
     }
 
     /**
@@ -673,7 +672,7 @@ public class DateTimeKit {
      * @return String 日期字符串 yyyy-MM-dd格式
      */
     public static String formatDate( Date date ) {
-	return formatDateByFormat( date, "yyyy-MM-dd" );
+        return formatDateByFormat( date, "yyyy-MM-dd" );
     }
 
     /**
@@ -685,35 +684,35 @@ public class DateTimeKit {
      * @return String 日期字符串
      */
     public static String formatDateByFormat( Date date, String format ) {
-	String result = "";
-	if ( date != null ) {
-	    try {
-		SimpleDateFormat sdf = new SimpleDateFormat( format );
-		result = sdf.format( date );
-	    } catch ( Exception ex ) {
-		ex.printStackTrace();
-	    }
-	}
-	return result;
+        String result = "";
+        if ( date != null ) {
+            try {
+                SimpleDateFormat sdf = new SimpleDateFormat( format );
+                result = sdf.format( date );
+            } catch ( Exception ex ) {
+                ex.printStackTrace();
+            }
+        }
+        return result;
     }
 
     public int getDaysBetween( Calendar d1, Calendar d2 ) {
-	if ( d1.after( d2 ) ) { // swap dates so that d1 is start and d2 is end
-	    Calendar swap = d1;
-	    d1 = d2;
-	    d2 = swap;
-	}
-	int days = d2.get( Calendar.DAY_OF_YEAR )
-			- d1.get( Calendar.DAY_OF_YEAR );
-	int y2 = d2.get( Calendar.YEAR );
-	if ( d1.get( Calendar.YEAR ) != y2 ) {
-	    d1 = (Calendar) d1.clone();
-	    do {
-		days += d1.getActualMaximum( Calendar.DAY_OF_YEAR );
-		d1.add( Calendar.YEAR, 1 );
-	    } while ( d1.get( Calendar.YEAR ) != y2 );
-	}
-	return days;
+        if ( d1.after( d2 ) ) { // swap dates so that d1 is start and d2 is end
+            Calendar swap = d1;
+            d1 = d2;
+            d2 = swap;
+        }
+        int days = d2.get( Calendar.DAY_OF_YEAR )
+            - d1.get( Calendar.DAY_OF_YEAR );
+        int y2 = d2.get( Calendar.YEAR );
+        if ( d1.get( Calendar.YEAR ) != y2 ) {
+            d1 = (Calendar) d1.clone();
+            do {
+                days += d1.getActualMaximum( Calendar.DAY_OF_YEAR );
+                d1.add( Calendar.YEAR, 1 );
+            } while ( d1.get( Calendar.YEAR ) != y2 );
+        }
+        return days;
     }
 
     /**
@@ -725,47 +724,47 @@ public class DateTimeKit {
      * @return
      */
     public int getWorkingDay( Calendar d1, Calendar d2 ) {
-	int result = -1;
-	if ( d1.after( d2 ) ) { // swap dates so that d1 is start and d2 is end
-	    Calendar swap = d1;
-	    d1 = d2;
-	    d2 = swap;
-	}
+        int result = -1;
+        if ( d1.after( d2 ) ) { // swap dates so that d1 is start and d2 is end
+            Calendar swap = d1;
+            d1 = d2;
+            d2 = swap;
+        }
 
-	int betweendays = getDaysBetween( d1, d2 );
+        //	int betweendays = getDaysBetween( d1, d2 );
 
-	@SuppressWarnings( "unused" )
-	int charge_date = 0;
-	int charge_start_date = 0;// 开始日期的日期偏移量
-	int charge_end_date = 0;// 结束日期的日期偏移量
-	// 日期不在同一个日期内
-	int stmp;
-	int etmp;
-	stmp = 7 - d1.get( Calendar.DAY_OF_WEEK );
-	etmp = 7 - d2.get( Calendar.DAY_OF_WEEK );
-	if ( stmp != 0 && stmp != 6 ) {// 开始日期为星期六和星期日时偏移量为0
-	    charge_start_date = stmp - 1;
-	}
-	if ( etmp != 0 && etmp != 6 ) {// 结束日期为星期六和星期日时偏移量为0
-	    charge_end_date = etmp - 1;
-	}
-	// }
-	result = ( getDaysBetween( this.getNextMonday( d1 ), this.getNextMonday( d2 ) ) / 7 )
-			* 5 + charge_start_date - charge_end_date;
-	// System.out.println("charge_start_date>" + charge_start_date);
-	// System.out.println("charge_end_date>" + charge_end_date);
-	// System.out.println("between day is-->" + betweendays);
-	return result;
+        @SuppressWarnings( "unused" )
+        int charge_date = 0;
+        int charge_start_date = 0;// 开始日期的日期偏移量
+        int charge_end_date = 0;// 结束日期的日期偏移量
+        // 日期不在同一个日期内
+        int stmp;
+        int etmp;
+        stmp = 7 - d1.get( Calendar.DAY_OF_WEEK );
+        etmp = 7 - d2.get( Calendar.DAY_OF_WEEK );
+        if ( stmp != 0 && stmp != 6 ) {// 开始日期为星期六和星期日时偏移量为0
+            charge_start_date = stmp - 1;
+        }
+        if ( etmp != 0 && etmp != 6 ) {// 结束日期为星期六和星期日时偏移量为0
+            charge_end_date = etmp - 1;
+        }
+        // }
+        result = ( getDaysBetween( this.getNextMonday( d1 ), this.getNextMonday( d2 ) ) / 7 )
+            * 5 + charge_start_date - charge_end_date;
+        // System.out.println("charge_start_date>" + charge_start_date);
+        // System.out.println("charge_end_date>" + charge_end_date);
+        // System.out.println("between day is-->" + betweendays);
+        return result;
     }
 
     public String getChineseWeek( Calendar date ) {
-	final String dayNames[] = { "星期日", "星期一", "星期二", "星期三", "星期四", "星期五",
-			"星期六" };
+        final String dayNames[] = { "星期日", "星期一", "星期二", "星期三", "星期四", "星期五",
+            "星期六" };
 
-	int dayOfWeek = date.get( Calendar.DAY_OF_WEEK );
+        int dayOfWeek = date.get( Calendar.DAY_OF_WEEK );
 
-	// System.out.println(dayNames[dayOfWeek - 1]);
-	return dayNames[dayOfWeek - 1];
+        // System.out.println(dayNames[dayOfWeek - 1]);
+        return dayNames[dayOfWeek - 1];
 
     }
 
@@ -777,13 +776,13 @@ public class DateTimeKit {
      * @return
      */
     public Calendar getNextMonday( Calendar date ) {
-	Calendar result = null;
-	result = date;
-	do {
-	    result = (Calendar) result.clone();
-	    result.add( Calendar.DATE, 1 );
-	} while ( result.get( Calendar.DAY_OF_WEEK ) != 2 );
-	return result;
+        Calendar result = null;
+        result = date;
+        do {
+            result = (Calendar) result.clone();
+            result.add( Calendar.DATE, 1 );
+        } while ( result.get( Calendar.DAY_OF_WEEK ) != 2 );
+        return result;
     }
 
     /**
@@ -793,7 +792,7 @@ public class DateTimeKit {
      * @return
      */
     public int getHolidays( Calendar d1, Calendar d2 ) {
-	return this.getDaysBetween( d1, d2 ) - this.getWorkingDay( d1, d2 );
+        return this.getDaysBetween( d1, d2 ) - this.getWorkingDay( d1, d2 );
 
     }
 
@@ -803,7 +802,7 @@ public class DateTimeKit {
      * @return
      */
     public static java.sql.Timestamp getDateDb() {
-	return new java.sql.Timestamp( new Date().getTime() );
+        return new java.sql.Timestamp( new Date().getTime() );
     }
 
     /**
@@ -814,7 +813,7 @@ public class DateTimeKit {
      * @return
      */
     public static java.sql.Timestamp parseDateDb( String dateStr ) {
-	return parseDateDb( dateStr, DEFAULT_DATE_FORMAT );
+        return parseDateDb( dateStr, DEFAULT_DATE_FORMAT );
     }
 
     /**
@@ -825,7 +824,7 @@ public class DateTimeKit {
      * @return
      */
     public static java.sql.Timestamp parseDateDb( Date date ) {
-	return new java.sql.Timestamp( date.getTime() );
+        return new java.sql.Timestamp( date.getTime() );
     }
 
     /**
@@ -836,7 +835,7 @@ public class DateTimeKit {
      * @return
      */
     public static java.sql.Timestamp parseDateDb( String dateStr, String format ) {
-	return new java.sql.Timestamp( parse( dateStr, format ).getTime() );
+        return new java.sql.Timestamp( parse( dateStr, format ).getTime() );
     }
 
     /**
@@ -848,11 +847,11 @@ public class DateTimeKit {
      * @return 在同一天返回true，不在同一天返回false
      */
     public static boolean isSameDay( Date day1, Date day2 ) {
-	SimpleDateFormat df = new SimpleDateFormat( "yyyy-MM-dd" );
-	if ( df.format( day1 ).equals( df.format( day2 ) ) ) {
-	    return true;
-	}
-	return false;
+        SimpleDateFormat df = new SimpleDateFormat( "yyyy-MM-dd" );
+        if ( df.format( day1 ).equals( df.format( day2 ) ) ) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -864,19 +863,19 @@ public class DateTimeKit {
      * @throws ParseException
      */
     public static int isYeaterday( Date oldTime ) throws ParseException {
-	Date newTime = new Date();
-	//将下面的 理解成  yyyy-MM-dd 00：00：00 更好理解点
-	SimpleDateFormat format = new SimpleDateFormat( "yyyy-MM-dd" );
-	String todayStr = format.format( newTime );
-	Date today = format.parse( todayStr );
-	//昨天 86400000=24*60*60*1000 一天
-	if ( ( today.getTime() - oldTime.getTime() ) > 0 && ( today.getTime() - oldTime.getTime() ) <= 86400000 ) {
-	    return 0;
-	} else if ( ( today.getTime() - oldTime.getTime() ) <= 0 ) { //至少是今天
-	    return -1;
-	} else { //至少是前天
-	    return 1;
-	}
+        Date newTime = new Date();
+        //将下面的 理解成  yyyy-MM-dd 00：00：00 更好理解点
+        SimpleDateFormat format = new SimpleDateFormat( "yyyy-MM-dd" );
+        String todayStr = format.format( newTime );
+        Date today = format.parse( todayStr );
+        //昨天 86400000=24*60*60*1000 一天
+        if ( ( today.getTime() - oldTime.getTime() ) > 0 && ( today.getTime() - oldTime.getTime() ) <= 86400000 ) {
+            return 0;
+        } else if ( ( today.getTime() - oldTime.getTime() ) <= 0 ) { //至少是今天
+            return -1;
+        } else { //至少是前天
+            return 1;
+        }
 
     }
 
@@ -889,12 +888,12 @@ public class DateTimeKit {
      * @throws Exception
      */
     public static boolean isAfterToday( String day ) throws Exception {
-	SimpleDateFormat df = new SimpleDateFormat( "yyyy-MM-dd" );
-	Date date = df.parse( day );
-	if ( date.after( df.parse( getDate() ) ) ) {
-	    return true;
-	}
-	return false;
+        SimpleDateFormat df = new SimpleDateFormat( "yyyy-MM-dd" );
+        Date date = df.parse( day );
+        if ( date.after( df.parse( getDate() ) ) ) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -905,14 +904,14 @@ public class DateTimeKit {
      * @return
      */
     public static String dateTimeAddSecond( String dateStr, String format ) {
-	String secondStr = "";
-	if ( DEFAULT_DATETIME_FORMAT.equals( format ) ) {
-	    secondStr = ":00";
-	}
-	if ( yyyyMMddHHmmssms.equals( format ) ) {
-	    secondStr = "00";
-	}
-	return dateStr + secondStr;
+        String secondStr = "";
+        if ( DEFAULT_DATETIME_FORMAT.equals( format ) ) {
+            secondStr = ":00";
+        }
+        if ( yyyyMMddHHmmssms.equals( format ) ) {
+            secondStr = "00";
+        }
+        return dateStr + secondStr;
     }
 
     /**
@@ -924,14 +923,14 @@ public class DateTimeKit {
      * @return 大于或等于当前时间返回true其他返回false
      */
     public static boolean laterThanNow( String sDate ) {
-	if ( StringUtils.isEmpty( sDate ) || sDate.length() != 14 ) {
-	    return false;
-	}
-	Calendar calendar0 = Calendar.getInstance( Locale.CHINESE );
-	calendar0.set( Integer.parseInt( sDate.substring( 0, 4 ) ), Integer.parseInt( sDate.substring( 4, 6 ) ) - 1, Integer.parseInt( sDate.substring( 6, 8 ) ),
-			Integer.parseInt( sDate.substring( 8, 10 ) ), Integer.parseInt( sDate.substring( 10, 12 ) ), Integer.parseInt( sDate.substring( 10, 12 ) ) );
-	Calendar calendar = Calendar.getInstance( Locale.CHINESE );
-	return calendar0.after( calendar );
+        if ( StringUtils.isEmpty( sDate ) || sDate.length() != 14 ) {
+            return false;
+        }
+        Calendar calendar0 = Calendar.getInstance( Locale.CHINESE );
+        calendar0.set( Integer.parseInt( sDate.substring( 0, 4 ) ), Integer.parseInt( sDate.substring( 4, 6 ) ) - 1, Integer.parseInt( sDate.substring( 6, 8 ) ),
+            Integer.parseInt( sDate.substring( 8, 10 ) ), Integer.parseInt( sDate.substring( 10, 12 ) ), Integer.parseInt( sDate.substring( 10, 12 ) ) );
+        Calendar calendar = Calendar.getInstance( Locale.CHINESE );
+        return calendar0.after( calendar );
     }
 
     /**
@@ -945,21 +944,21 @@ public class DateTimeKit {
      * @throws ParseException
      */
     public static int daysBetween( Date smdate, Date bdate ) throws Exception {
-	SimpleDateFormat sdf = new SimpleDateFormat( "yyyy-MM-dd" );
-	try {
-	    smdate = sdf.parse( sdf.format( smdate ) );
-	    bdate = sdf.parse( sdf.format( bdate ) );
-	} catch ( ParseException e ) {
-	    throw new Exception( "计算两个日期之间相差的天数  " );
-	}
-	Calendar cal = Calendar.getInstance();
-	cal.setTime( smdate );
-	long time1 = cal.getTimeInMillis();
-	cal.setTime( bdate );
-	long time2 = cal.getTimeInMillis();
-	long between_days = ( time2 - time1 ) / ( 1000 * 3600 * 24 );
+        SimpleDateFormat sdf = new SimpleDateFormat( "yyyy-MM-dd" );
+        try {
+            smdate = sdf.parse( sdf.format( smdate ) );
+            bdate = sdf.parse( sdf.format( bdate ) );
+        } catch ( ParseException e ) {
+            throw new Exception( "计算两个日期之间相差的天数  " );
+        }
+        Calendar cal = Calendar.getInstance();
+        cal.setTime( smdate );
+        long time1 = cal.getTimeInMillis();
+        cal.setTime( bdate );
+        long time2 = cal.getTimeInMillis();
+        long between_days = ( time2 - time1 ) / ( 1000 * 3600 * 24 );
 
-	return Integer.parseInt( String.valueOf( between_days ) );
+        return Integer.parseInt( String.valueOf( between_days ) );
     }
 
     /**
@@ -972,15 +971,15 @@ public class DateTimeKit {
      * @throws ParseException
      */
     public static int daysBetween( String sDate, String eDate ) throws ParseException {
-	SimpleDateFormat sdf = new SimpleDateFormat( "yyyy-MM-dd" );
-	Calendar cal = Calendar.getInstance();
-	cal.setTime( sdf.parse( sDate ) );
-	long time1 = cal.getTimeInMillis();
-	cal.setTime( sdf.parse( eDate ) );
-	long time2 = cal.getTimeInMillis();
-	long between_days = ( time2 - time1 ) / ( 1000 * 3600 * 24 );
+        SimpleDateFormat sdf = new SimpleDateFormat( "yyyy-MM-dd" );
+        Calendar cal = Calendar.getInstance();
+        cal.setTime( sdf.parse( sDate ) );
+        long time1 = cal.getTimeInMillis();
+        cal.setTime( sdf.parse( eDate ) );
+        long time2 = cal.getTimeInMillis();
+        long between_days = ( time2 - time1 ) / ( 1000 * 3600 * 24 );
 
-	return Integer.parseInt( String.valueOf( between_days ) );
+        return Integer.parseInt( String.valueOf( between_days ) );
     }
 
     /**
@@ -993,17 +992,17 @@ public class DateTimeKit {
      * @return
      */
     public static long minsBetween( String sDate, String eDate, long time ) {
-	SimpleDateFormat d = new SimpleDateFormat();// 格式化时间
-	long result = 0;
-	try {
-	    result = ( d.parse( eDate ).getTime() - d.parse( sDate )
-			    .getTime() ) / time;// 当前时间减去测试时间
-	    // 这个的除以1000得到秒，相应的60000得到分，3600000得到小时
-	    System.out.println( "当前时间减去测试时间=" + result + "分钟" );
-	} catch ( ParseException e ) {
-	    e.printStackTrace();
-	}
-	return result;
+        SimpleDateFormat d = new SimpleDateFormat();// 格式化时间
+        long result = 0;
+        try {
+            result = ( d.parse( eDate ).getTime() - d.parse( sDate )
+                .getTime() ) / time;// 当前时间减去测试时间
+            // 这个的除以1000得到秒，相应的60000得到分，3600000得到小时
+            System.out.println( "当前时间减去测试时间=" + result + "分钟" );
+        } catch ( ParseException e ) {
+            e.printStackTrace();
+        }
+        return result;
     }
 
     /**
@@ -1015,16 +1014,16 @@ public class DateTimeKit {
      * @return time  1000得到秒 60000得到分 3600000 得到小时
      */
     public static long secondBetween( Date sDate, Date eDate ) {
-	long result = 0;
-	try {
-	    result = ( eDate.getTime() - sDate.getTime() ) / 1000;
-	    //	    		   System.out.println("两个时间相差"+result+"秒");//会打印出相差3秒
-	    // 这个的除以1000得到秒，相应的60000得到分，3600000得到小时
-	    //	    		System.out.println("当前时间减去测试时间=" + result + "分钟");
-	} catch ( Exception e ) {
-	    e.printStackTrace();
-	}
-	return result;
+        long result = 0;
+        try {
+            result = ( eDate.getTime() - sDate.getTime() ) / 1000;
+            //	    		   System.out.println("两个时间相差"+result+"秒");//会打印出相差3秒
+            // 这个的除以1000得到秒，相应的60000得到分，3600000得到小时
+            //	    		System.out.println("当前时间减去测试时间=" + result + "分钟");
+        } catch ( Exception e ) {
+            e.printStackTrace();
+        }
+        return result;
     }
 
     /**
@@ -1035,15 +1034,15 @@ public class DateTimeKit {
      * @return
      */
     public static String getMonFirstDay() {
-	SimpleDateFormat df = new SimpleDateFormat( "yyyy-MM-dd" );
-	Calendar calendar = Calendar.getInstance();
-	Date theDate = calendar.getTime();
+        SimpleDateFormat df = new SimpleDateFormat( "yyyy-MM-dd" );
+        Calendar calendar = Calendar.getInstance();
+        Date theDate = calendar.getTime();
 
-	GregorianCalendar gcLast = (GregorianCalendar) Calendar.getInstance();
-	gcLast.setTime( theDate );
-	gcLast.set( Calendar.DAY_OF_MONTH, 1 );
-	String day_first = df.format( gcLast.getTime() );
-	return day_first + " 00:00:00";
+        GregorianCalendar gcLast = (GregorianCalendar) Calendar.getInstance();
+        gcLast.setTime( theDate );
+        gcLast.set( Calendar.DAY_OF_MONTH, 1 );
+        String day_first = df.format( gcLast.getTime() );
+        return day_first + " 00:00:00";
     }
 
     /**
@@ -1052,22 +1051,22 @@ public class DateTimeKit {
      * @return
      */
     public static Integer getCurrAndEnd() {
-	Date curr = new Date();
-	Long end = null;
-	try {
-	    SimpleDateFormat sdf = new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" );
-	    Calendar cal = Calendar.getInstance();
-	    cal.set( Calendar.HOUR_OF_DAY, 24 );
-	    cal.set( Calendar.SECOND, 0 );
-	    cal.set( Calendar.MINUTE, 0 );
-	    cal.set( Calendar.MILLISECOND, 0 );
-	    end = sdf.parse( sdf.format( cal.getTime() ) ).getTime();
-	    Long number = end - curr.getTime();
-	    return (int) ( number / 1000 );
-	} catch ( Exception e ) {
-	    e.printStackTrace();
-	}
-	return 0;
+        Date curr = new Date();
+        Long end = null;
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" );
+            Calendar cal = Calendar.getInstance();
+            cal.set( Calendar.HOUR_OF_DAY, 24 );
+            cal.set( Calendar.SECOND, 0 );
+            cal.set( Calendar.MINUTE, 0 );
+            cal.set( Calendar.MILLISECOND, 0 );
+            end = sdf.parse( sdf.format( cal.getTime() ) ).getTime();
+            Long number = end - curr.getTime();
+            return (int) ( number / 1000 );
+        } catch ( Exception e ) {
+            e.printStackTrace();
+        }
+        return 0;
     }
 
     /**
@@ -1078,7 +1077,7 @@ public class DateTimeKit {
      * @return
      */
     public static boolean laterThanNow( Date date ) {
-	return date.getTime() > new Date().getTime();
+        return date.getTime() > new Date().getTime();
     }
 
     /**
@@ -1089,9 +1088,9 @@ public class DateTimeKit {
      * @return
      */
     public static Date getFewMinutesLater( int num ) {
-	Calendar cal = Calendar.getInstance();
-	cal.add( Calendar.MINUTE, num );
-	return cal.getTime();
+        Calendar cal = Calendar.getInstance();
+        cal.add( Calendar.MINUTE, num );
+        return cal.getTime();
     }
 
     /**
@@ -1100,16 +1099,16 @@ public class DateTimeKit {
      * @return
      */
     public static String getNextDay( String date ) {
-	try {
-	    SimpleDateFormat df = new SimpleDateFormat( "yyyy-MM-dd" );
-	    Calendar calendar = Calendar.getInstance();
-	    calendar.setTime( df.parse( date ) );
-	    calendar.add( Calendar.DAY_OF_MONTH, 1 );
-	    return df.format( calendar.getTime() );
-	} catch ( Exception e ) {
-	    e.printStackTrace();
-	}
-	return null;
+        try {
+            SimpleDateFormat df = new SimpleDateFormat( "yyyy-MM-dd" );
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime( df.parse( date ) );
+            calendar.add( Calendar.DAY_OF_MONTH, 1 );
+            return df.format( calendar.getTime() );
+        } catch ( Exception e ) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     /**
@@ -1121,12 +1120,12 @@ public class DateTimeKit {
      * @return
      */
     public static boolean isBetween( Date date1, Date date2 ) {
-	Date date = new Date();
-	if ( date.getTime() > date1.getTime() && date.getTime() < date2.getTime() ) {
-	    return true;
-	} else {
-	    return false;
-	}
+        Date date = new Date();
+        if ( date.getTime() > date1.getTime() && date.getTime() < date2.getTime() ) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     ;
@@ -1139,12 +1138,12 @@ public class DateTimeKit {
      * @return
      */
     public static String getFirstDayOfWeek( Date date ) {
-	Calendar calendar = Calendar.getInstance();
-	calendar.setFirstDayOfWeek( Calendar.SUNDAY );
-	calendar.setTime( date );
-	calendar.set( Calendar.DAY_OF_WEEK,
-			calendar.getFirstDayOfWeek() ); // Sunday
-	return calendar.getTime().toString();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setFirstDayOfWeek( Calendar.SUNDAY );
+        calendar.setTime( date );
+        calendar.set( Calendar.DAY_OF_WEEK,
+            calendar.getFirstDayOfWeek() ); // Sunday
+        return calendar.getTime().toString();
     }
 
     /**
@@ -1155,12 +1154,12 @@ public class DateTimeKit {
      * @return
      */
     public static String getLastDayOfWeek( Date date ) {
-	Calendar calendar = Calendar.getInstance();
-	calendar.setFirstDayOfWeek( Calendar.SUNDAY );
-	calendar.setTime( date );
-	calendar.set( Calendar.DAY_OF_WEEK,
-			calendar.getFirstDayOfWeek() + 6 ); // Saturday
-	return calendar.getTime().toString();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setFirstDayOfWeek( Calendar.SUNDAY );
+        calendar.setTime( date );
+        calendar.set( Calendar.DAY_OF_WEEK,
+            calendar.getFirstDayOfWeek() + 6 ); // Saturday
+        return calendar.getTime().toString();
     }
 
     /**
@@ -1171,10 +1170,10 @@ public class DateTimeKit {
      * @return
      */
     public static String getFirstDayOfLastWeek( Date date ) {
-	Calendar calendar = Calendar.getInstance();
-	calendar.setTime( date );
-	return getFirstDayOfWeek( calendar.get( Calendar.YEAR ),
-			calendar.get( Calendar.WEEK_OF_YEAR ) - 1 );
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime( date );
+        return getFirstDayOfWeek( calendar.get( Calendar.YEAR ),
+            calendar.get( Calendar.WEEK_OF_YEAR ) - 1 );
     }
 
     /**
@@ -1185,10 +1184,10 @@ public class DateTimeKit {
      * @return
      */
     public static String getLastDayOfLastWeek( Date date ) {
-	Calendar calendar = Calendar.getInstance();
-	calendar.setTime( date );
-	return getLastDayOfWeek( calendar.get( Calendar.YEAR ),
-			calendar.get( Calendar.WEEK_OF_YEAR ) - 1 );
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime( date );
+        return getLastDayOfWeek( calendar.get( Calendar.YEAR ),
+            calendar.get( Calendar.WEEK_OF_YEAR ) - 1 );
     }
 
     /**
@@ -1200,15 +1199,15 @@ public class DateTimeKit {
      * @return
      */
     public static String getFirstDayOfWeek( int year, int week ) {
-	week = week - 1;
-	Calendar calendar = Calendar.getInstance();
-	calendar.set( Calendar.YEAR, year );
-	calendar.set( Calendar.MONTH, Calendar.JANUARY );
-	calendar.set( Calendar.DATE, 1 );
-	Calendar cal = (Calendar) calendar.clone();
-	cal.add( Calendar.DATE, week * 7 );
+        week = week - 1;
+        Calendar calendar = Calendar.getInstance();
+        calendar.set( Calendar.YEAR, year );
+        calendar.set( Calendar.MONTH, Calendar.JANUARY );
+        calendar.set( Calendar.DATE, 1 );
+        Calendar cal = (Calendar) calendar.clone();
+        cal.add( Calendar.DATE, week * 7 );
 
-	return getFirstDayOfWeek( cal.getTime() );
+        return getFirstDayOfWeek( cal.getTime() );
     }
 
     /**
@@ -1220,15 +1219,15 @@ public class DateTimeKit {
      * @return
      */
     public static String getLastDayOfWeek( int year, int week ) {
-	week = week - 1;
-	Calendar calendar = Calendar.getInstance();
-	calendar.set( Calendar.YEAR, year );
-	calendar.set( Calendar.MONTH, Calendar.JANUARY );
-	calendar.set( Calendar.DATE, 1 );
-	Calendar cal = (Calendar) calendar.clone();
-	cal.add( Calendar.DATE, week * 7 );
+        week = week - 1;
+        Calendar calendar = Calendar.getInstance();
+        calendar.set( Calendar.YEAR, year );
+        calendar.set( Calendar.MONTH, Calendar.JANUARY );
+        calendar.set( Calendar.DATE, 1 );
+        Calendar cal = (Calendar) calendar.clone();
+        cal.add( Calendar.DATE, week * 7 );
 
-	return getLastDayOfWeek( cal.getTime() );
+        return getLastDayOfWeek( cal.getTime() );
     }
 
     /**
@@ -1240,13 +1239,13 @@ public class DateTimeKit {
      * @return
      */
     public static String getFirstDayOfMonth( int year, int month ) {
-	Calendar cal = Calendar.getInstance();
-	cal.set( Calendar.YEAR, year ); //设置年份
-	cal.set( Calendar.MONTH, month - 1 ); //设置月份
-	cal.set( Calendar.DAY_OF_MONTH, 1 ); //设置日历中月份的第1天
-	SimpleDateFormat sdf = new SimpleDateFormat( "yyyy-MM-dd" );//格式化日期
-	String firstDayOfMonth = sdf.format( cal.getTime() );
-	return firstDayOfMonth;
+        Calendar cal = Calendar.getInstance();
+        cal.set( Calendar.YEAR, year ); //设置年份
+        cal.set( Calendar.MONTH, month - 1 ); //设置月份
+        cal.set( Calendar.DAY_OF_MONTH, 1 ); //设置日历中月份的第1天
+        SimpleDateFormat sdf = new SimpleDateFormat( "yyyy-MM-dd" );//格式化日期
+        String firstDayOfMonth = sdf.format( cal.getTime() );
+        return firstDayOfMonth;
     }
 
     /**
@@ -1257,14 +1256,14 @@ public class DateTimeKit {
      * @return
      */
     public static String getFirstDayOfLastMonth( Date date ) {
-	Calendar calendar = Calendar.getInstance();
-	calendar.setTime( date );
-	calendar.set( calendar.get( Calendar.YEAR ),
-			calendar.get( Calendar.MONTH ) - 1, 1 );
-	calendar.roll( Calendar.DAY_OF_MONTH, 0 );
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime( date );
+        calendar.set( calendar.get( Calendar.YEAR ),
+            calendar.get( Calendar.MONTH ) - 1, 1 );
+        calendar.roll( Calendar.DAY_OF_MONTH, 0 );
 
-	calendar.add( Calendar.DATE, -1 );
-	return calendar.getTime().toString();
+        calendar.add( Calendar.DATE, -1 );
+        return calendar.getTime().toString();
     }
 
     /**
@@ -1275,11 +1274,11 @@ public class DateTimeKit {
      * @return
      */
     public static String getLastDayOfLastMonth( Date date ) {
-	Calendar calendar = Calendar.getInstance();
-	calendar.setTime( date );
-	calendar.set( Calendar.DAY_OF_MONTH, 0 );//设置为1号,当前日期既为本月第一天
-	calendar.add( Calendar.DATE, -1 );
-	return calendar.getTime().toString();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime( date );
+        calendar.set( Calendar.DAY_OF_MONTH, 0 );//设置为1号,当前日期既为本月第一天
+        calendar.add( Calendar.DATE, -1 );
+        return calendar.getTime().toString();
     }
 
     /**
@@ -1291,17 +1290,17 @@ public class DateTimeKit {
      * @return
      */
     public static boolean isNextFewDays( Date date, int few ) {
-	Date now = new Date();
-	//判断是否满足大于当前时间
-	if ( now.getTime() > date.getTime() ) {
-	    return false;
-	}
-	//获取若干天以后时间
-	Date date_few = addDays( now, few );
-	if ( date.getTime() > date_few.getTime() ) {
-	    return false;
-	}
-	return true;
+        Date now = new Date();
+        //判断是否满足大于当前时间
+        if ( now.getTime() > date.getTime() ) {
+            return false;
+        }
+        //获取若干天以后时间
+        Date date_few = addDays( now, few );
+        if ( date.getTime() > date_few.getTime() ) {
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -1313,10 +1312,10 @@ public class DateTimeKit {
      * @return
      */
     public static Date addHours( Date date, int hour ) {
-	Calendar ca = Calendar.getInstance();
-	ca.setTime( date );
-	ca.add( Calendar.HOUR_OF_DAY, hour );
-	return ca.getTime();
+        Calendar ca = Calendar.getInstance();
+        ca.setTime( date );
+        ca.add( Calendar.HOUR_OF_DAY, hour );
+        return ca.getTime();
     }
 
     /**
@@ -1328,37 +1327,37 @@ public class DateTimeKit {
      * @return long[] 返回值为：{天, 时, 分, 秒}
      */
     public static long[] getDistanceTimes( String str1, String str2 ) {
-	DateFormat df = new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" );
-	Date one;
-	Date two;
-	long day = 0;
-	long hour = 0;
-	long min = 0;
-	long sec = 0;
-	try {
-	    if ( CommonUtil.isEmpty( str1 ) || CommonUtil.isEmpty( str2 ) ) {
-		return null;
-	    }
-	    one = df.parse( str1 );
-	    two = df.parse( str2 );
-	    long time1 = one.getTime();
-	    long time2 = two.getTime();
-	    long diff;
-	    if ( time1 < time2 ) {
-		diff = time2 - time1;
-	    } else {
-		diff = time1 - time2;
-	    }
-	    day = diff / ( 24 * 60 * 60 * 1000 );
-	    hour = ( diff / ( 60 * 60 * 1000 ) - day * 24 );
-	    min = ( ( diff / ( 60 * 1000 ) ) - day * 24 * 60 - hour * 60 );
-	    sec = ( diff / 1000 - day * 24 * 60 * 60 - hour * 60 * 60 - min * 60 );
-	} catch ( ParseException e ) {
-	    e.printStackTrace();
-	    return null;
-	}
-	long[] times = { day, hour, min, sec };
-	return times;
+        DateFormat df = new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" );
+        Date one;
+        Date two;
+        long day = 0;
+        long hour = 0;
+        long min = 0;
+        long sec = 0;
+        try {
+            if ( CommonUtil.isEmpty( str1 ) || CommonUtil.isEmpty( str2 ) ) {
+                return null;
+            }
+            one = df.parse( str1 );
+            two = df.parse( str2 );
+            long time1 = one.getTime();
+            long time2 = two.getTime();
+            long diff;
+            if ( time1 < time2 ) {
+                diff = time2 - time1;
+            } else {
+                diff = time1 - time2;
+            }
+            day = diff / ( 24 * 60 * 60 * 1000 );
+            hour = ( diff / ( 60 * 60 * 1000 ) - day * 24 );
+            min = ( ( diff / ( 60 * 1000 ) ) - day * 24 * 60 - hour * 60 );
+            sec = ( diff / 1000 - day * 24 * 60 * 60 - hour * 60 * 60 - min * 60 );
+        } catch ( ParseException e ) {
+            e.printStackTrace();
+            return null;
+        }
+        long[] times = { day, hour, min, sec };
+        return times;
     }
 
     /**
@@ -1367,13 +1366,13 @@ public class DateTimeKit {
      * @return
      */
     public static Long getStartTime() {
-	Date currentTime = new Date();
-	currentTime.setHours( 0 );
-	currentTime.setMinutes( 0 );
-	currentTime.setSeconds( 0 );
-	Date backupTime = DateUtils.addDays( currentTime, -1 );
-	System.out.println( DateTimeKit.format( currentTime, yyyyMMddHHmmssms ) );
-	return currentTime.getTime() / 1000;
+        Date currentTime = new Date();
+        currentTime.setHours( 0 );
+        currentTime.setMinutes( 0 );
+        currentTime.setSeconds( 0 );
+        //	Date backupTime = DateUtils.addDays( currentTime, -1 );
+        //	System.out.println( DateTimeKit.format( currentTime, yyyyMMddHHmmssms ) );
+        return currentTime.getTime() / 1000;
     }
 
     /**
@@ -1382,11 +1381,11 @@ public class DateTimeKit {
      * @return
      */
     public static Long getStartTime( Date date ) {
-	date.setHours( 0 );
-	date.setMinutes( 0 );
-	date.setSeconds( 0 );
-	System.out.println( DateTimeKit.format( date, yyyyMMddHHmmssms ) );
-	return date.getTime() / 1000;
+        date.setHours( 0 );
+        date.setMinutes( 0 );
+        date.setSeconds( 0 );
+        System.out.println( DateTimeKit.format( date, yyyyMMddHHmmssms ) );
+        return date.getTime() / 1000;
     }
 
     /**
@@ -1395,11 +1394,11 @@ public class DateTimeKit {
      * @return
      */
     public static Long getEndTime( Date date ) {
-	date.setHours( 23 );
-	date.setMinutes( 59 );
-	date.setSeconds( 59 );
-	System.out.println( DateTimeKit.format( date, yyyyMMddHHmmssms ) );
-	return date.getTime() / 1000;
+        date.setHours( 23 );
+        date.setMinutes( 59 );
+        date.setSeconds( 59 );
+        System.out.println( DateTimeKit.format( date, yyyyMMddHHmmssms ) );
+        return date.getTime() / 1000;
     }
 
     /**
@@ -1408,12 +1407,12 @@ public class DateTimeKit {
      * @throws ParseException
      */
     public static void main( String[] args ) throws ParseException {
-	//		20161216104457
-	Date date = DateTimeKit.parse( "20161216104457", "yyyyMMddHHmmss" );
-	System.out.println( date );
-	SimpleDateFormat sdf = new SimpleDateFormat( "yyyyMMddHHmmss" );
-	Date d = sdf.parse( "20161216104457" );
-	System.out.println( d.getTime() );
+        //		20161216104457
+        Date date = DateTimeKit.parse( "20161216104457", "yyyyMMddHHmmss" );
+        System.out.println( date );
+        SimpleDateFormat sdf = new SimpleDateFormat( "yyyyMMddHHmmss" );
+        Date d = sdf.parse( "20161216104457" );
+        System.out.println( d.getTime() );
     }
 
     /**
@@ -1422,18 +1421,18 @@ public class DateTimeKit {
      * @return
      */
     public static Long getEndTime() {
-	//	        Calendar todayEnd = Calendar.getInstance();
-	//	        todayEnd.set(Calendar.DATE, Calendar.DATE-1);
-	//	        todayEnd.set(Calendar.HOUR, 14);
-	//	        todayEnd.set(Calendar.MINUTE, 59);
-	//	        todayEnd.set(Calendar.SECOND, 59);
-	Date currentTime = new Date();
-	currentTime.setHours( 0 );
-	currentTime.setMinutes( 0 );
-	currentTime.setSeconds( 0 );
-	Date backupTime = currentTime;//DateUtils.addDays(currentTime,+1);
-	System.out.println( DateTimeKit.format( backupTime, yyyyMMddHHmmssms ) );
-	return backupTime.getTime() / 1000;
+        //	        Calendar todayEnd = Calendar.getInstance();
+        //	        todayEnd.set(Calendar.DATE, Calendar.DATE-1);
+        //	        todayEnd.set(Calendar.HOUR, 14);
+        //	        todayEnd.set(Calendar.MINUTE, 59);
+        //	        todayEnd.set(Calendar.SECOND, 59);
+        Date currentTime = new Date();
+        currentTime.setHours( 0 );
+        currentTime.setMinutes( 0 );
+        currentTime.setSeconds( 0 );
+        Date backupTime = currentTime;//DateUtils.addDays(currentTime,+1);
+        System.out.println( DateTimeKit.format( backupTime, yyyyMMddHHmmssms ) );
+        return backupTime.getTime() / 1000;
 
     }
 
@@ -1443,12 +1442,12 @@ public class DateTimeKit {
      * @return
      */
     public static Long getToDayTimeStamp() {
-	Date currentTime = new Date();
-	currentTime.setHours( 0 );
-	currentTime.setMinutes( 0 );
-	currentTime.setSeconds( 0 );
-	Date backupTime = currentTime;//DateUtils.addDays(currentTime,+1);
-	return backupTime.getTime();
+        Date currentTime = new Date();
+        currentTime.setHours( 0 );
+        currentTime.setMinutes( 0 );
+        currentTime.setSeconds( 0 );
+        Date backupTime = currentTime;//DateUtils.addDays(currentTime,+1);
+        return backupTime.getTime();
     }
 
     /**
@@ -1461,17 +1460,17 @@ public class DateTimeKit {
      * @return
      */
     public static long minsBetween( String sDate, String eDate, long time, String format ) {
-	SimpleDateFormat d = new SimpleDateFormat( format );// 格式化时间
-	long result = 0;
-	try {
-	    result = ( d.parse( eDate ).getTime() - d.parse( sDate )
-			    .getTime() ) / time;// 当前时间减去测试时间
-	    // 这个的除以1000得到秒，相应的60000得到分，3600000得到小时
-	     /*System.out.println("当前时间减去测试时间=" + result + "分钟");  */
-	} catch ( ParseException e ) {
-	    e.printStackTrace();
-	}
-	return result;
+        SimpleDateFormat d = new SimpleDateFormat( format );// 格式化时间
+        long result = 0;
+        try {
+            result = ( d.parse( eDate ).getTime() - d.parse( sDate )
+                .getTime() ) / time;// 当前时间减去测试时间
+            // 这个的除以1000得到秒，相应的60000得到分，3600000得到小时
+         /*System.out.println("当前时间减去测试时间=" + result + "分钟");  */
+        } catch ( ParseException e ) {
+            e.printStackTrace();
+        }
+        return result;
     }
 
     /**
@@ -1484,31 +1483,31 @@ public class DateTimeKit {
      * @return
      */
     public static Map< Integer,String > getWeekForDate2Date( String date1, String date2 ) {
-	Map< Integer,String > map = new HashMap<>();
-	try {
+        Map< Integer,String > map = new HashMap<>();
+        try {
 
-	    Calendar cal = Calendar.getInstance();
-	    Date startTime = parseDate( date1 );
-	    Date closeTime = parseDate( date2 );
-	    if ( startTime.getTime() >= closeTime.getTime() ) {
-		throw new Exception( "时间参数错误！" );
-	    }
-	    //获取两个日期之间相差的天数
-	    Long days = diffDays( closeTime, startTime );
-	    for ( int i = 0; i < days.intValue(); i++ ) {
-		if ( i > 6 ) {
-		    break;
-		}
-		Date date = addDays( startTime, i );
-		cal.setTime( date );
-		int week = cal.get( Calendar.DAY_OF_WEEK );
-		map.put( week, weekMap.get( week ) );
-	    }
+            Calendar cal = Calendar.getInstance();
+            Date startTime = parseDate( date1 );
+            Date closeTime = parseDate( date2 );
+            if ( startTime.getTime() >= closeTime.getTime() ) {
+                throw new Exception( "时间参数错误！" );
+            }
+            //获取两个日期之间相差的天数
+            Long days = diffDays( closeTime, startTime );
+            for ( int i = 0; i < days.intValue(); i++ ) {
+                if ( i > 6 ) {
+                    break;
+                }
+                Date date = addDays( startTime, i );
+                cal.setTime( date );
+                int week = cal.get( Calendar.DAY_OF_WEEK );
+                map.put( week, weekMap.get( week ) );
+            }
 
-	} catch ( Exception e ) {
-	    e.printStackTrace();
-	}
-	return map;
+        } catch ( Exception e ) {
+            e.printStackTrace();
+        }
+        return map;
     }
 
     /**
@@ -1517,9 +1516,9 @@ public class DateTimeKit {
      * @return
      */
     public static int getWeekToday() {
-	Calendar cal = Calendar.getInstance();
-	int week = cal.get( Calendar.DAY_OF_WEEK );
-	return week;
+        Calendar cal = Calendar.getInstance();
+        int week = cal.get( Calendar.DAY_OF_WEEK );
+        return week;
     }
 
     /**
@@ -1531,13 +1530,13 @@ public class DateTimeKit {
      * @return
      */
     public static long date2TimeStamp( String date_str, String format ) {
-	try {
-	    SimpleDateFormat sdf = new SimpleDateFormat( format );
-	    return sdf.parse( date_str ).getTime();
-	} catch ( Exception e ) {
-	    e.printStackTrace();
-	}
-	return 0;
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat( format );
+            return sdf.parse( date_str ).getTime();
+        } catch ( Exception e ) {
+            e.printStackTrace();
+        }
+        return 0;
     }
 
     /**
@@ -1552,21 +1551,21 @@ public class DateTimeKit {
      * @return
      */
     public static long timeBetween( String date_str, String format, String date_str1, String format1, long mill ) {
-	long result = 0;
-	try {
-	    long l = DateTimeKit.date2TimeStamp( date_str, format );
-	    long l1 = DateTimeKit.date2TimeStamp( date_str1, format1 );
-	    if ( l > l1 ) {
-		result = ( l - l1 ) / mill;
-	    } else {
-		result = ( l1 - l ) / mill;
-	    }
-	    // 这个的除以1000得到秒，相应的60000得到分，3600000得到小时
+        long result = 0;
+        try {
+            long l = DateTimeKit.date2TimeStamp( date_str, format );
+            long l1 = DateTimeKit.date2TimeStamp( date_str1, format1 );
+            if ( l > l1 ) {
+                result = ( l - l1 ) / mill;
+            } else {
+                result = ( l1 - l ) / mill;
+            }
+            // 这个的除以1000得到秒，相应的60000得到分，3600000得到小时
               /*System.out.println("当前时间减去测试时间=" + result + "分钟");  */
-	} catch ( Exception e ) {
-	    e.printStackTrace();
-	}
-	return result;
+        } catch ( Exception e ) {
+            e.printStackTrace();
+        }
+        return result;
     }
 
     /**
@@ -1575,11 +1574,11 @@ public class DateTimeKit {
      * @return
      */
     public static int[] minuteForTimes( int diff ) {
-	int day = diff / ( 24 * 60 );
-	int hour = ( diff / ( 60 ) - day * 24 );
-	int min = ( diff - day * 24 * 60 - hour * 60 );
-	int sec = ( diff - day * 24 * 60 - hour * 60 - min );
-	return new int[] { day, hour, min, sec };
+        int day = diff / ( 24 * 60 );
+        int hour = ( diff / ( 60 ) - day * 24 );
+        int min = ( diff - day * 24 * 60 - hour * 60 );
+        int sec = ( diff - day * 24 * 60 - hour * 60 - min );
+        return new int[] { day, hour, min, sec };
     }
 
     /**
@@ -1591,13 +1590,13 @@ public class DateTimeKit {
      * @return
      */
     public static String getFirstDayOfsMonth( int year, int month ) {
-	Calendar cal = Calendar.getInstance();
-	cal.set( Calendar.YEAR, year ); //设置年份
-	cal.set( Calendar.MONTH, month - 2 ); //设置月份
-	cal.set( Calendar.DAY_OF_MONTH, 1 ); //设置日历中月份的第1天
-	SimpleDateFormat sdf = new SimpleDateFormat( "yyyy-MM-dd" );//格式化日期
-	String firstDayOfMonth = sdf.format( cal.getTime() );
-	return firstDayOfMonth;
+        Calendar cal = Calendar.getInstance();
+        cal.set( Calendar.YEAR, year ); //设置年份
+        cal.set( Calendar.MONTH, month - 2 ); //设置月份
+        cal.set( Calendar.DAY_OF_MONTH, 1 ); //设置日历中月份的第1天
+        SimpleDateFormat sdf = new SimpleDateFormat( "yyyy-MM-dd" );//格式化日期
+        String firstDayOfMonth = sdf.format( cal.getTime() );
+        return firstDayOfMonth;
     }
 
     /**
@@ -1606,12 +1605,12 @@ public class DateTimeKit {
      * @return
      */
     public static String getTomorrowBegin() {
-	Calendar cal = Calendar.getInstance();
-	cal.setTime( new Date() );
-	cal.add( Calendar.DAY_OF_MONTH, 1 );
-	Date date = cal.getTime();
-	SimpleDateFormat sdf = new SimpleDateFormat( "yyyy-MM-dd" );
-	return sdf.format( date ) + " 00:00:00";
+        Calendar cal = Calendar.getInstance();
+        cal.setTime( new Date() );
+        cal.add( Calendar.DAY_OF_MONTH, 1 );
+        Date date = cal.getTime();
+        SimpleDateFormat sdf = new SimpleDateFormat( "yyyy-MM-dd" );
+        return sdf.format( date ) + " 00:00:00";
     }
 
     /**
@@ -1624,12 +1623,12 @@ public class DateTimeKit {
      * @return
      */
     public static boolean isBetweenByHHmmss( Date date1, Date date2 ) {
-	Date date = getNowDateSmallShort();
-	if ( date.getTime() > date1.getTime() && date.getTime() < date2.getTime() ) {
-	    return true;
-	} else {
-	    return false;
-	}
+        Date date = getNowDateSmallShort();
+        if ( date.getTime() > date1.getTime() && date.getTime() < date2.getTime() ) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -1642,38 +1641,38 @@ public class DateTimeKit {
      * @throws IllegalArgumentException
      */
     public static boolean isInTime( String sourceTime, String curTime ) {
-	if ( sourceTime == null || !sourceTime.contains( "-" ) || !sourceTime.contains( ":" ) ) {
-	    throw new IllegalArgumentException( "Illegal Argument arg:" + sourceTime );
-	}
-	if ( curTime == null || !curTime.contains( ":" ) ) {
-	    throw new IllegalArgumentException( "Illegal Argument arg:" + curTime );
-	}
-	String[] args = sourceTime.split( "-" );
-	SimpleDateFormat sdf = new SimpleDateFormat( "HH:mm" );
-	try {
-	    long now = sdf.parse( curTime ).getTime();
-	    long start = sdf.parse( args[0] ).getTime();
-	    long end = sdf.parse( args[1] ).getTime();
-	    if ( args[1].equals( "00:00" ) ) {
-		args[1] = "24:00";
-	    }
-	    if ( end < start ) {
-		if ( now >= end && now < start ) {
-		    return false;
-		} else {
-		    return true;
-		}
-	    } else {
-		if ( now >= start && now < end ) {
-		    return true;
-		} else {
-		    return false;
-		}
-	    }
-	} catch ( ParseException e ) {
-	    e.printStackTrace();
-	    throw new IllegalArgumentException( "Illegal Argument arg:" + sourceTime );
-	}
+        if ( sourceTime == null || !sourceTime.contains( "-" ) || !sourceTime.contains( ":" ) ) {
+            throw new IllegalArgumentException( "Illegal Argument arg:" + sourceTime );
+        }
+        if ( curTime == null || !curTime.contains( ":" ) ) {
+            throw new IllegalArgumentException( "Illegal Argument arg:" + curTime );
+        }
+        String[] args = sourceTime.split( "-" );
+        SimpleDateFormat sdf = new SimpleDateFormat( "HH:mm" );
+        try {
+            long now = sdf.parse( curTime ).getTime();
+            long start = sdf.parse( args[0] ).getTime();
+            long end = sdf.parse( args[1] ).getTime();
+            if ( args[1].equals( "00:00" ) ) {
+                args[1] = "24:00";
+            }
+            if ( end < start ) {
+                if ( now >= end && now < start ) {
+                    return false;
+                } else {
+                    return true;
+                }
+            } else {
+                if ( now >= start && now < end ) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        } catch ( ParseException e ) {
+            e.printStackTrace();
+            throw new IllegalArgumentException( "Illegal Argument arg:" + sourceTime );
+        }
 
     }
 
@@ -1691,12 +1690,12 @@ public class DateTimeKit {
      * @throws Exception
      */
     public static int dateCompare( String source, String traget, String type ) throws Exception {
-	int ret = 2;
-	SimpleDateFormat format = new SimpleDateFormat( type );
-	Date sourcedate = format.parse( source );
-	Date tragetdate = format.parse( traget );
-	ret = sourcedate.compareTo( tragetdate );
-	return ret;
+        int ret = 2;
+        SimpleDateFormat format = new SimpleDateFormat( type );
+        Date sourcedate = format.parse( source );
+        Date tragetdate = format.parse( traget );
+        ret = sourcedate.compareTo( tragetdate );
+        return ret;
     }
 
 }

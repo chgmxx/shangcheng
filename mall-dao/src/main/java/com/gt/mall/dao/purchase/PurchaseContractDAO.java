@@ -15,37 +15,41 @@ import java.util.Map;
  * @author yangqian
  * @since 2017-07-31
  */
-public interface PurchaseContractDAO extends BaseMapper<PurchaseContract> {
+public interface PurchaseContractDAO extends BaseMapper< PurchaseContract > {
 
     /**
      * 分页查询
      *
      * @param parms contractTitle:合同标题，busId:商家id, pageFirst:页数,pageLast：记录数
+     *
      * @return list
      */
-    List<Map<String, Object>> findList(Map<String, Object> parms);
+    List< Map< String,Object > > findList( Map< String,Object > parms );
 
     /**
      * 分页查询的订单条数
      *
      * @param parms contractTitle:合同标题，busId:商家id
+     *
      * @return 数量
      */
-    Integer findListCount(Map<String, Object> parms);
+    Integer findListCount( Map< String,Object > parms );
 
     /**
      * 批量删除合同
      *
      * @param contractIds Id集合
+     *
      * @return 是否成功
      */
-    int deleteContracts(@Param("contractIds") String contractIds);
+    int deleteContracts( @Param( "contractIds" ) String contractIds );
 
     /**
      * 所有合同
      *
      * @param busId 商家id
+     *
      * @return list
      */
-    List<Map<String, Object>> findAllList(Integer busId);
+    List< Map< String,Object > > findAllList( Integer busId );
 }

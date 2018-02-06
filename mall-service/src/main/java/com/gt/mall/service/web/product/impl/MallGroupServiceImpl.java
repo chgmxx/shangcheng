@@ -51,433 +51,433 @@ public class MallGroupServiceImpl extends BaseServiceImpl< MallGroupDAO,MallGrou
 
     @Override
     public PageUtil findGroupByPage( Map< String,Object > param, List< Map< String,Object > > shoplist, int userId ) {
-	int curPage = CommonUtil.isEmpty( param.get( "curPage" ) ) ? 1 : CommonUtil.toInteger( param.get( "curPage" ) );
-	param.put( "curPage", curPage );
-	int pageSize = 10;
-	param.put( "shoplist", shoplist );
-	// 统计商品分组
-	int count = mallGroupDAO.selectGroupByCount( param );
+        int curPage = CommonUtil.isEmpty( param.get( "curPage" ) ) ? 1 : CommonUtil.toInteger( param.get( "curPage" ) );
+        param.put( "curPage", curPage );
+        int pageSize = 10;
+        param.put( "shoplist", shoplist );
+        // 统计商品分组
+        int count = mallGroupDAO.selectGroupByCount( param );
 
-	String url = "/mPro/group/group_index.do";
-	if ( CommonUtil.isNotEmpty( param.get( "isLabel" ) ) ) {
-	    if ( param.get( "isLabel" ).toString().equals( "1" ) ) {
-		url = "/mPro/group/label_index.do";
-	    }
-	}
-	PageUtil page = new PageUtil( curPage, pageSize, count, url );
-	int firstNum = pageSize * ( ( page.getCurPage() <= 0 ? 1 : page.getCurPage() ) - 1 );
-	param.put( "firstNum", firstNum );// 起始页
-	param.put( "maxNum", pageSize );// 每页显示分组的数量
+        String url = "/mPro/group/group_index.do";
+        if ( CommonUtil.isNotEmpty( param.get( "isLabel" ) ) ) {
+            if ( param.get( "isLabel" ).toString().equals( "1" ) ) {
+                url = "/mPro/group/label_index.do";
+            }
+        }
+        PageUtil page = new PageUtil( curPage, pageSize, count, url );
+        int firstNum = pageSize * ( ( page.getCurPage() <= 0 ? 1 : page.getCurPage() ) - 1 );
+        param.put( "firstNum", firstNum );// 起始页
+        param.put( "maxNum", pageSize );// 每页显示分组的数量
 
-	if ( count > 0 ) {// 判断商品分组是否有数据
-	    if ( CommonUtil.isEmpty( param.get( "type" ) ) ) {
-		param.put( "type", 0 );
-	    }
-	    List< Map< String,Object > > groupList = mallGroupDAO.selectGroupByPage( param );
-	    List< Integer > groupIds = new ArrayList<>();
-	    if ( groupList != null && groupList.size() > 0 && param.containsKey( "isProNum" ) ) {
-		for ( Map< String,Object > map : groupList ) {
-		    groupIds.add( CommonUtil.toInteger( map.get( "id" ) ) );
-		    map.put( "COUNT", "0" );//默认商品数量为0
-		}
-		Map< String,Object > params = new HashMap<>();
-		params.put( "groupIds", groupIds );
-		params.put( "userId", userId );
-		List< Map< String,Object > > productList = mallProductDAO.countProductByGroup( params );
-		if ( productList != null && productList.size() > 0 ) {
-		    for ( Map< String,Object > map : groupList ) {
-			int id = CommonUtil.toInteger( map.get( "id" ) );
-			if ( productList == null || productList.size() == 0 ) {
-			    break;
-			}
-			for ( Map< String,Object > productMap : productList ) {
-			    int groupId = CommonUtil.toInteger( productMap.get( "groupId" ) );
-			    if ( groupId == id ) {
-				map.put( "COUNT", productMap.get( "counts" ) );
-				productList.remove( productMap );
-				break;
-			    }
-			}
-		    }
-		}
+        if ( count > 0 ) {// 判断商品分组是否有数据
+            if ( CommonUtil.isEmpty( param.get( "type" ) ) ) {
+                param.put( "type", 0 );
+            }
+            List< Map< String,Object > > groupList = mallGroupDAO.selectGroupByPage( param );
+            List< Integer > groupIds = new ArrayList<>();
+            if ( groupList != null && groupList.size() > 0 && param.containsKey( "isProNum" ) ) {
+                for ( Map< String,Object > map : groupList ) {
+                    groupIds.add( CommonUtil.toInteger( map.get( "id" ) ) );
+                    map.put( "COUNT", "0" );//默认商品数量为0
+                }
+                Map< String,Object > params = new HashMap<>();
+                params.put( "groupIds", groupIds );
+                params.put( "userId", userId );
+                List< Map< String,Object > > productList = mallProductDAO.countProductByGroup( params );
+                if ( productList != null && productList.size() > 0 ) {
+                    for ( Map< String,Object > map : groupList ) {
+                        int id = CommonUtil.toInteger( map.get( "id" ) );
+                        for ( Map< String,Object > productMap : productList ) {
+                            int groupId = CommonUtil.toInteger( productMap.get( "groupId" ) );
+                            if ( groupId == id ) {
+                                map.put( "COUNT", productMap.get( "counts" ) );
+                                productList.remove( productMap );
+                                break;
+                            }
+                        }
+                    }
+                }
 
-	    }
-	    page.setSubList( groupList );
-	}
-	return page;
+            }
+            page.setSubList( groupList );
+        }
+        return page;
     }
 
     @Override
     public PageUtil findGroupDialogByPage( Map< String,Object > param, List< Map< String,Object > > shoplist, int userId ) {
-	int curPage = CommonUtil.isEmpty( param.get( "curPage" ) ) ? 1 : CommonUtil.toInteger( param.get( "curPage" ) );
-	param.put( "curPage", curPage );
-	int pageSize = 10;
-	param.put( "shoplist", shoplist );
-	// 统计商品分组
-	int count = mallGroupDAO.selectGroupByCount( param );
+        int curPage = CommonUtil.isEmpty( param.get( "curPage" ) ) ? 1 : CommonUtil.toInteger( param.get( "curPage" ) );
+        param.put( "curPage", curPage );
+        int pageSize = 10;
+        param.put( "shoplist", shoplist );
+        // 统计商品分组
+        int count = mallGroupDAO.selectGroupByCount( param );
 
-	PageUtil page = new PageUtil( curPage, pageSize, count, "" );
-	int firstNum = pageSize * ( ( page.getCurPage() <= 0 ? 1 : page.getCurPage() ) - 1 );
-	param.put( "firstNum", firstNum );// 起始页
-	param.put( "maxNum", pageSize );// 每页显示分组的数量
+        PageUtil page = new PageUtil( curPage, pageSize, count, "" );
+        int firstNum = pageSize * ( ( page.getCurPage() <= 0 ? 1 : page.getCurPage() ) - 1 );
+        param.put( "firstNum", firstNum );// 起始页
+        param.put( "maxNum", pageSize );// 每页显示分组的数量
 
-	if ( count > 0 ) {// 判断商品分组是否有数据
-	    if ( CommonUtil.isEmpty( param.get( "type" ) ) ) {
-		param.put( "type", 0 );
-	    }
-	    List< Map< String,Object > > groupList = mallGroupDAO.selectGroupDialogByPage( param );
-	    page.setSubList( groupList );
-	}
-	return page;
+        if ( count > 0 ) {// 判断商品分组是否有数据
+            if ( CommonUtil.isEmpty( param.get( "type" ) ) ) {
+                param.put( "type", 0 );
+            }
+            List< Map< String,Object > > groupList = mallGroupDAO.selectGroupDialogByPage( param );
+            page.setSubList( groupList );
+        }
+        return page;
     }
 
     @Transactional( rollbackFor = Exception.class )
     @Override
     public boolean saveOrUpdateGroup( MallGroup group, List< MallImageAssociative > imageList, int userId ) {
-	boolean flag = true;
-	int groupId = 0;
-	// 判断分组id是否为空
-	if ( CommonUtil.isEmpty( group.getId() ) ) {
-	    group.setUserId( userId );
-	    group.setCreateTime( new Date() );
-	    // 添加商品分组
-	    groupId = mallGroupDAO.insert( group );
-	    // 批量添加商品分组关联表
-	    if ( imageList != null && imageList.size() > 0 ) {
-		for ( int i = 0; i < imageList.size(); i++ ) {
-		    MallImageAssociative image = imageList.get( i );
-		    image.setAssId( group.getId() );
-		    mallImageAssociativeDAO.insert( image );
-		}
-	    }
-	} else {
-	    group.setEditTime( new Date() );
-	    group.setEditUserId( userId );
-	    groupId = mallGroupDAO.updateById( group );
+        boolean flag = true;
+        int groupId = 0;
+        // 判断分组id是否为空
+        if ( CommonUtil.isEmpty( group.getId() ) ) {
+            group.setUserId( userId );
+            group.setCreateTime( new Date() );
+            // 添加商品分组
+            groupId = mallGroupDAO.insert( group );
+            // 批量添加商品分组关联表
+            if ( imageList != null && imageList.size() > 0 ) {
+                for ( int i = 0; i < imageList.size(); i++ ) {
+                    MallImageAssociative image = imageList.get( i );
+                    image.setAssId( group.getId() );
+                    mallImageAssociativeDAO.insert( image );
+                }
+            }
+        } else {
+            group.setEditTime( new Date() );
+            group.setEditUserId( userId );
+            groupId = mallGroupDAO.updateById( group );
 
-	    Map< String,Object > imageMap = new HashMap< String,Object >();
-	    imageMap.put( "assId", group.getId() );
-	    imageMap.put( "assType", "2" );
-	    //所有关连图片
-	    List< MallImageAssociative > allIImageList = mallImageAssociativeDAO.selectImageByAssId( imageMap );
+            Map< String,Object > imageMap = new HashMap< String,Object >();
+            imageMap.put( "assId", group.getId() );
+            imageMap.put( "assType", "2" );
+            //所有关连图片
+            List< MallImageAssociative > allIImageList = mallImageAssociativeDAO.selectImageByAssId( imageMap );
 
-	    if ( imageList != null && imageList.size() > 0 ) {
-		for ( MallImageAssociative image : imageList ) {
-		    if ( CommonUtil.isEmpty( image.getId() ) ) {
-			image.setAssId( group.getId() );
-			mallImageAssociativeDAO.insert( image );
-		    } else {
-			mallImageAssociativeDAO.updateById( image );
-			//1.remove 存在的数据
-			for ( MallImageAssociative mallImage : allIImageList ) {
-			    if ( image.getId().equals( mallImage.getId() ) ) {
-				allIImageList.remove( mallImage );
-				break;
-			    }
-			}
-		    }
-		}
-	    }
-	    //2.还存在的数据，进行删除
-	    if ( allIImageList != null && allIImageList.size() > 0 ) {
-		for ( MallImageAssociative image : allIImageList ) {
-		    image.setIsDelete( 1 );
-		    mallImageAssociativeDAO.updateById( image );
-		}
-	    }
-	}
-	group = mallGroupDAO.selectById( group.getId() );
-	// 修改父类分组
-	if ( group.getGroupPId() != null && group.getGroupPId() > 0 ) {
-	    MallGroup parent = new MallGroup();
-	    parent.setId( group.getGroupPId() );
-	    parent.setIsChild( 1 );
-	    mallGroupDAO.updateById( parent );
-	}
-	if ( groupId > 0 ) {
-	    return true;
-	}
-	return false;
+            if ( imageList != null && imageList.size() > 0 ) {
+                for ( MallImageAssociative image : imageList ) {
+                    if ( CommonUtil.isEmpty( image.getId() ) ) {
+                        image.setAssId( group.getId() );
+                        mallImageAssociativeDAO.insert( image );
+                    } else {
+                        mallImageAssociativeDAO.updateById( image );
+                        //1.remove 存在的数据
+                        for ( MallImageAssociative mallImage : allIImageList ) {
+                            if ( image.getId().equals( mallImage.getId() ) ) {
+                                allIImageList.remove( mallImage );
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            //2.还存在的数据，进行删除
+            if ( allIImageList != null && allIImageList.size() > 0 ) {
+                for ( MallImageAssociative image : allIImageList ) {
+                    image.setIsDelete( 1 );
+                    mallImageAssociativeDAO.updateById( image );
+                }
+            }
+        }
+        group = mallGroupDAO.selectById( group.getId() );
+        // 修改父类分组
+        if ( group.getGroupPId() != null && group.getGroupPId() > 0 ) {
+            MallGroup parent = new MallGroup();
+            parent.setId( group.getGroupPId() );
+            parent.setIsChild( 1 );
+            mallGroupDAO.updateById( parent );
+        }
+        if ( groupId > 0 ) {
+            return true;
+        }
+        return false;
     }
 
     @Override
     public boolean deleteGroup( Integer id ) throws Exception {
-	try {
-	    MallGroup group = new MallGroup();
-	    group.setId( id );
-	    group.setIsDelete( 1 );
-	    int count = mallGroupDAO.updateById( group );//逻辑删除商品分组
+        try {
+            MallGroup group = new MallGroup();
+            group.setId( id );
+            group.setIsDelete( 1 );
+            int count = mallGroupDAO.updateById( group );//逻辑删除商品分组
 
-	    //查询父类的分组
-	    Wrapper< MallGroup > groupWrapper = new EntityWrapper<>();
-	    groupWrapper.where( "group_p_id = {0}", id );
-	    List< MallGroup > groupList = mallGroupDAO.selectList( groupWrapper );
-	    if ( groupList != null && groupList.size() > 0 ) {
-		mallGroupDAO.updateByGroupId( groupList );// 删除父类商品分组
-	    }
+            //查询父类的分组
+            Wrapper< MallGroup > groupWrapper = new EntityWrapper<>();
+            groupWrapper.where( "group_p_id = {0}", id );
+            List< MallGroup > groupList = mallGroupDAO.selectList( groupWrapper );
+            if ( groupList != null && groupList.size() > 0 ) {
+                mallGroupDAO.updateByGroupId( groupList );// 删除父类商品分组
+            }
 
-	    //查询父类下有没有子类列表
-	    MallGroup mallGroup = mallGroupDAO.selectById( id );
-	    if ( mallGroup != null ) {
-		Wrapper< MallGroup > wrapper = new EntityWrapper<>();
-		wrapper.where( "is_delete =0 and group_p_id = {0}", mallGroup.getGroupPId() );
-		List< MallGroup > groupPList = mallGroupDAO.selectList( wrapper );
-		if ( groupPList != null && groupPList.size() == 0 ) {
-		    MallGroup groupP = new MallGroup();
-		    groupP.setId( mallGroup.getGroupPId() );
-		    groupP.setIsChild( 0 );
-		    mallGroupDAO.updateById( groupP );//逻辑删除商品分组
-		}
-	    }
-	    if ( count > 0 ) {
-		return true;
-	    }
-	} catch ( Exception e ) {
-	    throw new Exception( "删除商品分组失败：" + e.getMessage() );
-	}
-	return false;
+            //查询父类下有没有子类列表
+            MallGroup mallGroup = mallGroupDAO.selectById( id );
+            if ( mallGroup != null ) {
+                Wrapper< MallGroup > wrapper = new EntityWrapper<>();
+                wrapper.where( "is_delete =0 and group_p_id = {0}", mallGroup.getGroupPId() );
+                List< MallGroup > groupPList = mallGroupDAO.selectList( wrapper );
+                if ( groupPList != null && groupPList.size() == 0 ) {
+                    MallGroup groupP = new MallGroup();
+                    groupP.setId( mallGroup.getGroupPId() );
+                    groupP.setIsChild( 0 );
+                    mallGroupDAO.updateById( groupP );//逻辑删除商品分组
+                }
+            }
+            if ( count > 0 ) {
+                return true;
+            }
+        } catch ( Exception e ) {
+            throw new Exception( "删除商品分组失败：" + e.getMessage() );
+        }
+        return false;
     }
 
     @Override
     public MallGroup findGroupById( Integer id ) {
-	return mallGroupDAO.selectById( id );
+        return mallGroupDAO.selectById( id );
     }
 
     @Override
     public List< Map< String,Object > > findGroupByShopId( Map< String,Object > maps ) {
-	return mallGroupDAO.selectGroupByPage( maps );
+        return mallGroupDAO.selectGroupByPage( maps );
     }
 
     @Override
     public List< MallGroup > selectGroupByShopId( Integer shopId, Integer groupPId ) {
-	Wrapper< MallGroup > groupWrapper = new EntityWrapper<>();
-	groupWrapper.where( "is_delete = 0 and shop_id = {0}", shopId );
-	if ( groupPId == 0 ) {
-	    groupWrapper.where( "is_first_parents = 1" );
-	}
-	return mallGroupDAO.selectList( groupWrapper );
+        Wrapper< MallGroup > groupWrapper = new EntityWrapper<>();
+        groupWrapper.where( "is_delete = 0 and shop_id = {0}", shopId );
+        if ( groupPId == 0 ) {
+            groupWrapper.where( "is_first_parents = 1" );
+        }
+        return mallGroupDAO.selectList( groupWrapper );
     }
 
     @Override
     public List< MallGroup > selectPGroupByShopId( Map< String,Object > params ) {
-	Wrapper< MallGroup > groupWrapper = new EntityWrapper<>();
-	groupWrapper.where( "is_delete=0 and is_first_parents=1 and shop_id = {0}", params.get( "shopId" ) ).orderBy( "sorc", true );
-	return mallGroupDAO.selectList( groupWrapper );
+        Wrapper< MallGroup > groupWrapper = new EntityWrapper<>();
+        groupWrapper.where( "is_delete=0 and is_first_parents=1 and shop_id = {0}", params.get( "shopId" ) ).orderBy( "sorc", true );
+        return mallGroupDAO.selectList( groupWrapper );
     }
 
     @Override
     public List< Map< String,Object > > selectGroupByParent( Map< String,Object > param ) {
-	Map< String,Object > proGroupMap = new HashMap< String,Object >();
-	if ( CommonUtil.isNotEmpty( param.get( "group" ) ) ) {
-	    String group = param.get( "group" ).toString();
-	    String[] str = group.split( "," );
-	    for ( String string : str ) {
-		if ( CommonUtil.isNotEmpty( string ) ) {
-		    proGroupMap.put( string, string );
-		}
-	    }
-	}
-	List< Map< String,Object > > groupList = new ArrayList< Map< String,Object > >();
-	List< Map< String,Object > > list = mallGroupDAO.selectGroupByParent( param );
-	if ( list != null && list.size() > 0 ) {
-	    for ( Map< String,Object > map : list ) {
-		boolean flag = false;
-		if ( CommonUtil.isNotEmpty( map.get( "groupPId" ) ) ) {
-		    int groupPId = CommonUtil.toInteger( map.get( "groupPId" ) );
-		    if ( groupPId > 0 ) {
-			flag = true;
-		    }
-		}
-		int select = 0;
-		if ( CommonUtil.isNotEmpty( proGroupMap ) ) {
-		    if ( CommonUtil.isNotEmpty( proGroupMap.get( map.get( "id" ).toString() ) ) ) {
-			select = 1;
-		    }
-		}
-		map.put( "select", select );
-		if ( flag ) {
-		    if ( groupList != null && groupList.size() > 0 ) {
-			for ( Map< String,Object > map2 : groupList ) {
-			    if ( map2.get( "id" ).toString().equals( map.get( "groupPId" ).toString() ) ) {
-				List< Map > childList = new ArrayList<>();
-				if ( CommonUtil.isNotEmpty( map2.get( "childGroupList" ) ) ) {
-				    childList = JSONArray.parseArray( JSON.toJSONString( map2.get( "childGroupList" ) ), Map.class );
-				}
-				childList.add( map );
-				map2.put( "childGroupList", childList );
-				break;
-			    }
-			}
-		    } else {
-			groupList.add( map );
-		    }
-		} else {
-		    groupList.add( map );
-		}
+        Map< String,Object > proGroupMap = new HashMap< String,Object >();
+        if ( CommonUtil.isNotEmpty( param.get( "group" ) ) ) {
+            String group = param.get( "group" ).toString();
+            String[] str = group.split( "," );
+            for ( String string : str ) {
+                if ( CommonUtil.isNotEmpty( string ) ) {
+                    proGroupMap.put( string, string );
+                }
+            }
+        }
+        List< Map< String,Object > > groupList = new ArrayList< Map< String,Object > >();
+        List< Map< String,Object > > list = mallGroupDAO.selectGroupByParent( param );
+        if ( list != null && list.size() > 0 ) {
+            for ( Map< String,Object > map : list ) {
+                boolean flag = false;
+                if ( CommonUtil.isNotEmpty( map.get( "groupPId" ) ) ) {
+                    int groupPId = CommonUtil.toInteger( map.get( "groupPId" ) );
+                    if ( groupPId > 0 ) {
+                        flag = true;
+                    }
+                }
+                int select = 0;
+                if ( CommonUtil.isNotEmpty( proGroupMap ) ) {
+                    if ( CommonUtil.isNotEmpty( proGroupMap.get( map.get( "id" ).toString() ) ) ) {
+                        select = 1;
+                    }
+                }
+                map.put( "select", select );
+                if ( flag ) {
+                    if ( groupList != null && groupList.size() > 0 ) {
+                        for ( Map< String,Object > map2 : groupList ) {
+                            if ( map2.get( "id" ).toString().equals( map.get( "groupPId" ).toString() ) ) {
+                                List< Map > childList = new ArrayList<>();
+                                if ( CommonUtil.isNotEmpty( map2.get( "childGroupList" ) ) ) {
+                                    childList = JSONArray.parseArray( JSON.toJSONString( map2.get( "childGroupList" ) ), Map.class );
+                                }
+                                childList.add( map );
+                                map2.put( "childGroupList", childList );
+                                break;
+                            }
+                        }
+                    } else {
+                        groupList.add( map );
+                    }
+                } else {
+                    groupList.add( map );
+                }
 
-	    }
-	}
-	return groupList;
+            }
+        }
+        return groupList;
     }
 
     @Override
     public boolean saveOrUpdateGroupLabel( List< MallSearchLabel > labelList, int userId ) {
-	int count = 0;
-	if ( labelList != null && labelList.size() > 0 ) {
-	    for ( MallSearchLabel label : labelList ) {
-		if ( CommonUtil.isNotEmpty( label ) ) {
-		    label.setUserId( userId );
-		    if ( CommonUtil.isEmpty( label.getId() ) ) {
-			MallSearchLabel sLabel = mallSearchLabelDAO.selectOne( label );
-			if ( CommonUtil.isNotEmpty( sLabel ) ) {
-			    label.setId( sLabel.getId() );
-			}
-		    }
-		    if ( CommonUtil.isNotEmpty( label.getId() ) ) {
-			count = mallSearchLabelDAO.updateById( label );
-		    } else {
-			label.setCreateTime( new Date() );
-			count = mallSearchLabelDAO.insert( label );
-		    }
-		}
-	    }
-	}
-	if ( count > 0 ) {
-	    return true;
-	}
-	return false;
+        int count = 0;
+        if ( labelList != null && labelList.size() > 0 ) {
+            for ( MallSearchLabel label : labelList ) {
+                if ( CommonUtil.isNotEmpty( label ) ) {
+                    label.setUserId( userId );
+                    if ( CommonUtil.isEmpty( label.getId() ) ) {
+                        MallSearchLabel sLabel = mallSearchLabelDAO.selectOne( label );
+                        if ( CommonUtil.isNotEmpty( sLabel ) ) {
+                            label.setId( sLabel.getId() );
+                        }
+                    }
+                    if ( CommonUtil.isNotEmpty( label.getId() ) ) {
+                        count = mallSearchLabelDAO.updateById( label );
+                    } else {
+                        label.setCreateTime( new Date() );
+                        count = mallSearchLabelDAO.insert( label );
+                    }
+                }
+            }
+        }
+        if ( count > 0 ) {
+            return true;
+        }
+        return false;
     }
 
     @Override
     public List< MallGroup > selectChildGroupByPId( Map< String,Object > params ) {
-	Wrapper< MallGroup > groupWrapper = new EntityWrapper<>();
-	String sql = "";
-	if ( CommonUtil.isNotEmpty( params.get( "groupPId" ) ) ) {
-	    sql += " and group_p_id = " + params.get( "groupPId" );
-	}
-	if ( CommonUtil.isNotEmpty( params.get( "shopId" ) ) ) {
-	    sql += " and shop_id = " + params.get( "shopId" );
-	}
-	groupWrapper.where( "is_delete=0  " + sql );
-	List< MallGroup > groupList = mallGroupDAO.selectList( groupWrapper );
-	List< Integer > groupIds = new ArrayList<>();
-	if ( groupList != null && groupList.size() > 0 ) {
-	    for ( MallGroup mallGroup : groupList ) {
-		if ( !groupIds.contains( mallGroup.getId() ) ) {
-		    groupIds.add( mallGroup.getId() );
-		}
-	    }
-	    Map< String,Object > imageParams = new HashMap<>();
-	    imageParams.put( "isMainImages", 1 );
-	    imageParams.put( "assType", 2 );
-	    imageParams.put( "assIds", groupIds );
-	    List< Map< String,Object > > imageList = mallImageAssociativeDAO.selectByAssIds( imageParams );
-	    if ( imageList != null && imageList.size() > 0 ) {
-		for ( MallGroup mallGroup : groupList ) {
-		    for ( Map< String,Object > imageMap : imageList ) {
-			if ( mallGroup.getId().toString().equals( imageMap.get( "ass_id" ).toString() ) ) {
-			    mallGroup.setImageUrl( imageMap.get( "image_url" ).toString() );
-			    break;
-			}
-		    }
-		}
-	    }
+        Wrapper< MallGroup > groupWrapper = new EntityWrapper<>();
+        String sql = "";
+        if ( CommonUtil.isNotEmpty( params.get( "groupPId" ) ) ) {
+            sql += " and group_p_id = " + params.get( "groupPId" );
+        }
+        if ( CommonUtil.isNotEmpty( params.get( "shopId" ) ) ) {
+            sql += " and shop_id = " + params.get( "shopId" );
+        }
+        groupWrapper.where( "is_delete=0  " + sql );
+        List< MallGroup > groupList = mallGroupDAO.selectList( groupWrapper );
+        List< Integer > groupIds = new ArrayList<>();
+        if ( groupList != null && groupList.size() > 0 ) {
+            for ( MallGroup mallGroup : groupList ) {
+                if ( !groupIds.contains( mallGroup.getId() ) ) {
+                    groupIds.add( mallGroup.getId() );
+                }
+            }
+            Map< String,Object > imageParams = new HashMap<>();
+            imageParams.put( "isMainImages", 1 );
+            imageParams.put( "assType", 2 );
+            imageParams.put( "assIds", groupIds );
+            List< Map< String,Object > > imageList = mallImageAssociativeDAO.selectByAssIds( imageParams );
+            if ( imageList != null && imageList.size() > 0 ) {
+                for ( MallGroup mallGroup : groupList ) {
+                    for ( Map< String,Object > imageMap : imageList ) {
+                        if ( mallGroup.getId().toString().equals( imageMap.get( "ass_id" ).toString() ) ) {
+                            mallGroup.setImageUrl( imageMap.get( "image_url" ).toString() );
+                            break;
+                        }
+                    }
+                }
+            }
 
-	}
-	return groupList;
+        }
+        return groupList;
     }
 
     @Override
     public boolean clearSearchKeyWord( Map< String,Object > params ) {
 
-	//	return mallSearchKeywordDAO.update(  );
-	Wrapper< MallSearchKeyword > keywordWrapper = new EntityWrapper<>();
-	String sql = " user_id=" + params.get( "userId" );
-	if ( CommonUtil.isNotEmpty( params.get( "shopId" ) ) ) {
-	    sql += " and shop_id = " + params.get( "shopId" );
-	}
-	keywordWrapper.where( sql );
-	MallSearchKeyword keyword = new MallSearchKeyword();
-	keyword.setIsDelete( 1 );
-	int count = mallSearchKeywordDAO.update( keyword, keywordWrapper );
-	if ( count > 0 ) {
-	    return true;
-	}
-	throw new BusinessException( ResponseEnums.ERROR.getCode(), "清空历史搜索接口失败" );
+        //	return mallSearchKeywordDAO.update(  );
+        Wrapper< MallSearchKeyword > keywordWrapper = new EntityWrapper<>();
+        String sql = " user_id=" + params.get( "userId" );
+        if ( CommonUtil.isNotEmpty( params.get( "shopId" ) ) ) {
+            sql += " and shop_id = " + params.get( "shopId" );
+        }
+        keywordWrapper.where( sql );
+        MallSearchKeyword keyword = new MallSearchKeyword();
+        keyword.setIsDelete( 1 );
+        int count = mallSearchKeywordDAO.update( keyword, keywordWrapper );
+        if ( count > 0 ) {
+            return true;
+        }
+        throw new BusinessException( ResponseEnums.ERROR.getCode(), "清空历史搜索接口失败" );
     }
 
     @Override
-    public void copyProductGroupByProduct( Map< String,Object > params, MallProduct product ) {
-	List< Map< String,Object > > productGroupList = mallProductGroupDAO.selectgroupsByProductId( params );
-	if ( productGroupList != null && productGroupList.size() > 0 ) {
-	    for ( Map< String,Object > map2 : productGroupList ) {
-		MallProductGroup productGroup = new MallProductGroup();
-		productGroup.setProductId( product.getId() );
+    public void copyProductGroupByProduct( Map< String,Object > params, MallProduct product, List< Map< String,Object > > productGroupList ) {
+        //List< Map< String,Object > > productGroupList = mallProductGroupDAO.selectgroupsByProductId( params );
+        if ( productGroupList != null && productGroupList.size() > 0 ) {
+            for ( Map< String,Object > map2 : productGroupList ) {
+                if ( !map2.get( "productId" ).toString().equals( product.getId().toString() ) ) {
+                    continue;
+                }
+                MallProductGroup productGroup = new MallProductGroup();
+                productGroup.setProductId( product.getId() );
 
-		int groupPId = 0;
-		int groupId = 0;
-		//判断分组是否存在
-		if ( CommonUtil.isNotEmpty( map2.get( "groupPId" ) ) ) {//判断是否有父类 的分组
-		    groupPId = CommonUtil.toInteger( map2.get( "groupPId" ) );
-		    if ( groupPId > 0 ) {
-			MallGroup group = mallGroupDAO.selectById( groupPId );
-			groupPId = insertGroup( map2, product, group.getGroupName(), group.getIsChild(), group.getIsFirstParents(), 0 );
-		    }
-		}
-		if ( CommonUtil.isNotEmpty( map2.get( "groupId" ) ) ) {//判断是否有分组
-		    groupId = CommonUtil.toInteger( map2.get( "groupId" ) );
-		    if ( groupId > 0 ) {
-			groupId = insertGroup( map2, product, CommonUtil.toString( map2.get( "groupName" ) ), map2.get( "is_child" ), map2.get( "is_first_parents" ), groupPId );
-		    }
-		}
-		productGroup.setGroupId( groupId );
-		productGroup.setShopId( product.getShopId() );
-		if ( groupPId > 0 ) {
-		    productGroup.setGroupPId( groupPId );
-		}
-		productGroup.setSort( CommonUtil.toInteger( map2.get( "sort" ) ) );
-		mallProductGroupDAO.insert( productGroup );
-	    }
-	}
+                int groupPId = 0;
+                int groupId = 0;
+                //判断分组是否存在
+                if ( CommonUtil.isNotEmpty( map2.get( "groupPId" ) ) ) {//判断是否有父类 的分组
+                    groupPId = CommonUtil.toInteger( map2.get( "groupPId" ) );
+                    if ( groupPId > 0 ) {
+                        MallGroup group = mallGroupDAO.selectById( groupPId );
+                        groupPId = insertGroup( map2, product, group.getGroupName(), group.getIsChild(), group.getIsFirstParents(), 0 );
+                    }
+                }
+                if ( CommonUtil.isNotEmpty( map2.get( "groupId" ) ) ) {//判断是否有分组
+                    groupId = CommonUtil.toInteger( map2.get( "groupId" ) );
+                    if ( groupId > 0 ) {
+                        groupId = insertGroup( map2, product, CommonUtil.toString( map2.get( "groupName" ) ), map2.get( "is_child" ), map2.get( "is_first_parents" ), groupPId );
+                    }
+                }
+                productGroup.setGroupId( groupId );
+                productGroup.setShopId( product.getShopId() );
+                if ( groupPId > 0 ) {
+                    productGroup.setGroupPId( groupPId );
+                }
+                productGroup.setSort( CommonUtil.toInteger( map2.get( "sort" ) ) );
+                mallProductGroupDAO.insert( productGroup );
+            }
+        }
     }
 
     @Override
     public Map< String,Object > selectGroupBySearchName( String searchName ) {
-	//select id,group_p_id,id from t_mall_group where group_name like '%" + params.get( "proName" ) + "%'
-	Wrapper< MallGroup > wrapper = new EntityWrapper<>();
-	wrapper.setSqlSelect( "id,group_p_id" );
-	wrapper.like( "group_name", searchName );
-	List< Map< String,Object > > groupList = mallGroupDAO.selectMaps( wrapper );
-	if ( groupList != null && groupList.size() > 0 ) {
-	    return groupList.get( 0 );
-	}
-	return null;
+        //select id,group_p_id,id from t_mall_group where group_name like '%" + params.get( "proName" ) + "%'
+        Wrapper< MallGroup > wrapper = new EntityWrapper<>();
+        wrapper.setSqlSelect( "id,group_p_id" );
+        wrapper.like( "group_name", searchName );
+        List< Map< String,Object > > groupList = mallGroupDAO.selectMaps( wrapper );
+        if ( groupList != null && groupList.size() > 0 ) {
+            return groupList.get( 0 );
+        }
+        return null;
     }
 
     private int insertGroup( Map< String,Object > map2, MallProduct product, String groupName, Object isChild, Object isFirst, int pId ) {
-	int groupId = 0;
-	MallGroup group = new MallGroup();
-	Wrapper< MallGroup > groupWrapper = new EntityWrapper<>();
-	groupWrapper.where( "group_name = {0} and shop_id = {1}", groupName, product.getShopId() );
+        int groupId = 0;
+        MallGroup group = new MallGroup();
+        Wrapper< MallGroup > groupWrapper = new EntityWrapper<>();
+        groupWrapper.where( "group_name = {0} and shop_id = {1}", groupName, product.getShopId() );
 
-	List< MallGroup > groupList = mallGroupDAO.selectList( groupWrapper );
-	if ( groupList != null && groupList.size() > 0 ) {
-	    MallGroup mGroup = groupList.get( 0 );
-	    groupId = mGroup.getId();
-	} else {
-	    group.setGroupName( groupName );
-	    group.setGroupPId( pId );
-	    group.setIsShowPage( 1 );
-	    group.setShopId( product.getShopId() );
-	    group.setIsChild( CommonUtil.toInteger( isChild ) );
-	    group.setUserId( product.getUserId() );
-	    group.setCreateTime( new Date() );
-	    group.setIsFirstParents( CommonUtil.toInteger( isFirst ) );
-	    int count = mallGroupDAO.insert( group );
-	    if ( count > 0 ) {
-		groupId = group.getId();
-	    }
-	}
-	return groupId;
+        List< MallGroup > groupList = mallGroupDAO.selectList( groupWrapper );
+        if ( groupList != null && groupList.size() > 0 ) {
+            MallGroup mGroup = groupList.get( 0 );
+            groupId = mGroup.getId();
+        } else {
+            group.setGroupName( groupName );
+            group.setGroupPId( pId );
+            group.setIsShowPage( 1 );
+            group.setShopId( product.getShopId() );
+            group.setIsChild( CommonUtil.toInteger( isChild ) );
+            group.setUserId( product.getUserId() );
+            group.setCreateTime( new Date() );
+            group.setIsFirstParents( CommonUtil.toInteger( isFirst ) );
+            int count = mallGroupDAO.insert( group );
+            if ( count > 0 ) {
+                groupId = group.getId();
+            }
+        }
+        return groupId;
     }
 }

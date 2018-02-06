@@ -161,5 +161,5 @@ public interface MallGroupBuyDAO extends BaseMapper< MallGroupBuy > {
     /**
      * 统计正在进行的团购商品
      */
-    int selectCountGoingGroupProduct(PhoneSearchProductDTO searchProductDTO);
+    int selectCountGoingGroupProduct( PhoneSearchProductDTO searchProductDTO );
 }

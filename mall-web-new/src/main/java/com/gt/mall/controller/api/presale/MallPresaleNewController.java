@@ -66,47 +66,47 @@ public class MallPresaleNewController extends BaseController {
     @ApiOperation( value = "预售列表(分页)", notes = "预售列表(分页)" )
     @ResponseBody
     @ApiImplicitParams( { @ApiImplicitParam( name = "curPage", value = "页数", paramType = "query", required = false, dataType = "int" ),
-		    @ApiImplicitParam( name = "type", value = "活动状态  -2已失效 1进行中 -1 未开始  2已结束", paramType = "query", required = false, dataType = "int" ),
-		    @ApiImplicitParam( name = "shopId", value = "店铺ID", paramType = "query", required = false, dataType = "int" ) } )
+        @ApiImplicitParam( name = "type", value = "活动状态  -2已失效 1进行中 -1 未开始  2已结束", paramType = "query", required = false, dataType = "int" ),
+        @ApiImplicitParam( name = "shopId", value = "店铺ID", paramType = "query", required = false, dataType = "int" ) } )
     @RequestMapping( value = "/list", method = RequestMethod.POST )
     public ServerResponse list( HttpServletRequest request, HttpServletResponse response, Integer curPage, Integer type, Integer shopId ) {
-	Map< String,Object > result = new HashMap<>();
-	try {
-	    BusUser user = MallSessionUtils.getLoginUser( request );
-	    MallPaySet paySet = new MallPaySet();
-	    paySet.setUserId( user.getId() );
-	    //通过商品id查询预售信息
-	    MallPaySet set = mallPaySetService.selectByUserId( paySet );
-	    boolean isOpenPresale = false;
-	    if ( CommonUtil.isNotEmpty( set ) ) {
-		if ( CommonUtil.isNotEmpty( set.getIsPresale() ) ) {
-		    if ( set.getIsPresale() == 1 ) {
-			isOpenPresale = true;
-		    }
-		}
-	    }
-	    result.put( "isOpenPresale", isOpenPresale );
-	    if ( isOpenPresale ) {
-		Map< String,Object > params = new HashMap<>();
-		params.put( "curPage", curPage );
-		params.put( "type", type );
-		params.put( "shopId", shopId );
-		List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
-		if ( shoplist != null && shoplist.size() > 0 ) {
-		    if ( CommonUtil.isEmpty( shopId ) ) {
-			params.put( "shoplist", shoplist );
-		    }
-		    PageUtil page = mallPresaleService.selectPresaleByShopId( params, user.getId(), shoplist );
-		    result.put( "page", page );
-		}
-		result.put( "videourl", Constants.VIDEO_URL + 83 );
-	    }
-	} catch ( Exception e ) {
-	    logger.error( "获取预售列表异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取预售列表异常" );
-	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
+        Map< String,Object > result = new HashMap<>();
+        try {
+            BusUser user = MallSessionUtils.getLoginUser( request );
+            MallPaySet paySet = new MallPaySet();
+            paySet.setUserId( user.getId() );
+            //通过商品id查询预售信息
+            MallPaySet set = mallPaySetService.selectByUserId( paySet );
+            boolean isOpenPresale = false;
+            if ( CommonUtil.isNotEmpty( set ) ) {
+                if ( CommonUtil.isNotEmpty( set.getIsPresale() ) ) {
+                    if ( set.getIsPresale() == 1 ) {
+                        isOpenPresale = true;
+                    }
+                }
+            }
+            result.put( "isOpenPresale", isOpenPresale );
+            if ( isOpenPresale ) {
+                Map< String,Object > params = new HashMap<>();
+                params.put( "curPage", curPage );
+                params.put( "type", type );
+                params.put( "shopId", shopId );
+                List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
+                if ( shoplist != null && shoplist.size() > 0 ) {
+                    if ( CommonUtil.isEmpty( shopId ) ) {
+                        params.put( "shoplist", shoplist );
+                    }
+                    PageUtil page = mallPresaleService.selectPresaleByShopId( params, user.getId(), shoplist );
+                    result.put( "page", page );
+                }
+                result.put( "videourl", Constants.VIDEO_URL + 83 );
+            }
+        } catch ( Exception e ) {
+            logger.error( "获取预售列表异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取预售列表异常" );
+        }
+        return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
     }
 
     /**
@@ -116,17 +116,17 @@ public class MallPresaleNewController extends BaseController {
     @ResponseBody
     @RequestMapping( value = "/presaleInfo", method = RequestMethod.POST )
     public ServerResponse presaleInfo( HttpServletRequest request, HttpServletResponse response,
-		    @ApiParam( name = "id", value = "预售ID", required = true ) @RequestParam Integer id ) {
-	Map< String,Object > presaleMap = null;
-	try {
-	    // 根据预售id查询预售信息
-	    presaleMap = mallPresaleService.selectPresaleById( id );
-	} catch ( Exception e ) {
-	    logger.error( "获取预售信息异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取预售信息异常" );
-	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), presaleMap );
+        @ApiParam( name = "id", value = "预售ID", required = true ) @RequestParam Integer id ) {
+        Map< String,Object > presaleMap = null;
+        try {
+            // 根据预售id查询预售信息
+            presaleMap = mallPresaleService.selectPresaleById( id );
+        } catch ( Exception e ) {
+            logger.error( "获取预售信息异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取预售信息异常" );
+        }
+        return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), presaleMap );
     }
 
     /**
@@ -137,33 +137,33 @@ public class MallPresaleNewController extends BaseController {
     @SysLogAnnotation( description = "保存预售信息", op_function = "2" )
     @RequestMapping( value = "/save", method = RequestMethod.POST )
     public ServerResponse saveOrUpdate( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
-	try {
+        try {
 
 	   /* presale:{"id":"","productId":"26771","isDeposit":1,"depositPercent":"0.1","saleStartTime":"2017-09-28 10:05:17","saleEndTime":"2017-10-07 10:05:17","orderNum":"1","shopId":"177"}
-	      presaleTimes:[{"startTime":"2017-09-28 00:00:00","endTime":"2017-10-06 00:00:00","saleType":"1","price":"1","priceType":"1"}]
+          presaleTimes:[{"startTime":"2017-09-28 00:00:00","endTime":"2017-10-06 00:00:00","saleType":"1","price":"1","priceType":"1"}]
 	    */
-	    int code = -1;// 编辑成功
-	    Integer userId = MallSessionUtils.getLoginUser( request ).getId();
-	    if ( CommonUtil.isNotEmpty( userId ) && CommonUtil.isNotEmpty( params ) ) {
-		code = mallPresaleService.newEditPresale( params, userId );// 编辑商品
-	    }
+            int code = -1;// 编辑成功
+            Integer userId = MallSessionUtils.getLoginUser( request ).getId();
+            if ( CommonUtil.isNotEmpty( userId ) && CommonUtil.isNotEmpty( params ) ) {
+                code = mallPresaleService.newEditPresale( params, userId );// 编辑商品
+            }
 
-	    if ( code == -2 ) {
-		return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "正在进行预售的信息不能修改" );
-	    } else if ( code <= 0 ) {
-		return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "保存预售失败" );
-	    }
+            if ( code == -2 ) {
+                return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "正在进行预售的信息不能修改" );
+            } else if ( code <= 0 ) {
+                return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "保存预售失败" );
+            }
 
-	} catch ( BusinessException e ) {
-	    logger.error( "保存预售信息异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
-	} catch ( Exception e ) {
-	    logger.error( "保存预售信息异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
-	}
-	return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
+        } catch ( BusinessException e ) {
+            logger.error( "保存预售信息异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
+        } catch ( Exception e ) {
+            logger.error( "保存预售信息异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
+        }
+        return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
     }
 
     /**
@@ -174,32 +174,32 @@ public class MallPresaleNewController extends BaseController {
     @SysLogAnnotation( description = "删除预售信息", op_function = "4" )
     @RequestMapping( value = "/delete", method = RequestMethod.POST )
     public ServerResponse delete( HttpServletRequest request, HttpServletResponse response, @ApiParam( name = "id", value = "预售Id", required = true ) @RequestParam Integer id,
-		    @ApiParam( name = "type", value = "类型 -1删除 -2失效", required = true ) @RequestParam Integer type ) {
-	try {
+        @ApiParam( name = "type", value = "类型 -1删除 -2失效", required = true ) @RequestParam Integer type ) {
+        try {
 
-	    MallPresale presale = new MallPresale();
-	    presale.setId( id );
-	    if ( CommonUtil.isNotEmpty( type ) ) {
-		if ( type == -1 ) {// 删除
-		    presale.setIsDelete( 1 );
-		} else if ( type == -2 ) {// 使失效预售
-		    presale.setIsUse( -1 );
-		}
-	    }
-	    boolean flag = mallPresaleService.deletePresale( presale );
-	    if ( !flag ) {
-		return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), type == -1 ? "删除" : "失效" + "预售记录异常" );
-	    }
-	} catch ( BusinessException e ) {
-	    logger.error( "删除预售信息异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
-	} catch ( Exception e ) {
-	    logger.error( "删除预售信息异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "删除预售信息异常" );
-	}
-	return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
+            MallPresale presale = new MallPresale();
+            presale.setId( id );
+            if ( CommonUtil.isNotEmpty( type ) ) {
+                if ( type == -1 ) {// 删除
+                    presale.setIsDelete( 1 );
+                } else if ( type == -2 ) {// 使失效预售
+                    presale.setIsUse( -1 );
+                }
+            }
+            boolean flag = mallPresaleService.deletePresale( presale );
+            if ( !flag ) {
+                return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), type == -1 ? "删除" : "失效" + "预售记录异常" );
+            }
+        } catch ( BusinessException e ) {
+            logger.error( "删除预售信息异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
+        } catch ( Exception e ) {
+            logger.error( "删除预售信息异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "删除预售信息异常" );
+        }
+        return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
     }
 
     /********************************拍卖定金管理*******************************************/
@@ -209,24 +209,24 @@ public class MallPresaleNewController extends BaseController {
     @ApiImplicitParams( { @ApiImplicitParam( name = "curPage", value = "页数", paramType = "query", required = false, dataType = "int" ) } )
     @RequestMapping( value = "/deposit/list", method = RequestMethod.POST )
     public ServerResponse depositList( HttpServletRequest request, HttpServletResponse response, Integer curPage ) {
-	Map< String,Object > result = new HashMap<>();
-	try {
-	    BusUser user = MallSessionUtils.getLoginUser( request );
-	    Map< String,Object > params = new HashMap<>();
-	    params.put( "curPage", curPage );
-	    List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
-	    if ( shoplist != null && shoplist.size() > 0 ) {
-		params.put( "shoplist", shoplist );
-		PageUtil page = mallPresaleDepositService.selectPresaleByShopId( params, shoplist );
-		result.put( "page", page );
-	    }
-	    result.put( "busId", user.getId() );
-	} catch ( Exception e ) {
-	    logger.error( "获取拍卖定金管理列表异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取拍卖定金管理列表异常" );
-	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
+        Map< String,Object > result = new HashMap<>();
+        try {
+            BusUser user = MallSessionUtils.getLoginUser( request );
+            Map< String,Object > params = new HashMap<>();
+            params.put( "curPage", curPage );
+            List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
+            if ( shoplist != null && shoplist.size() > 0 ) {
+                params.put( "shoplist", shoplist );
+                PageUtil page = mallPresaleDepositService.selectPresaleByShopId( params, shoplist );
+                result.put( "page", page );
+            }
+            result.put( "busId", user.getId() );
+        } catch ( Exception e ) {
+            logger.error( "获取拍卖定金管理列表异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取拍卖定金管理列表异常" );
+        }
+        return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
     }
 
     /**
@@ -236,16 +236,16 @@ public class MallPresaleNewController extends BaseController {
     @ResponseBody
     @RequestMapping( value = "/deposit/depositInfo", method = RequestMethod.POST )
     public ServerResponse depositInfo( HttpServletRequest request, HttpServletResponse response,
-		    @ApiParam( name = "depositId", value = "定金ID", required = true ) @RequestParam Integer depositId ) {
-	MallPresaleDeposit deposit = null;
-	try {
-	    deposit = mallPresaleDepositService.selectByDeposit( depositId );
-	} catch ( Exception e ) {
-	    logger.error( "获取定金信息异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取定金信息异常" );
-	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), deposit );
+        @ApiParam( name = "depositId", value = "定金ID", required = true ) @RequestParam Integer depositId ) {
+        MallPresaleDeposit deposit = null;
+        try {
+            deposit = mallPresaleDepositService.selectByDeposit( depositId );
+        } catch ( Exception e ) {
+            logger.error( "获取定金信息异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取定金信息异常" );
+        }
+        return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), deposit );
     }
 
     /**
@@ -255,21 +255,22 @@ public class MallPresaleNewController extends BaseController {
     @ResponseBody
     @RequestMapping( value = "/deposit/refundUrl", method = RequestMethod.POST )
     public ServerResponse refundUrl( HttpServletRequest request, HttpServletResponse response,
-		    @ApiParam( name = "depositId", value = "定金ID", required = true ) @RequestParam Integer depositId ) {
-	String url = "";
-	try {
-	    MallPresaleDeposit deposit = mallPresaleDepositService.selectByDeposit( depositId );
-	    BusUser user = MallSessionUtils.getLoginUser( request );
+        @ApiParam( name = "depositId", value = "定金ID", required = true ) @RequestParam Integer depositId ) {
+        String url = "";
+        try {
+            MallPresaleDeposit deposit = mallPresaleDepositService.selectByDeposit( depositId );
+            BusUser user = MallSessionUtils.getLoginUser( request );
 
-	    url = CommonUtil.getAliReturnUrl( deposit.getDepositNo(), user.getId(), "退保证金", CommonUtil.toDouble( deposit.getDepositMoney() ), Constants.PRESALE_REFUND_URL );
+            url = CommonUtil.getAliReturnUrl( deposit.getDepositNo(), user.getId(), "退保证金", CommonUtil.toDouble( deposit.getDepositMoney() ), Constants.PRESALE_REFUND_URL );
 
-	} catch ( Exception e ) {
-	    logger.error( "获取支付宝退款地址异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取支付宝退款地址异常" );
-	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), url, false );
+        } catch ( Exception e ) {
+            logger.error( "获取支付宝退款地址异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取支付宝退款地址异常" );
+        }
+        return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), url, false );
     }
+
     /**
      * 退保证金
      */
@@ -278,40 +279,40 @@ public class MallPresaleNewController extends BaseController {
     @SysLogAnnotation( description = "退保证金", op_function = "2" )
     @RequestMapping( value = "/deposit/agreedReturnDeposit", method = RequestMethod.POST )
     public ServerResponse agreedReturnDeposit( HttpServletRequest request, HttpServletResponse response,
-		    @ApiParam( name = "depositId", value = "定金ID", required = true ) @RequestParam Integer depositId ) {
-	try {
+        @ApiParam( name = "depositId", value = "定金ID", required = true ) @RequestParam Integer depositId ) {
+        try {
 
-	    MallPresaleDeposit deposit = mallPresaleDepositService.selectByDeposit( depositId );
+            MallPresaleDeposit deposit = mallPresaleDepositService.selectByDeposit( depositId );
 
-	    Map< String,Object > map = new HashMap<>();
-	    map.put( "id", deposit.getId() );
-	    map.put( "user_id", deposit.getUserId() );
-	    map.put( "pay_way", deposit.getPayWay() );
-	    map.put( "deposit_money", deposit.getDepositMoney() );
-	    map.put( "deposit_no", deposit.getDepositNo() );
-	    Map< String,Object > result = mallPresaleDepositService.returnEndPresale( map );
-	    if ( result.size() == 0 ) {
-		result.put( "result", false );
-	    }
-	    boolean flag = (boolean) result.get( "result" );
-	    if ( !flag ) {
-		if ( CommonUtil.isNotEmpty( result.get( "msg" ) ) ) {
-		    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), result.get( "msg" ).toString() );
-		} else {
-		    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "退保证金失败" );
-		}
-	    }
+            Map< String,Object > map = new HashMap<>();
+            map.put( "id", deposit.getId() );
+            map.put( "user_id", deposit.getUserId() );
+            map.put( "pay_way", deposit.getPayWay() );
+            map.put( "deposit_money", deposit.getDepositMoney() );
+            map.put( "deposit_no", deposit.getDepositNo() );
+            Map< String,Object > result = mallPresaleDepositService.returnEndPresale( map );
+            if ( result.size() == 0 ) {
+                result.put( "result", false );
+            }
+            boolean flag = (boolean) result.get( "result" );
+            if ( !flag ) {
+                if ( CommonUtil.isNotEmpty( result.get( "msg" ) ) ) {
+                    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), result.get( "msg" ).toString() );
+                } else {
+                    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "退保证金失败" );
+                }
+            }
 
-	} catch ( BusinessException e ) {
-	    logger.error( "退保证金异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
-	} catch ( Exception e ) {
-	    logger.error( "退保证金异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
-	}
-	return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
+        } catch ( BusinessException e ) {
+            logger.error( "退保证金异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
+        } catch ( Exception e ) {
+            logger.error( "退保证金异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
+        }
+        return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
     }
 
     /********************************预售送礼设置*******************************************/
@@ -324,36 +325,36 @@ public class MallPresaleNewController extends BaseController {
     @ApiImplicitParams( { @ApiImplicitParam( name = "curPage", value = "页数", paramType = "query", required = false, dataType = "int" ) } )
     @RequestMapping( value = "/give/list", method = RequestMethod.POST )
     public ServerResponse giveInfo( HttpServletRequest request, HttpServletResponse response, Integer curPage ) {
-	Map< String,Object > result = new HashMap<>();
-	try {
-	    BusUser user = MallSessionUtils.getLoginUser( request );
-	    MallPaySet paySet = new MallPaySet();
-	    paySet.setUserId( user.getId() );
-	    //通过商品id查询预售信息
-	    MallPaySet set = mallPaySetService.selectByUserId( paySet );
-	    boolean isPresaleGive = false;
-	    if ( CommonUtil.isNotEmpty( set ) ) {
-		if ( CommonUtil.isNotEmpty( set.getIsPresale() ) ) {
-		    if ( set.getIsPresaleGive() == 1 ) {
-			isPresaleGive = true;
-		    }
-		}
-	    }
-	    result.put( "isPresaleGive", isPresaleGive );
+        Map< String,Object > result = new HashMap<>();
+        try {
+            BusUser user = MallSessionUtils.getLoginUser( request );
+            MallPaySet paySet = new MallPaySet();
+            paySet.setUserId( user.getId() );
+            //通过商品id查询预售信息
+            MallPaySet set = mallPaySetService.selectByUserId( paySet );
+            boolean isPresaleGive = false;
+            if ( CommonUtil.isNotEmpty( set ) ) {
+                if ( CommonUtil.isNotEmpty( set.getIsPresale() ) ) {
+                    if ( set.getIsPresaleGive() == 1 ) {
+                        isPresaleGive = true;
+                    }
+                }
+            }
+            result.put( "isPresaleGive", isPresaleGive );
 
-	    Map< String,Object > params = new HashMap<>();
-	    params.put( "curPage", curPage );
-	    params.put( "userId", user.getId() );
-	    PageUtil giveList = mallPresaleService.selectPageGiveByUserId( params );
+            Map< String,Object > params = new HashMap<>();
+            params.put( "curPage", curPage );
+            params.put( "userId", user.getId() );
+            PageUtil giveList = mallPresaleService.selectPageGiveByUserId( params );
 
-	    result.put( "page", giveList );
+            result.put( "page", giveList );
 
-	} catch ( Exception e ) {
-	    logger.error( "获取预售送礼设置列表异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取预售送礼设置列表异常" );
-	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
+        } catch ( Exception e ) {
+            logger.error( "获取预售送礼设置列表异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取预售送礼设置列表异常" );
+        }
+        return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
     }
 
     /**
@@ -363,15 +364,15 @@ public class MallPresaleNewController extends BaseController {
     @ResponseBody
     @RequestMapping( value = "/give/dictList", method = RequestMethod.POST )
     public ServerResponse< List< DictBean > > dictList( HttpServletRequest request, HttpServletResponse response ) {
-	List< DictBean > list = null;
-	try {
-	    list = dictService.getDict( "1143" );
-	} catch ( Exception e ) {
-	    logger.error( "获取预售送礼礼品类型异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取预售送礼礼品类型异常" );
-	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), list );
+        List< DictBean > list = null;
+        try {
+            list = dictService.getDict( "1143" );
+        } catch ( Exception e ) {
+            logger.error( "获取预售送礼礼品类型异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取预售送礼礼品类型异常" );
+        }
+        return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), list );
     }
 
     /**
@@ -382,37 +383,37 @@ public class MallPresaleNewController extends BaseController {
     @SysLogAnnotation( description = "保存预售送礼设置", op_function = "2" )
     @RequestMapping( value = "/give/save", method = RequestMethod.POST )
     public ServerResponse setSave( HttpServletRequest request, HttpServletResponse response, @RequestParam Map< String,Object > params ) {
-	try {
+        try {
 
-	    int code = -1;// 编辑成功
-	    Integer userId = MallSessionUtils.getLoginUser( request ).getId();
-	    if ( CommonUtil.isNotEmpty( userId ) && CommonUtil.isNotEmpty( params ) ) {
-		MallPresaleGive give = JSONObject.parseObject( params.get( "presaleSet" ).toString(), MallPresaleGive.class );
-		give.setGiveName( CommonUtil.urlEncode( give.getGiveName() ) );
-		if ( CommonUtil.isEmpty( give ) ) {
-		    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "参数不能为空" );
-		} else if ( CommonUtil.isEmpty( give.getGiveName() ) ) {
-		    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "礼品名称不能为空" );
-		} else if ( CommonUtil.isEmpty( give.getGiveRanking() ) ) {
-		    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "送礼名次不能为空" );
-		} else if ( CommonUtil.isEmpty( give.getGiveNum() ) ) {
-		    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "礼品数量不能为空" );
-		}
-		code = mallPresaleService.newEditOnePresaleSet( give, userId );// 编辑商品
-	    }
-	    if ( code <= 0 ) {
-		return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "保存预售送礼设置失败" );
-	    }
-	} catch ( BusinessException e ) {
-	    logger.error( "保存预售送礼设置异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
-	} catch ( Exception e ) {
-	    logger.error( "保存预售送礼设置异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
-	}
-	return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
+            int code = -1;// 编辑成功
+            Integer userId = MallSessionUtils.getLoginUser( request ).getId();
+            if ( CommonUtil.isNotEmpty( userId ) && CommonUtil.isNotEmpty( params ) ) {
+                MallPresaleGive give = JSONObject.parseObject( params.get( "presaleSet" ).toString(), MallPresaleGive.class );
+                give.setGiveName( CommonUtil.urlEncode( give.getGiveName() ) );
+                if ( CommonUtil.isEmpty( give ) ) {
+                    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "参数不能为空" );
+                } else if ( CommonUtil.isEmpty( give.getGiveName() ) ) {
+                    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "礼品名称不能为空" );
+                } else if ( CommonUtil.isEmpty( give.getGiveRanking() ) ) {
+                    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "送礼名次不能为空" );
+                } else if ( CommonUtil.isEmpty( give.getGiveNum() ) ) {
+                    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "礼品数量不能为空" );
+                }
+                code = mallPresaleService.newEditOnePresaleSet( give, userId );// 编辑商品
+            }
+            if ( code <= 0 ) {
+                return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "保存预售送礼设置失败" );
+            }
+        } catch ( BusinessException e ) {
+            logger.error( "保存预售送礼设置异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
+        } catch ( Exception e ) {
+            logger.error( "保存预售送礼设置异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
+        }
+        return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
     }
 
     /**
@@ -422,22 +423,22 @@ public class MallPresaleNewController extends BaseController {
     @ResponseBody
     @RequestMapping( value = "/give/delete", method = RequestMethod.POST )
     public ServerResponse giveDelete( HttpServletRequest request, HttpServletResponse response,
-		    @ApiParam( name = "id", value = "预售送礼ID", required = true ) @RequestParam Integer id ) {
-	try {
+        @ApiParam( name = "id", value = "预售送礼ID", required = true ) @RequestParam Integer id ) {
+        try {
 
-	    MallPresaleGive give = new MallPresaleGive();
-	    give.setId( id );
-	    give.setIsDelete( 1 );
-	    boolean code = mallPresaleGiveService.updateById( give );
-	    if ( !code ) {
-		return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "保存预售送礼设置失败" );
-	    }
-	} catch ( Exception e ) {
-	    logger.error( "保存预售送礼设置异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
-	}
-	return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
+            MallPresaleGive give = new MallPresaleGive();
+            give.setId( id );
+            give.setIsDelete( 1 );
+            boolean code = mallPresaleGiveService.updateById( give );
+            if ( !code ) {
+                return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "保存预售送礼设置失败" );
+            }
+        } catch ( Exception e ) {
+            logger.error( "保存预售送礼设置异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
+        }
+        return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
     }
 
 }

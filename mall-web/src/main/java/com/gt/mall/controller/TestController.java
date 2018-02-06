@@ -23,18 +23,18 @@ import java.util.Map;
  * @create 2017/7/8
  */
 @Controller
-@Api(description="Test", value = "TestController")
+@Api( description = "Test", value = "TestController" )
 public class TestController extends BaseController {
 
     @Test
     public void test() {
-	Map< String,Integer > params = new HashMap<>();
-	params.put( "id", 2 );
-	params.put( "userId", 42 );
-	//	MallPaySet set = (MallPaySet) JSON.parseArray(params.toString(), MallPaySet.class);
-	MallPaySet set2 = (MallPaySet) JSONObject.toBean( JSONObject.fromObject( params ), MallPaySet.class );
-	System.out.println( "开始" );
-	System.out.println( set2.getId() );
+        Map< String,Integer > params = new HashMap<>();
+        params.put( "id", 2 );
+        params.put( "userId", 42 );
+        //	MallPaySet set = (MallPaySet) JSON.parseArray(params.toString(), MallPaySet.class);
+        MallPaySet set2 = (MallPaySet) JSONObject.toBean( JSONObject.fromObject( params ), MallPaySet.class );
+        System.out.println( "开始" );
+        System.out.println( set2.getId() );
     }
 
     /**
@@ -47,34 +47,34 @@ public class TestController extends BaseController {
     @ApiOperation( value = "首页", notes = "首页" )
     @RequestMapping( value = "/", method = RequestMethod.POST )
     public ModelAndView index( ModelAndView map ) {
-	try {
+        try {
 
 	/*WsWxShopInfo wxShopInfo = wxShopService.getShopById( 21 );
-	map.addObject( "wxShop", JSONObject.toJSONString( wxShopInfo ));*/
+    map.addObject( "wxShop", JSONObject.toJSONString( wxShopInfo ));*/
 
-	    map.setViewName( "index" );
-	} catch ( Exception e ) {
-	    e.printStackTrace();
-	}
-	return map;
+            map.setViewName( "index" );
+        } catch ( Exception e ) {
+            e.printStackTrace();
+        }
+        return map;
     }
 
     @GetMapping( "/79B4DE7C/ss" )
     public ModelAndView test( ModelAndView map ) {
-	try {
-	    System.out.println( "MyConfigUtil.getHomeUrl() = " + PropertiesUtil.getHomeUrl() );
-	    map.addObject( "homeUrl", 22 );
+        try {
+            System.out.println( "MyConfigUtil.getHomeUrl() = " + PropertiesUtil.getHomeUrl() );
+            map.addObject( "homeUrl", 22 );
 
-	    map.addObject( "test", "hello sssssddss!" );
+            map.addObject( "test", "hello sssssddss!" );
 
 	/*WsWxShopInfo wxShopInfo = wxShopService.getShopById( 21 );
 	map.addObject( "wxShop", JSONObject.toJSONString( wxShopInfo ));*/
 
-	    map.setViewName( "index" );
-	} catch ( Exception e ) {
-	    e.printStackTrace();
-	}
-	return map;
+            map.setViewName( "index" );
+        } catch ( Exception e ) {
+            e.printStackTrace();
+        }
+        return map;
     }
 
 }

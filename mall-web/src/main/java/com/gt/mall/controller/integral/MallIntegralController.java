@@ -21,7 +21,6 @@ import java.util.Map;
 @RequestMapping( "mallIntegral" )
 public class MallIntegralController extends BaseController {
 
-
     /**
      * 获取二维码的图片
      *
@@ -29,13 +28,13 @@ public class MallIntegralController extends BaseController {
      */
     @RequestMapping( value = "/79B4DE7C/integralMallCodeIframs" )
     public String integralMallCodeIframs( @RequestParam Map< String,Object > params, HttpServletRequest request, HttpServletResponse response ) {
-	try {
+        try {
 
-	} catch ( Exception e ) {
-	    logger.error( "获取积分商城二维码图片失败：" + e.getMessage() );
-	    e.printStackTrace();
-	}
-	return "mall/integral/iframe/integral_mall";
+        } catch ( Exception e ) {
+            logger.error( "获取积分商城二维码图片失败：" + e.getMessage() );
+            e.printStackTrace();
+        }
+        return "mall/integral/iframe/integral_mall";
     }
 
 }

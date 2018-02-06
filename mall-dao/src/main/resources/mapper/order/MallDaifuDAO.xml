@@ -24,14 +24,14 @@
         df_return_no , df_return_time , df_return_status , df_create_time
     </sql>
 
-    <select id="selectByDfOrderNo" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    <select id="selectByDfOrderNo" resultMap="BaseResultMap" parameterType="java.lang.String">
         select
-        <include refid="Base_Column_List" />
+        <include refid="Base_Column_List"/>
         from t_mall_daifu where df_order_no = #{dfOrderNo}
     </select>
-    <select id="selectBydf" resultMap="BaseResultMap" parameterType="com.gt.mall.entity.order.MallDaifu" >
+    <select id="selectBydf" resultMap="BaseResultMap" parameterType="com.gt.mall.entity.order.MallDaifu">
         select
-        <include refid="Base_Column_List" />
+        <include refid="Base_Column_List"/>
         from t_mall_daifu where 1=1
         <if test="dfUserId != null">
             and df_user_id = #{dfUserId}
@@ -42,7 +42,8 @@
     </select>
     <!-- 查询订单是否已经有人代付了 -->
     <select id="selectByPayDaifu" resultMap="BaseResultMap" parameterType="com.gt.mall.entity.order.MallDaifu">
-        select <include refid="Base_Column_List" />
+        select
+        <include refid="Base_Column_List"/>
         from t_mall_daifu
         where 1=1 and order_id = #{orderId} and df_pay_status=1
     </select>

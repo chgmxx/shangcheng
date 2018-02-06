@@ -55,94 +55,94 @@ public class MallSecuritytradeApiController {
     private DictService                  dictService;
 
     @ApiOperation( value = "待审核退出担保交易的接口", notes = "获取所有待审核退出担保交易的列表" )
-//    @ApiImplicitParams( { @ApiImplicitParam( name = "curPage", value = "页数", paramType = "query", required = false, dataType = "int" ),
-//		    @ApiImplicitParam( name = "pageSize", value = "显示数量 默认15条", paramType = "query", required = false, dataType = "int" ),
-//		    @ApiImplicitParam( name = "userIds", value = "用户Id集合", paramType = "query", required = false, dataType = "String" ) } )
+    //    @ApiImplicitParams( { @ApiImplicitParam( name = "curPage", value = "页数", paramType = "query", required = false, dataType = "int" ),
+    //		    @ApiImplicitParam( name = "pageSize", value = "显示数量 默认15条", paramType = "query", required = false, dataType = "int" ),
+    //		    @ApiImplicitParam( name = "userIds", value = "用户Id集合", paramType = "query", required = false, dataType = "String" ) } )
     @ResponseBody
     @RequestMapping( value = "/waitCheckList", method = RequestMethod.POST )
     public ServerResponse waitCheckList( HttpServletRequest request, HttpServletResponse response, @RequestBody String param ) {
-	Map< String,Object > result = new HashMap<>();
-	try {
-	    logger.info( "接收到的参数：" + param );
-	    Map< String,Object > params = JSONObject.parseObject( param );
+        Map< String,Object > result = new HashMap<>();
+        try {
+            logger.info( "接收到的参数：" + param );
+            Map< String,Object > params = JSONObject.parseObject( param );
 
-	    List< Map< String,Object > > securitytradeList = null;
-	    Integer curPage = CommonUtil.isEmpty( params.get( "curPage" ) ) ? 1 : CommonUtil.toInteger( params.get( "curPage" ) );
-	    Integer pageSize = CommonUtil.isEmpty( params.get( "pageSize" ) ) ? 15 : CommonUtil.toInteger( params.get( "pageSize" ) );
+            List< Map< String,Object > > securitytradeList = null;
+            Integer curPage = CommonUtil.isEmpty( params.get( "curPage" ) ) ? 1 : CommonUtil.toInteger( params.get( "curPage" ) );
+            Integer pageSize = CommonUtil.isEmpty( params.get( "pageSize" ) ) ? 15 : CommonUtil.toInteger( params.get( "pageSize" ) );
 
-	    params.put( "checkStatus", "0" );
-	    if ( CommonUtil.isNotEmpty( params.get( "userIds" ) ) ) {
-		params.put( "userIds", params.get( "userIds" ).toString().split( "," ) );
-	    }
-	    int count = mallSecuritytradeQuitDAO.selectAllCount( params );
+            params.put( "checkStatus", "0" );
+            if ( CommonUtil.isNotEmpty( params.get( "userIds" ) ) ) {
+                params.put( "userIds", params.get( "userIds" ).toString().split( "," ) );
+            }
+            int count = mallSecuritytradeQuitDAO.selectAllCount( params );
 
-	    PageUtil page = new PageUtil( curPage, pageSize, count, "" );
-	    int firstNum = pageSize * ( ( page.getCurPage() <= 0 ? 1 : page.getCurPage() ) - 1 );
-	    params.put( "firstNum", firstNum );// 起始页
-	    params.put( "maxNum", pageSize );// 每页显示商品的数量
+            PageUtil page = new PageUtil( curPage, pageSize, count, "" );
+            int firstNum = pageSize * ( ( page.getCurPage() <= 0 ? 1 : page.getCurPage() ) - 1 );
+            params.put( "firstNum", firstNum );// 起始页
+            params.put( "maxNum", pageSize );// 每页显示商品的数量
 
-	    if ( count > 0 ) {// 判断是否有数据
-		securitytradeList = mallSecuritytradeQuitDAO.selectAllByPage( params );// 查询退出申请总数
-		List< DictBean > typeMap = dictService.getDict( "1073" );
-		if ( securitytradeList != null && securitytradeList.size() > 0 && typeMap.size() > 0 ) {
-		    for ( Map< String,Object > map : securitytradeList ) {
-			Integer quitReasonId = CommonUtil.toInteger( map.get( "quit_reason_id" ) );
-			for ( DictBean bean : typeMap ) {
-			    if ( bean.getItem_key().equals( quitReasonId.toString() ) ) {
-				map.put( "reasonName", bean.getItem_value() );
-			    }
-			}
-		    }
-		}
-	    }
-	    page.setSubList( securitytradeList );
-	    result.put( "page", page );
-	} catch ( Exception e ) {
-	    logger.error( "获取所有待审核退出担保交易的列表异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取所有待审核退出担保交易的列表异常" );
-	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, false );
+            if ( count > 0 ) {// 判断是否有数据
+                securitytradeList = mallSecuritytradeQuitDAO.selectAllByPage( params );// 查询退出申请总数
+                List< DictBean > typeMap = dictService.getDict( "1073" );
+                if ( securitytradeList != null && securitytradeList.size() > 0 && typeMap.size() > 0 ) {
+                    for ( Map< String,Object > map : securitytradeList ) {
+                        Integer quitReasonId = CommonUtil.toInteger( map.get( "quit_reason_id" ) );
+                        for ( DictBean bean : typeMap ) {
+                            if ( bean.getItem_key().equals( quitReasonId.toString() ) ) {
+                                map.put( "reasonName", bean.getItem_value() );
+                            }
+                        }
+                    }
+                }
+            }
+            page.setSubList( securitytradeList );
+            result.put( "page", page );
+        } catch ( Exception e ) {
+            logger.error( "获取所有待审核退出担保交易的列表异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取所有待审核退出担保交易的列表异常" );
+        }
+        return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, false );
     }
 
     @ApiOperation( value = "担保交易审核", notes = "担保交易审核" )
-//    @ApiImplicitParams( { @ApiImplicitParam( name = "id", value = "退出申请ID", paramType = "query", required = true, dataType = "int" ),
-//		    @ApiImplicitParam( name = "status", value = "审核状态  1通过 -1不通过", paramType = "query", required = true, dataType = "int" ),
-//		    @ApiImplicitParam( name = "reason", value = "不通过理由", paramType = "query", required = false, dataType = "String" ) } )
+    //    @ApiImplicitParams( { @ApiImplicitParam( name = "id", value = "退出申请ID", paramType = "query", required = true, dataType = "int" ),
+    //		    @ApiImplicitParam( name = "status", value = "审核状态  1通过 -1不通过", paramType = "query", required = true, dataType = "int" ),
+    //		    @ApiImplicitParam( name = "reason", value = "不通过理由", paramType = "query", required = false, dataType = "String" ) } )
     @ResponseBody
     @RequestMapping( value = "/securityCheck", method = RequestMethod.POST )
     public ServerResponse commentCheck( HttpServletRequest request, HttpServletResponse response, @RequestBody String param ) {
-	try {
-	    logger.info( "接收到的参数：" + param );
-	    Map< String,Object > params = JSONObject.parseObject( param );
-	    MallSecuritytradeQuit quit = mallSecuritytradeQuitService.selectById( CommonUtil.toInteger( params.get( "id" ) ) );
-	    quit.setCheckStatus( CommonUtil.toInteger( params.get( "status" ) ) );
-	    quit.setCheckTime( new Date() );
-	    if ( CommonUtil.isNotEmpty( params.get( "reason" ) ) ) {
-		quit.setRefuseReason( params.get( "reason" ).toString() );
-	    }
-	    boolean flag = mallSecuritytradeQuitService.updateById( quit );
-	    //TODO 审核失败 不通过理由通过 通知中心通知商家
-	    if ( CommonUtil.toInteger( params.get( "status" ) )  == 1 ) {
-		MallPaySet set = new MallPaySet();
-		set.setUserId( quit.getUserId() );
-		set = mallPaySetService.selectByUserId( set );
-		set.setIsSecuritytrade( 0 );
-		mallPaySetService.updateById( set );
-	    }
-	    if ( !flag ) {
-		return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "修改审核状态异常" );
-	    }
-	} catch ( BusinessException e ) {
-	    logger.error( "修改审核状态异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
-	} catch ( Exception e ) {
-	    logger.error( "修改审核状态异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "修改审核状态异常" );
-	}
-	return ServerResponse.createBySuccessCode();
+        try {
+            logger.info( "接收到的参数：" + param );
+            Map< String,Object > params = JSONObject.parseObject( param );
+            MallSecuritytradeQuit quit = mallSecuritytradeQuitService.selectById( CommonUtil.toInteger( params.get( "id" ) ) );
+            quit.setCheckStatus( CommonUtil.toInteger( params.get( "status" ) ) );
+            quit.setCheckTime( new Date() );
+            if ( CommonUtil.isNotEmpty( params.get( "reason" ) ) ) {
+                quit.setRefuseReason( params.get( "reason" ).toString() );
+            }
+            boolean flag = mallSecuritytradeQuitService.updateById( quit );
+            //TODO 审核失败 不通过理由通过 通知中心通知商家
+            if ( CommonUtil.toInteger( params.get( "status" ) ) == 1 ) {
+                MallPaySet set = new MallPaySet();
+                set.setUserId( quit.getUserId() );
+                set = mallPaySetService.selectByUserId( set );
+                set.setIsSecuritytrade( 0 );
+                mallPaySetService.updateById( set );
+            }
+            if ( !flag ) {
+                return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "修改审核状态异常" );
+            }
+        } catch ( BusinessException e ) {
+            logger.error( "修改审核状态异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
+        } catch ( Exception e ) {
+            logger.error( "修改审核状态异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "修改审核状态异常" );
+        }
+        return ServerResponse.createBySuccessCode();
     }
 
 }

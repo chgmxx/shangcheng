@@ -31,38 +31,38 @@ public class CookieUtil {
      * @param maxAge   cookie生命周期  以秒为单位
      */
     public static void addCookie( HttpServletResponse response, String name, String value, int maxAge ) {
-	try {
-	    KeysUtil keyUtil = new KeysUtil();
-	    value = keyUtil.getEncString( value );//对存入cookie的值进行加密
-	} catch ( Exception e ) {
-	    e.printStackTrace();
-	}
-	Cookie cookie = new Cookie( name, value );
-	cookie.setPath( "/" );
-	   /* cookie.setDomain(".yifriend.net");*/
-	if ( maxAge > 0 ) {
-	    cookie.setMaxAge( maxAge );
-	}
-	response.addCookie( cookie );
+        try {
+            KeysUtil keyUtil = new KeysUtil();
+            value = keyUtil.getEncString( value );//对存入cookie的值进行加密
+        } catch ( Exception e ) {
+            e.printStackTrace();
+        }
+        Cookie cookie = new Cookie( name, value );
+        cookie.setPath( "/" );
+       /* cookie.setDomain(".yifriend.net");*/
+        if ( maxAge > 0 ) {
+            cookie.setMaxAge( maxAge );
+        }
+        response.addCookie( cookie );
     }
 
     public static String findCookieByName( HttpServletRequest request, String name ) {
-	Map< String,Cookie > cookieMap = ReadCookieMap( request );
-	if ( cookieMap.containsKey( name ) ) {
-	    Cookie cookie = (Cookie) cookieMap.get( name );
-	    //	    System.out.println( "cookie:[" + cookie.getName() + "] 的值为:" + cookie.getValue() );
-	    String value = cookie.getValue();
-	    try {
-		KeysUtil keyUtil = new KeysUtil();
-		value = keyUtil.getDesString( value );//解密从cookie取的值
-		System.out.println( "cookieValue = " + value );
-	    } catch ( Exception e ) {
-		e.printStackTrace();
-	    }
-	    return value;
-	} else {
-	    return null;
-	}
+        Map< String,Cookie > cookieMap = ReadCookieMap( request );
+        if ( cookieMap.containsKey( name ) ) {
+            Cookie cookie = (Cookie) cookieMap.get( name );
+            //	    System.out.println( "cookie:[" + cookie.getName() + "] 的值为:" + cookie.getValue() );
+            String value = cookie.getValue();
+            try {
+                KeysUtil keyUtil = new KeysUtil();
+                value = keyUtil.getDesString( value );//解密从cookie取的值
+                System.out.println( "cookieValue = " + value );
+            } catch ( Exception e ) {
+                e.printStackTrace();
+            }
+            return value;
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -92,14 +92,14 @@ public class CookieUtil {
      * @return 内容
      */
     private static Map< String,Cookie > ReadCookieMap( HttpServletRequest request ) {
-	Map< String,Cookie > cookieMap = new HashMap< String,Cookie >();
-	Cookie[] cookies = request.getCookies();
-	if ( null != cookies ) {
-	    for ( Cookie cookie : cookies ) {
-		cookieMap.put( cookie.getName(), cookie );
-	    }
-	}
-	return cookieMap;
+        Map< String,Cookie > cookieMap = new HashMap< String,Cookie >();
+        Cookie[] cookies = request.getCookies();
+        if ( null != cookies ) {
+            for ( Cookie cookie : cookies ) {
+                cookieMap.put( cookie.getName(), cookie );
+            }
+        }
+        return cookieMap;
     }
 
     /**
@@ -110,21 +110,21 @@ public class CookieUtil {
      * @param name     cookie 名称
      */
     public static void delCookie( HttpServletRequest request, HttpServletResponse response, String name ) {
-	Cookie[] cookies = request.getCookies();
-	if ( null == cookies ) {
-	    //             System.out.println("没有cookie==============");
-	} else {
-	    for ( Cookie cookie : cookies ) {
-		if ( cookie.getName().equals( name ) ) {
-		    cookie.setValue( null );
-		    cookie.setMaxAge( 0 );// 立即销毁cookie
-		    cookie.setPath( "/" );
-		    //                     System.out.println("被删除的cookie名字为:"+cookie.getName());
-		    response.addCookie( cookie );
-		    break;
-		}
-	    }
-	}
+        Cookie[] cookies = request.getCookies();
+        if ( null == cookies ) {
+            //             System.out.println("没有cookie==============");
+        } else {
+            for ( Cookie cookie : cookies ) {
+                if ( cookie.getName().equals( name ) ) {
+                    cookie.setValue( null );
+                    cookie.setMaxAge( 0 );// 立即销毁cookie
+                    cookie.setPath( "/" );
+                    //                     System.out.println("被删除的cookie名字为:"+cookie.getName());
+                    response.addCookie( cookie );
+                    break;
+                }
+            }
+        }
     }
 
 }

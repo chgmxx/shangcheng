@@ -16,11 +16,11 @@ import org.springframework.session.web.http.DefaultCookieSerializer;
  * @date 2017/07/16
  */
 @Configuration
-@EnableRedisHttpSession(maxInactiveIntervalInSeconds = 3600)
+@EnableRedisHttpSession( maxInactiveIntervalInSeconds = 3600 )
 public class RedisSessionConfig {
 
     /** 日志 */
-    private static final Logger LOG                          = LoggerFactory.getLogger( RedisSessionConfig.class );
+    private static final Logger LOG = LoggerFactory.getLogger( RedisSessionConfig.class );
     // 注入配置属性 根据环境配置切换
     @Value( "${redisSession.cookieName}" )
     private String cookieName;
@@ -36,12 +36,12 @@ public class RedisSessionConfig {
      */
     @Bean( name = "defaultCookieSerializer" )
     public DefaultCookieSerializer defaultCookieSerializer() {
-	LOG.debug( " domainName:{},cookieName:{},cookiePath:{} ", domainName, cookieName, cookiePath );
-	DefaultCookieSerializer cookieSerializer = new DefaultCookieSerializer();
-	cookieSerializer.setDomainName( domainName );
-	cookieSerializer.setCookieName( cookieName );
-	cookieSerializer.setCookiePath( cookiePath );
-	return cookieSerializer;
+        LOG.debug( " domainName:{},cookieName:{},cookiePath:{} ", domainName, cookieName, cookiePath );
+        DefaultCookieSerializer cookieSerializer = new DefaultCookieSerializer();
+        cookieSerializer.setDomainName( domainName );
+        cookieSerializer.setCookieName( cookieName );
+        cookieSerializer.setCookiePath( cookiePath );
+        return cookieSerializer;
     }
 
 }

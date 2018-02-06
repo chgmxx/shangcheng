@@ -40,18 +40,18 @@
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-       id, member_id, referees_member_id, user_name, company_name, telephone, commission,
-      total_commission, freeze_commission, can_presented_commission, already_presented_commission,
-      income_integral, sale_money, user_type, bus_user_id, apply_time, check_time, check_status,
-      check_pass_reason, qr_code_path, add_time, remark, is_start_use, scene_key, qr_code_ticket,
-      is_send_focus_integral, is_focus_public, promotion_poster_path, head_image_path, ucqr_code_path, ucpromotion_poster_path
+        id, member_id, referees_member_id, user_name, company_name, telephone, commission,
+        total_commission, freeze_commission, can_presented_commission, already_presented_commission,
+        income_integral, sale_money, user_type, bus_user_id, apply_time, check_time, check_status,
+        check_pass_reason, qr_code_path, add_time, remark, is_start_use, scene_key, qr_code_ticket,
+        is_send_focus_integral, is_focus_public, promotion_poster_path, head_image_path, ucqr_code_path, ucpromotion_poster_path
     </sql>
 
     <update id="updateStatusByUserId">
         update t_mall_seller
         set check_status = #{status,jdbcType=INTEGER} ,
-            check_time = now(),
-            add_time=now()
+        check_time = now(),
+        add_time=now()
         where bus_user_id=#{user_id,jdbcType=INTEGER} and (check_status = 0 or check_status = -1)
     </update>
 

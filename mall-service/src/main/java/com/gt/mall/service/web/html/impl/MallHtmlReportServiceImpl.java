@@ -30,21 +30,21 @@ public class MallHtmlReportServiceImpl extends BaseServiceImpl< MallHtmlReportDA
 
     @Override
     public void htmlReport( Integer htmlid, Integer style ) {
-	int num = htmlReportDAO.countReportNumByHtmlId( htmlid, style );
-	if ( num > 0 ) {
-	    num += 1;
-	    htmlReportDAO.updateReportNumByHtmlId( num, htmlid, style );
-	} else {
-	    MallHtmlReport obj = new MallHtmlReport();
-	    obj.setReportNum( 1 );
-	    obj.setStyle( style );
-	    obj.setHtmlId( htmlid );
-	    htmlReportDAO.insert( obj );
-	    MallHtml html = new MallHtml();
-	    html.setId( htmlid );
-	    html.setReportstate( 1 );
-	    htmlDAO.updateById( html );
+        int num = htmlReportDAO.countReportNumByHtmlId( htmlid, style );
+        if ( num > 0 ) {
+            num += 1;
+            htmlReportDAO.updateReportNumByHtmlId( num, htmlid, style );
+        } else {
+            MallHtmlReport obj = new MallHtmlReport();
+            obj.setReportNum( 1 );
+            obj.setStyle( style );
+            obj.setHtmlId( htmlid );
+            htmlReportDAO.insert( obj );
+            MallHtml html = new MallHtml();
+            html.setId( htmlid );
+            html.setReportstate( 1 );
+            htmlDAO.updateById( html );
 
-	}
+        }
     }
 }

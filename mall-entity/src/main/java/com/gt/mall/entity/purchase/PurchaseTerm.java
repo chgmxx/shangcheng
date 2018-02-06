@@ -13,62 +13,61 @@ import java.util.Date;
 
 /**
  * <p>
- * 
+ * <p>
  * </p>
  *
  * @author yangqian
  * @since 2017-07-31
  */
 @Data
-@Accessors(chain = true)
-@TableName("purchase_term")
-public class PurchaseTerm extends Model<PurchaseTerm> {
+@Accessors( chain = true )
+@TableName( "purchase_term" )
+public class PurchaseTerm extends Model< PurchaseTerm > {
 
     private static final long serialVersionUID = 1L;
 
-	@TableId(value="id", type= IdType.AUTO)
-	private Integer id;
+    @TableId( value = "id", type = IdType.AUTO )
+    private Integer id;
     /**
      * 订单id
      */
-	@TableField("order_id")
-	private Integer orderId;
+    @TableField( "order_id" )
+    private Integer orderId;
     /**
      * 分期序号
      */
-	@TableField("term_index")
-	private Integer termIndex;
+    @TableField( "term_index" )
+    private Integer termIndex;
     /**
      * 分期时间
      */
-	@TableField("term_time")
-	private Date termTime;
+    @TableField( "term_time" )
+    private Date    termTime;
     /**
      * 分期金额
      */
-	@TableField("term_money")
-	private Double termMoney;
+    @TableField( "term_money" )
+    private Double  termMoney;
     /**
      * 0未付款1已付款
      */
-	@TableField("term_buy")
-	private String termBuy;
+    @TableField( "term_buy" )
+    private String  termBuy;
 
+    @Override
+    protected Serializable pkVal() {
+        return this.id;
+    }
 
-	@Override
-	protected Serializable pkVal() {
-		return this.id;
-	}
-
-	@Override
-	public String toString() {
-		return "PurchaseTerm{" +
-			"id=" + id +
-			", orderId=" + orderId +
-			", termIndex=" + termIndex +
-			", termTime=" + termTime +
-			", termMoney=" + termMoney +
-			", termBuy=" + termBuy +
-			"}";
-	}
+    @Override
+    public String toString() {
+        return "PurchaseTerm{" +
+            "id=" + id +
+            ", orderId=" + orderId +
+            ", termIndex=" + termIndex +
+            ", termTime=" + termTime +
+            ", termMoney=" + termMoney +
+            ", termBuy=" + termBuy +
+            "}";
+    }
 }

@@ -19,24 +19,30 @@ public interface MallOrderReturnDAO extends BaseMapper< MallOrderReturn > {
 
     /**
      * 根据订单id和订单详情id查询退款信息
+     *
      * @param orderReturn
+     *
      * @return
      */
-    MallOrderReturn selectByOrderDetailId(MallOrderReturn orderReturn);
+    MallOrderReturn selectByOrderDetailId( MallOrderReturn orderReturn );
 
     /**
      * 根据退单号，查询退单信息
+     *
      * @param returnNo
+     *
      * @return
      */
-    MallOrderReturn selectByReturnNo(String returnNo);
+    MallOrderReturn selectByReturnNo( String returnNo );
 
     /**
      * 根据订单id查询退单信息
+     *
      * @param params
+     *
      * @return
      */
-    List<MallOrderReturn> selectByDetailIds(Map<String, Object> params);
+    List< MallOrderReturn > selectByDetailIds( Map< String,Object > params );
 
     /**
      * 退款的所有商品
@@ -59,5 +65,5 @@ public interface MallOrderReturnDAO extends BaseMapper< MallOrderReturn > {
      * @return
      */
     List< Map< String,Object > > selectProductMoneyByWay( @Param( "startTime" ) String startTime, @Param( "endTime" ) String endTime, @Param( "productId" ) Integer productId,
-                    @Param( "payWay" ) Integer payWay );
+        @Param( "payWay" ) Integer payWay );
 }

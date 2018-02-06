@@ -73,32 +73,32 @@ public class PhoneMallIntegralNewController extends AuthorizeOrUcLoginController
     @ResponseBody
     @RequestMapping( value = "integralProductList", method = RequestMethod.POST )
     public ServerResponse< Map< String,Object > > integralProductList( HttpServletRequest request, HttpServletResponse response,
-		    @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO, Integer curPage ) {
-	Map< String,Object > result = new HashMap<>();
-	try {
-	    coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "2" ) );////判断活动是否已经过期
-	    /*loginDTO.setUcLogin( 1 );
+        @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO, Integer curPage ) {
+        Map< String,Object > result = new HashMap<>();
+        try {
+            coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "2" ) );////判断活动是否已经过期
+        /*loginDTO.setUcLogin( 1 );
 	    userLogin( request, response, loginDTO );*/
-	    BusUser user = new BusUser();
-	    user.setId( loginDTO.getBusId() );
-	    List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
-	    if ( shoplist == null || shoplist.size() == 0 ) {
-		throw new BusinessException( ResponseEnums.SHOP_NULL_ERROR.getCode(), ResponseEnums.SHOP_NULL_ERROR.getDesc() );
-	    }
-	    Map< String,Object > params = new HashMap<>();
-	    params.put( "shoplist", shoplist );
-	    params.put( "curPage", curPage );
-	    PageUtil page = integralService.selectIntegralByUserId( params );
+            BusUser user = new BusUser();
+            user.setId( loginDTO.getBusId() );
+            List< Map< String,Object > > shoplist = mallStoreService.findAllStoByUser( user, request );// 查询登陆人拥有的店铺
+            if ( shoplist == null || shoplist.size() == 0 ) {
+                throw new BusinessException( ResponseEnums.SHOP_NULL_ERROR.getCode(), ResponseEnums.SHOP_NULL_ERROR.getDesc() );
+            }
+            Map< String,Object > params = new HashMap<>();
+            params.put( "shoplist", shoplist );
+            params.put( "curPage", curPage );
+            PageUtil page = integralService.selectIntegralByUserId( params );
 
-	    result.put( "page", page );
-	} catch ( BusinessException be ) {
-	    return ServerResponse.createByErrorCodeMessage( be.getCode(), be.getMessage() );
-	} catch ( Exception e ) {
-	    logger.error( "获取积分商城商品列表异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取积分商城商品列表异常" );
-	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, true );
+            result.put( "page", page );
+        } catch ( BusinessException be ) {
+            return ServerResponse.createByErrorCodeMessage( be.getCode(), be.getMessage() );
+        } catch ( Exception e ) {
+            logger.error( "获取积分商城商品列表异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取积分商城商品列表异常" );
+        }
+        return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, true );
     }
 
     /**
@@ -108,42 +108,42 @@ public class PhoneMallIntegralNewController extends AuthorizeOrUcLoginController
     @ResponseBody
     @RequestMapping( value = "integralImage", method = RequestMethod.POST )
     public ServerResponse< Map< String,Object > > integralImage( HttpServletRequest request, HttpServletResponse response,
-		    @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO ) {
-	Map< String,Object > result = new HashMap<>();
-	try {
-	    coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "2" ) );////判断活动是否已经过期
+        @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO ) {
+        Map< String,Object > result = new HashMap<>();
+        try {
+            coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "2" ) );////判断活动是否已经过期
 	    /*loginDTO.setUcLogin( 1 );
 	    userLogin( request, response, loginDTO );*/
-	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
+            Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 
-	    //查询我的积分
-	    if ( CommonUtil.isNotEmpty( member ) ) {
-		member = memberService.findMemberById( member.getId(), member );
-		if ( CommonUtil.isNotEmpty( member.getIntegral() ) ) {
-		    result.put( "memberIntegral", member.getIntegral() );
-		} else {
-		    result.put( "memberIntegral", 0 );
-		}
-		result.put( "memberId", member.getId() );
-	    }
+            //查询我的积分
+            if ( CommonUtil.isNotEmpty( member ) ) {
+                member = memberService.findMemberById( member.getId(), member );
+                if ( CommonUtil.isNotEmpty( member.getIntegral() ) ) {
+                    result.put( "memberIntegral", member.getIntegral() );
+                } else {
+                    result.put( "memberIntegral", 0 );
+                }
+                result.put( "memberId", member.getId() );
+            }
 
-	    //查询轮播图片
-	    Map< String,Object > params = new HashMap<>();
-	    //	    params.put( "shopId", shopId );
-	    params.put( "userId", loginDTO.getBusId() );
-	    List< MallIntegralImage > imageList = integralImageService.getIntegralImageByUser( params );
-	    result.put( "imageList", imageList );
+            //查询轮播图片
+            Map< String,Object > params = new HashMap<>();
+            //	    params.put( "shopId", shopId );
+            params.put( "userId", loginDTO.getBusId() );
+            List< MallIntegralImage > imageList = integralImageService.getIntegralImageByUser( params );
+            result.put( "imageList", imageList );
 
-	    //	    MallRedisUtils.getMallShopId( shopId );//从session获取店铺id  或  把店铺id存入session
+            //	    MallRedisUtils.getMallShopId( shopId );//从session获取店铺id  或  把店铺id存入session
 
-	} catch ( BusinessException be ) {
-	    return ErrorInfo.createByErrorCodeMessage( be.getCode(), be.getMessage(), be.getData() );
-	} catch ( Exception e ) {
-	    logger.error( "获取积分数量,轮播图片异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取积分数量,轮播图片异常" );
-	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, true );
+        } catch ( BusinessException be ) {
+            return ErrorInfo.createByErrorCodeMessage( be.getCode(), be.getMessage(), be.getData() );
+        } catch ( Exception e ) {
+            logger.error( "获取积分数量,轮播图片异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取积分数量,轮播图片异常" );
+        }
+        return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, true );
     }
 
     /**
@@ -154,43 +154,41 @@ public class PhoneMallIntegralNewController extends AuthorizeOrUcLoginController
     @ResponseBody
     @RequestMapping( value = "recordList", method = RequestMethod.POST )
     public ServerResponse< Map< String,Object > > recordList( HttpServletRequest request, HttpServletResponse response,
-		    @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO, Integer curPage ) {
-	Map< String,Object > result = new HashMap<>();
-	try {
-	    coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "2" ) );////判断活动是否已经过期
+        @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO, Integer curPage ) {
+        Map< String,Object > result = new HashMap<>();
+        try {
+            coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "2" ) );////判断活动是否已经过期
 
-//	    userLogin( request, response, loginDTO );
-	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
-	    Map< String,Object > params = new HashMap<>();
-	    params.put( "buyerUserId", member.getId() );
-	    params.put( "busUserId", loginDTO.getBusId() );
-	    params.put( "curPage", curPage );
-	    List< MallOrder > orderList = orderService.selectIntegeralOrder( params );
-	    double totalIntegral = 0;
-	    if ( orderList != null && orderList.size() > 0 ) {
-		params.put( "totalOrderNum", orderList.size() );
-		//查询兑换记录
-		PageUtil pageUtil = orderService.selectIntegralOrder( params );
-		result.put( "pageUtil", pageUtil );
+            //	    userLogin( request, response, loginDTO );
+            Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
+            Map< String,Object > params = new HashMap<>();
+            params.put( "buyerUserId", member.getId() );
+            params.put( "busUserId", loginDTO.getBusId() );
+            params.put( "curPage", curPage );
+            List< MallOrder > orderList = orderService.selectIntegeralOrder( params );
+            double totalIntegral = 0;
+            if ( orderList != null && orderList.size() > 0 ) {
+                params.put( "totalOrderNum", orderList.size() );
+                //查询兑换记录
+                PageUtil pageUtil = orderService.selectIntegralOrder( params );
+                result.put( "pageUtil", pageUtil );
 
-		if ( orderList != null && orderList.size() > 0 ) {
-		    for ( MallOrder mallOrder : orderList ) {
-			if ( CommonUtil.isEmpty( mallOrder ) || CommonUtil.isEmpty( mallOrder.getOrderMoney() ) ) {
-			    continue;
-			}
-			totalIntegral = CommonUtil.add( totalIntegral, CommonUtil.toDouble( mallOrder.getOrderMoney() ) );
-		    }
-		}
-	    }
-	    result.put( "totalIntegral", totalIntegral );
-	} catch ( BusinessException be ) {
-	    return ErrorInfo.createByErrorCodeMessage( be.getCode(), be.getMessage(), be.getData() );
-	} catch ( Exception e ) {
-	    logger.error( "获取兑换记录列表异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取兑换记录列表异常" );
-	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, true );
+                for ( MallOrder mallOrder : orderList ) {
+                    if ( CommonUtil.isEmpty( mallOrder ) || CommonUtil.isEmpty( mallOrder.getOrderMoney() ) ) {
+                        continue;
+                    }
+                    totalIntegral = CommonUtil.add( totalIntegral, CommonUtil.toDouble( mallOrder.getOrderMoney() ) );
+                }
+            }
+            result.put( "totalIntegral", totalIntegral );
+        } catch ( BusinessException be ) {
+            return ErrorInfo.createByErrorCodeMessage( be.getCode(), be.getMessage(), be.getData() );
+        } catch ( Exception e ) {
+            logger.error( "获取兑换记录列表异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取兑换记录列表异常" );
+        }
+        return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, true );
     }
 
     /**
@@ -201,41 +199,41 @@ public class PhoneMallIntegralNewController extends AuthorizeOrUcLoginController
     @ResponseBody
     @RequestMapping( value = "integralDetail", method = RequestMethod.POST )
     public ServerResponse< Map< String,Object > > integralDetail( HttpServletRequest request, HttpServletResponse response,
-		    @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO, Integer curPage ) {
-	Map< String,Object > result = new HashMap<>();
-	try {
-	    coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "2" ) );////判断活动是否已经过期
+        @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO, Integer curPage ) {
+        Map< String,Object > result = new HashMap<>();
+        try {
+            coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "2" ) );////判断活动是否已经过期
 
-//	    userLogin( request, response, loginDTO );
-	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
+            //	    userLogin( request, response, loginDTO );
+            Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 
-	    Map< String,Object > map = new HashMap<>();
-	    int pageSize = 20;
-	    curPage = CommonUtil.isEmpty( curPage ) ? 1 : curPage;
-	    int firstNum = pageSize * ( ( curPage <= 0 ? 1 : curPage ) - 1 );
-	    map.put( "memberId", member.getId() );
-	    map.put( "page", firstNum );
-	    map.put( "pageSize", pageSize );
-	    List< Map > list = memberService.findCardrecordList( map );
-	    result.put( "curPage", curPage );
-	    result.put( "integralList", list );
-	    //查询我的积分
-	    if ( CommonUtil.isNotEmpty( member ) ) {
-		member = memberService.findMemberById( member.getId(), member );
-		result.put( "memberIntegral", member.getIntegral() );
-	    }
+            Map< String,Object > map = new HashMap<>();
+            int pageSize = 20;
+            curPage = CommonUtil.isEmpty( curPage ) ? 1 : curPage;
+            int firstNum = pageSize * ( ( curPage <= 0 ? 1 : curPage ) - 1 );
+            map.put( "memberId", member.getId() );
+            map.put( "page", firstNum );
+            map.put( "pageSize", pageSize );
+            List< Map > list = memberService.findCardrecordList( map );
+            result.put( "curPage", curPage );
+            result.put( "integralList", list );
+            //查询我的积分
+            if ( CommonUtil.isNotEmpty( member ) ) {
+                member = memberService.findMemberById( member.getId(), member );
+                result.put( "memberIntegral", member.getIntegral() );
+            }
 
-	    //	    if ( CommonUtil.isNotEmpty( shopId ) ) {
-	    //		MallRedisUtils.getMallShopId( shopId );//从session获取店铺id  或  把店铺id存入session
-	    //	    }
-	} catch ( BusinessException be ) {
-	    return ErrorInfo.createByErrorCodeMessage( be.getCode(), be.getMessage(), be.getData() );
-	} catch ( Exception e ) {
-	    logger.error( "获取积分明细列表异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取积分明细列表异常" );
-	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, true );
+            //	    if ( CommonUtil.isNotEmpty( shopId ) ) {
+            //		MallRedisUtils.getMallShopId( shopId );//从session获取店铺id  或  把店铺id存入session
+            //	    }
+        } catch ( BusinessException be ) {
+            return ErrorInfo.createByErrorCodeMessage( be.getCode(), be.getMessage(), be.getData() );
+        } catch ( Exception e ) {
+            logger.error( "获取积分明细列表异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取积分明细列表异常" );
+        }
+        return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, true );
     }
 
     /**
@@ -243,45 +241,45 @@ public class PhoneMallIntegralNewController extends AuthorizeOrUcLoginController
      */
     @ApiOperation( value = "获取积分商品信息", notes = "获取积分商品信息" )
     @ApiImplicitParams(
-		    @ApiImplicitParam( name = "productId", value = "商品ID", paramType = "query", required = true, dataType = "int" ) )
+        @ApiImplicitParam( name = "productId", value = "商品ID", paramType = "query", required = true, dataType = "int" ) )
     @ResponseBody
     @RequestMapping( value = "integralProduct", method = RequestMethod.POST )
     public ServerResponse< Map< String,Object > > integralProduct( HttpServletRequest request, HttpServletResponse response,
-		    @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO, Integer productId ) {
-	Map< String,Object > result = new HashMap<>();
-	try {
-	    coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "2" ) );////判断活动是否已经过期
+        @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO, Integer productId ) {
+        Map< String,Object > result = new HashMap<>();
+        try {
+            coreService.payModel( loginDTO.getBusId(), CommonUtil.getAddedStyle( "2" ) );////判断活动是否已经过期
 
 	    /*loginDTO.setUcLogin( 1 );
 	    userLogin( request, response, loginDTO );*/
-	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
-	    Map< String,Object > params = new HashMap<>();
-	    params.put( "id", productId );
-	    Map< String,Object > resultMap = integralService.selectProductDetail( member, params );
-	    if ( resultMap != null && resultMap.size() > 0 ) {
-		for ( String str : resultMap.keySet() ) {
-		    result.put( str, resultMap.get( str ) );
-		}
-	    }
-	    if ( CommonUtil.isNotEmpty( member ) ) {
-		member = memberService.findMemberById( member.getId(), member );
-		boolean isMember = memberService.isMember( member.getId() );
-		if ( isMember ) {
-		    result.put( "isMember", 1 );
-		}
-		result.put( "memberId", member.getId() );
-		result.put( "memberIntegral", member.getIntegral() );
-	    }
-	    //	    result.put( "member", member );
+            Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
+            Map< String,Object > params = new HashMap<>();
+            params.put( "id", productId );
+            Map< String,Object > resultMap = integralService.selectProductDetail( member, params );
+            if ( resultMap != null && resultMap.size() > 0 ) {
+                for ( String str : resultMap.keySet() ) {
+                    result.put( str, resultMap.get( str ) );
+                }
+            }
+            if ( CommonUtil.isNotEmpty( member ) ) {
+                member = memberService.findMemberById( member.getId(), member );
+                boolean isMember = memberService.isMember( member.getId() );
+                if ( isMember ) {
+                    result.put( "isMember", 1 );
+                }
+                result.put( "memberId", member.getId() );
+                result.put( "memberIntegral", member.getIntegral() );
+            }
+            //	    result.put( "member", member );
 
-	} catch ( BusinessException be ) {
-	    return ErrorInfo.createByErrorCodeMessage( be.getCode(), be.getMessage(), be.getData() );
-	} catch ( Exception e ) {
-	    logger.error( "获取积分商品信息异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取积分商品信息异常" );
-	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, true );
+        } catch ( BusinessException be ) {
+            return ErrorInfo.createByErrorCodeMessage( be.getCode(), be.getMessage(), be.getData() );
+        } catch ( Exception e ) {
+            logger.error( "获取积分商品信息异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取积分商品信息异常" );
+        }
+        return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, true );
     }
 
     /**
@@ -291,26 +289,26 @@ public class PhoneMallIntegralNewController extends AuthorizeOrUcLoginController
     @ResponseBody
     @RequestMapping( value = "recordIntegral", method = RequestMethod.POST )
     public ServerResponse< Map< String,Object > > recordIntegral( HttpServletRequest request, HttpServletResponse response,
-		    @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO, PhoneAddIntegralDTO integralDTO ) {
-	Map< String,Object > result = null;
-	try {
-//	    userLogin( request, response, loginDTO );
-	    Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
+        @RequestBody @Valid @ModelAttribute PhoneLoginDTO loginDTO, PhoneAddIntegralDTO integralDTO ) {
+        Map< String,Object > result = null;
+        try {
+            //	    userLogin( request, response, loginDTO );
+            Member member = MallSessionUtils.getLoginMember( request, loginDTO.getBusId() );
 
-	    member = memberService.findMemberById( member.getId(), member );
-	    Integer browser = loginDTO.getBrowerType();//CommonUtil.judgeBrowser( request );
-	    if ( browser != 1 ) {
-		browser = 2;
-	    }
-	    result = integralService.recordIntegral( integralDTO, member, browser, request );
-	} catch ( BusinessException be ) {
-	    return ServerResponse.createByErrorCodeMessage( be.getCode(), be.getMessage() );
-	} catch ( Exception e ) {
-	    logger.error( "兑换积分异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "兑换积分异常" );
-	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
+            member = memberService.findMemberById( member.getId(), member );
+            Integer browser = loginDTO.getBrowerType();//CommonUtil.judgeBrowser( request );
+            if ( browser != 1 ) {
+                browser = 2;
+            }
+            result = integralService.recordIntegral( integralDTO, member, browser, request );
+        } catch ( BusinessException be ) {
+            return ServerResponse.createByErrorCodeMessage( be.getCode(), be.getMessage() );
+        } catch ( Exception e ) {
+            logger.error( "兑换积分异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "兑换积分异常" );
+        }
+        return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result );
     }
 
 }

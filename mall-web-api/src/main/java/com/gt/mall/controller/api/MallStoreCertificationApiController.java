@@ -58,57 +58,57 @@ public class MallStoreCertificationApiController extends BaseController {
     @ResponseBody
     @RequestMapping( value = "/certList", method = RequestMethod.POST )
     public ServerResponse certList( HttpServletRequest request, HttpServletResponse response, @RequestBody String param ) {
-	Map< String,Object > result = new HashMap<>();
-	try {
-	    logger.info( "接收到的参数：" + param );
-	    Map< String,Object > params = JSONObject.parseObject( param );
+        Map< String,Object > result = new HashMap<>();
+        try {
+            logger.info( "接收到的参数：" + param );
+            Map< String,Object > params = JSONObject.parseObject( param );
 
-	    List< Map< String,Object > > certList = null;
-	    Integer curPage = CommonUtil.isEmpty( params.get( "curPage" ) ) ? 1 : CommonUtil.toInteger( params.get( "curPage" ) );
-	    Integer pageSize = CommonUtil.isEmpty( params.get( "pageSize" ) ) ? 15 : CommonUtil.toInteger( params.get( "pageSize" ) );
+            List< Map< String,Object > > certList = null;
+            Integer curPage = CommonUtil.isEmpty( params.get( "curPage" ) ) ? 1 : CommonUtil.toInteger( params.get( "curPage" ) );
+            Integer pageSize = CommonUtil.isEmpty( params.get( "pageSize" ) ) ? 15 : CommonUtil.toInteger( params.get( "pageSize" ) );
 
-	    //	    params.put( "checkStatus", "0" );
-	    if ( CommonUtil.isNotEmpty( params.get( "checkStatus" ) ) ) {
-		params.put( "checkStatus", params.get( "checkStatus" ).toString() );
-	    }
-	    if ( CommonUtil.isNotEmpty( params.get( "userIds" ) ) ) {
-		params.put( "userIds", params.get( "userIds" ).toString().split( "," ) );
-	    }
-	    int count = mallStoreCertificationDAO.selectAllCount( params );
+            //	    params.put( "checkStatus", "0" );
+            if ( CommonUtil.isNotEmpty( params.get( "checkStatus" ) ) ) {
+                params.put( "checkStatus", params.get( "checkStatus" ).toString() );
+            }
+            if ( CommonUtil.isNotEmpty( params.get( "userIds" ) ) ) {
+                params.put( "userIds", params.get( "userIds" ).toString().split( "," ) );
+            }
+            int count = mallStoreCertificationDAO.selectAllCount( params );
 
-	    PageUtil page = new PageUtil( curPage, pageSize, count, "" );
-	    int firstNum = pageSize * ( ( page.getCurPage() <= 0 ? 1 : page.getCurPage() ) - 1 );
-	    params.put( "firstNum", firstNum );// 起始页
-	    params.put( "maxNum", pageSize );// 每页显示商品的数量
+            PageUtil page = new PageUtil( curPage, pageSize, count, "" );
+            int firstNum = pageSize * ( ( page.getCurPage() <= 0 ? 1 : page.getCurPage() ) - 1 );
+            params.put( "firstNum", firstNum );// 起始页
+            params.put( "maxNum", pageSize );// 每页显示商品的数量
 
-	    if ( count > 0 ) {// 判断是否有数据
-		certList = mallStoreCertificationDAO.selectAllByPage( params );
-		if ( certList != null && certList.size() > 0 ) {
-		    List< DictBean > categoryMap = dictService.getDict( "K002" );
-		    for ( Map< String,Object > map : certList ) {
-			if ( CommonUtil.toInteger( map.get( "stoType" ) ) == 1 ) {
-			    if ( categoryMap != null && categoryMap.size() > 0 ) {
-				for ( DictBean dictBean : categoryMap ) {
-				    if ( dictBean.getItem_key().toString().equals( map.get( "stoCategory" ).toString() ) ) {
-					String value = dictBean.getItem_value();
-					net.sf.json.JSONObject foorerObj = net.sf.json.JSONObject.fromObject( value );
-					map.put( "stoCategoryName", foorerObj.get( "title" ).toString() );
-					break;
-				    }
-				}
-			    }
-			}
-		    }
-		}
-	    }
-	    page.setSubList( certList );
-	    result.put( "page", page );
-	} catch ( Exception e ) {
-	    logger.error( "待审核店铺认证列表异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "待审核店铺认证列表异常" );
-	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, true );
+            if ( count > 0 ) {// 判断是否有数据
+                certList = mallStoreCertificationDAO.selectAllByPage( params );
+                if ( certList != null && certList.size() > 0 ) {
+                    List< DictBean > categoryMap = dictService.getDict( "K002" );
+                    for ( Map< String,Object > map : certList ) {
+                        if ( CommonUtil.toInteger( map.get( "stoType" ) ) == 1 ) {
+                            if ( categoryMap != null && categoryMap.size() > 0 ) {
+                                for ( DictBean dictBean : categoryMap ) {
+                                    if ( dictBean.getItem_key().toString().equals( map.get( "stoCategory" ).toString() ) ) {
+                                        String value = dictBean.getItem_value();
+                                        net.sf.json.JSONObject foorerObj = net.sf.json.JSONObject.fromObject( value );
+                                        map.put( "stoCategoryName", foorerObj.get( "title" ).toString() );
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            page.setSubList( certList );
+            result.put( "page", page );
+        } catch ( Exception e ) {
+            logger.error( "待审核店铺认证列表异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "待审核店铺认证列表异常" );
+        }
+        return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), result, true );
     }
 
     /**
@@ -118,45 +118,45 @@ public class MallStoreCertificationApiController extends BaseController {
     @ResponseBody
     @RequestMapping( value = "/certInfo", method = RequestMethod.POST )
     public ServerResponse certInfo( HttpServletRequest request, HttpServletResponse response, @RequestBody String param ) {
-	MallStoreCertification storeCert = null;
-	try {
-	    logger.info( "接收到的参数：" + param );
-	    Map< String,Object > params = JSONObject.parseObject( param );
+        MallStoreCertification storeCert = null;
+        try {
+            logger.info( "接收到的参数：" + param );
+            Map< String,Object > params = JSONObject.parseObject( param );
 
-	    storeCert = mallStoreCertService.selectById( CommonUtil.toInteger( params.get( "id" ) ) );
-	    if ( storeCert != null && storeCert.getIsDelete() == 1 ) {
-		storeCert = null;
-	    }
-	    if ( storeCert != null ) {
-		MallStore store = mallStoreService.selectById( storeCert.getStoId() );
-		storeCert.setStoName( store.getStoName() );
-		List< DictBean > categoryMap = dictService.getDict( "K002" );
-		if ( categoryMap != null && categoryMap.size() > 0 ) {
-		    for ( DictBean dictBean : categoryMap ) {
-			if ( dictBean.getItem_key().toString().equals( storeCert.getStoCategory().toString() ) ) {
-			    String value = dictBean.getItem_value();
-			    net.sf.json.JSONObject foorerObj = net.sf.json.JSONObject.fromObject( value );
-			    storeCert.setStoCategoryName( foorerObj.get( "title" ).toString() );
-			    break;
-			}
-		    }
-		}
+            storeCert = mallStoreCertService.selectById( CommonUtil.toInteger( params.get( "id" ) ) );
+            if ( storeCert != null && storeCert.getIsDelete() == 1 ) {
+                storeCert = null;
+            }
+            if ( storeCert != null ) {
+                MallStore store = mallStoreService.selectById( storeCert.getStoId() );
+                storeCert.setStoName( store.getStoName() );
+                List< DictBean > categoryMap = dictService.getDict( "K002" );
+                if ( categoryMap != null && categoryMap.size() > 0 ) {
+                    for ( DictBean dictBean : categoryMap ) {
+                        if ( dictBean.getItem_key().toString().equals( storeCert.getStoCategory().toString() ) ) {
+                            String value = dictBean.getItem_value();
+                            net.sf.json.JSONObject foorerObj = net.sf.json.JSONObject.fromObject( value );
+                            storeCert.setStoCategoryName( foorerObj.get( "title" ).toString() );
+                            break;
+                        }
+                    }
+                }
 
-		if ( storeCert.getIsCertDoc() == 1 ) {
-		    Map< String,Object > assParams = new HashMap<>();
-		    assParams.put( "assType", 6 );
-		    assParams.put( "assId", storeCert.getId() );
-		    List< MallImageAssociative > imageAssociativeList = mallImageAssociativeService.selectByAssId( assParams );
-		    storeCert.setImageList( imageAssociativeList );
-		}
-	    }
+                if ( storeCert.getIsCertDoc() == 1 ) {
+                    Map< String,Object > assParams = new HashMap<>();
+                    assParams.put( "assType", 6 );
+                    assParams.put( "assId", storeCert.getId() );
+                    List< MallImageAssociative > imageAssociativeList = mallImageAssociativeService.selectByAssId( assParams );
+                    storeCert.setImageList( imageAssociativeList );
+                }
+            }
 
-	} catch ( Exception e ) {
-	    logger.error( "获取店铺认证信息异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取店铺认证信息异常" );
-	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), storeCert );
+        } catch ( Exception e ) {
+            logger.error( "获取店铺认证信息异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取店铺认证信息异常" );
+        }
+        return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), storeCert );
     }
 
     /**
@@ -166,26 +166,26 @@ public class MallStoreCertificationApiController extends BaseController {
     @ResponseBody
     @RequestMapping( value = "/certCheck", method = RequestMethod.POST )
     public ServerResponse certCheck( HttpServletRequest request, HttpServletResponse response, @RequestBody String param ) {
-	//		    @ApiParam( name = "status", value = "类型 1通过 -1不通过", required = true ) @RequestParam Integer status
-	try {
-	    logger.info( "接收到的参数：" + param );
-	    Map< String,Object > params = JSONObject.parseObject( param );
+        //		    @ApiParam( name = "status", value = "类型 1通过 -1不通过", required = true ) @RequestParam Integer status
+        try {
+            logger.info( "接收到的参数：" + param );
+            Map< String,Object > params = JSONObject.parseObject( param );
 
-	    MallStoreCertification certification = mallStoreCertService.selectById( CommonUtil.toInteger( params.get( "id" ) ) );
-	    certification.setCheckStatus( CommonUtil.toInteger( params.get( "status" ) ) );
-	    if ( CommonUtil.isNotEmpty( params.get( "reason" ) ) ) {
-		certification.setRefuseReason( params.get( "reason" ).toString() );
-	    }
-	    boolean flag = mallStoreCertService.updateById( certification );
-	    if ( !flag ) {
-		return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "认证审核异常" );
-	    }
-	} catch ( Exception e ) {
-	    logger.error( "认证审核异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "认证审核异常" );
-	}
-	return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
+            MallStoreCertification certification = mallStoreCertService.selectById( CommonUtil.toInteger( params.get( "id" ) ) );
+            certification.setCheckStatus( CommonUtil.toInteger( params.get( "status" ) ) );
+            if ( CommonUtil.isNotEmpty( params.get( "reason" ) ) ) {
+                certification.setRefuseReason( params.get( "reason" ).toString() );
+            }
+            boolean flag = mallStoreCertService.updateById( certification );
+            if ( !flag ) {
+                return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "认证审核异常" );
+            }
+        } catch ( Exception e ) {
+            logger.error( "认证审核异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "认证审核异常" );
+        }
+        return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
     }
 
 }

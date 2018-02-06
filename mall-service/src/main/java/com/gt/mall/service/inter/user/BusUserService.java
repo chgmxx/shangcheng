@@ -72,6 +72,6 @@ public interface BusUserService {
      *
      * @return 店铺列表
      */
-//    List< WsWxShopInfoExtend > getShopIdListByUserId( int userId );
+    //    List< WsWxShopInfoExtend > getShopIdListByUserId( int userId );
 
 }

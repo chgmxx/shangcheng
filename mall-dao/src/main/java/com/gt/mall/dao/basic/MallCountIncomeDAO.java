@@ -16,7 +16,7 @@ import java.util.Map;
  */
 public interface MallCountIncomeDAO extends BaseMapper< MallCountIncome > {
 
-     /**
+    /**
      * 获取 营业金额或收入金额
      *
      * @param params

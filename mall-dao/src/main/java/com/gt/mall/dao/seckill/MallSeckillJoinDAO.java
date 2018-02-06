@@ -17,8 +17,10 @@ public interface MallSeckillJoinDAO extends BaseMapper< MallSeckillJoin > {
 
     /**
      * 查询用户参加秒杀的数量
+     *
      * @param params
+     *
      * @return
      */
-    int selectCountByBuyId(Map<String, Object> params);
+    int selectCountByBuyId( Map< String,Object > params );
 }

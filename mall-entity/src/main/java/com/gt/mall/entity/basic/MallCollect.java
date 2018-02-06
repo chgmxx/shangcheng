@@ -59,18 +59,18 @@ public class MallCollect extends Model< MallCollect > {
 
     @Override
     protected Serializable pkVal() {
-	return this.id;
+        return this.id;
     }
 
     @Override
     public String toString() {
-	return "MallCollect{" +
-			"id=" + id +
-			", productId=" + productId +
-			", userId=" + userId +
-			", createTime=" + createTime +
-			", isCollect=" + isCollect +
-			", isDelete=" + isDelete +
-			"}";
+        return "MallCollect{" +
+            "id=" + id +
+            ", productId=" + productId +
+            ", userId=" + userId +
+            ", createTime=" + createTime +
+            ", isCollect=" + isCollect +
+            ", isDelete=" + isDelete +
+            "}";
     }
 }

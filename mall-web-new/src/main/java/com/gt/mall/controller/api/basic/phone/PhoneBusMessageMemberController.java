@@ -49,58 +49,58 @@ public class PhoneBusMessageMemberController extends AuthorizeOrUcLoginControlle
 
     @ApiOperation( value = "商家是否授权", notes = "商家是否授权" )
     @ApiImplicitParams( { @ApiImplicitParam( name = "busId", value = "商家id,必传", paramType = "query", required = true, dataType = "Integer" ),
-		    @ApiImplicitParam( name = "url", value = "地址,必传", paramType = "query", required = true, dataType = "String" ) } )
+        @ApiImplicitParam( name = "url", value = "地址,必传", paramType = "query", required = true, dataType = "String" ) } )
     @ResponseBody
     @RequestMapping( value = "grant/{busId}", method = RequestMethod.POST )
     public ServerResponse grant( HttpServletRequest request, HttpServletResponse response, @PathVariable Integer busId, String url ) {
-	try {
-	    Integer browser = CommonUtil.judgeBrowser( request );
-	    if ( browser != 1 ) {//微信
-		return ServerResponse.createByErrorCodeMessage( ResponseEnums.GRAND_ERROR.getCode(), ResponseEnums.GRAND_ERROR.getDesc() );
-	    }
-	    PhoneLoginDTO loginDTO = new PhoneLoginDTO();
-	    loginDTO.setBusId( busId );
-	    loginDTO.setUrl( url );
-	    loginDTO.setBrowerType( CommonUtil.judgeBrowser( request ) );
-	    userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
-	    Member member = MallSessionUtils.getLoginMember( request, busId );
+        try {
+            Integer browser = CommonUtil.judgeBrowser( request );
+            if ( browser != 1 ) {//微信
+                return ServerResponse.createByErrorCodeMessage( ResponseEnums.GRAND_ERROR.getCode(), ResponseEnums.GRAND_ERROR.getDesc() );
+            }
+            PhoneLoginDTO loginDTO = new PhoneLoginDTO();
+            loginDTO.setBusId( busId );
+            loginDTO.setUrl( url );
+            loginDTO.setBrowerType( CommonUtil.judgeBrowser( request ) );
+            userLogin( request, response, loginDTO );//授权或登陆，以及商家是否已过期的判断
+            Member member = MallSessionUtils.getLoginMember( request, busId );
 
-	    Wrapper wrapper1 = new EntityWrapper<>();
-	    wrapper1.where( "is_delete =0 and bus_id= {0}", member.getBusid() );
-	    List< MallBusMessageMember > busMemberList = mallBusMessageMemberService.selectList( wrapper1 );
-	    if ( busMemberList != null && busMemberList.size() > 5 ) {
-		return ServerResponse.createByErrorCodeMessage( ResponseEnums.GRANT_MAX_ERROR.getCode(), ResponseEnums.GRANT_MAX_ERROR.getDesc() );
-	    }
+            Wrapper wrapper1 = new EntityWrapper<>();
+            wrapper1.where( "is_delete =0 and bus_id= {0}", member.getBusid() );
+            List< MallBusMessageMember > busMemberList = mallBusMessageMemberService.selectList( wrapper1 );
+            if ( busMemberList != null && busMemberList.size() > 5 ) {
+                return ServerResponse.createByErrorCodeMessage( ResponseEnums.GRANT_MAX_ERROR.getCode(), ResponseEnums.GRANT_MAX_ERROR.getDesc() );
+            }
 
-	    //新增
-	    Wrapper wrapper = new EntityWrapper<>();
-	    wrapper.where( "is_delete =0 and member_id= {0}", member.getId() );
-	    MallBusMessageMember mallBusMessageMember = mallBusMessageMemberService.selectOne( wrapper );
-	    if ( mallBusMessageMember != null ) {
-		mallBusMessageMember.setNickName( member.getNickname() );
-		mallBusMessageMember.setHeadImgUrl( member.getHeadimgurl() );
-		mallBusMessageMemberService.updateById( mallBusMessageMember );
-	    } else {
-		mallBusMessageMember = new MallBusMessageMember();
-		mallBusMessageMember.setCreateTime( new Date() );
-		mallBusMessageMember.setMemberId( member.getId() );
-		mallBusMessageMember.setPublicId( member.getPublicId() );
-		mallBusMessageMember.setNickName( member.getNickname() );
-		mallBusMessageMember.setHeadImgUrl( member.getHeadimgurl() );
-		mallBusMessageMember.setBusId( member.getBusid() );
-		mallBusMessageMemberService.insert( mallBusMessageMember );
-	    }
-	    return ServerResponse.createBySuccessCode();
-	} catch ( BusinessException e ) {
-	    logger.error( "商家授权异常：" + e.getCode() + "---" + e.getMessage() );
-	    if ( e.getCode() == ResponseEnums.NEED_LOGIN.getCode() ) {
-		return ErrorInfo.createByErrorCodeMessage( e.getCode(), e.getMessage(), e.getData() );
-	    }
-	    return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
-	} catch ( Exception e ) {
-	    logger.error( "商家授权异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorMessage( "商家授权失败" );
-	}
+            //新增
+            Wrapper wrapper = new EntityWrapper<>();
+            wrapper.where( "is_delete =0 and member_id= {0}", member.getId() );
+            MallBusMessageMember mallBusMessageMember = mallBusMessageMemberService.selectOne( wrapper );
+            if ( mallBusMessageMember != null ) {
+                mallBusMessageMember.setNickName( member.getNickname() );
+                mallBusMessageMember.setHeadImgUrl( member.getHeadimgurl() );
+                mallBusMessageMemberService.updateById( mallBusMessageMember );
+            } else {
+                mallBusMessageMember = new MallBusMessageMember();
+                mallBusMessageMember.setCreateTime( new Date() );
+                mallBusMessageMember.setMemberId( member.getId() );
+                mallBusMessageMember.setPublicId( member.getPublicId() );
+                mallBusMessageMember.setNickName( member.getNickname() );
+                mallBusMessageMember.setHeadImgUrl( member.getHeadimgurl() );
+                mallBusMessageMember.setBusId( member.getBusid() );
+                mallBusMessageMemberService.insert( mallBusMessageMember );
+            }
+            return ServerResponse.createBySuccessCode();
+        } catch ( BusinessException e ) {
+            logger.error( "商家授权异常：" + e.getCode() + "---" + e.getMessage() );
+            if ( e.getCode() == ResponseEnums.NEED_LOGIN.getCode() ) {
+                return ErrorInfo.createByErrorCodeMessage( e.getCode(), e.getMessage(), e.getData() );
+            }
+            return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
+        } catch ( Exception e ) {
+            logger.error( "商家授权异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorMessage( "商家授权失败" );
+        }
     }
 }

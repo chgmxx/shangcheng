@@ -102,26 +102,26 @@ public class MallGroupJoin extends Model< MallGroupJoin > {
 
     @Override
     protected Serializable pkVal() {
-	return this.id;
+        return this.id;
     }
 
     @Override
     public String toString() {
         return "MallGroupJoin{" +
-                        "id=" + id +
-                        ", groupBuyId=" + groupBuyId +
-                        ", specificaIds=" + specificaIds +
-                        ", joinPrice=" + joinPrice +
-                        ", joinUserId=" + joinUserId +
-                        ", joinType=" + joinType +
-                        ", orderId=" + orderId +
-                        ", orderDetailId=" + orderDetailId +
-                        ", joinTime=" + joinTime +
-                        ", joinStatus=" + joinStatus +
-                        ", productId=" + productId +
-                        ", pJoinId=" + pJoinId +
-                        ", joinUserName=" + joinUserName +
-                        ", joinUserHeadimgurl=" + joinUserHeadimgurl +
-                        "}";
+            "id=" + id +
+            ", groupBuyId=" + groupBuyId +
+            ", specificaIds=" + specificaIds +
+            ", joinPrice=" + joinPrice +
+            ", joinUserId=" + joinUserId +
+            ", joinType=" + joinType +
+            ", orderId=" + orderId +
+            ", orderDetailId=" + orderDetailId +
+            ", joinTime=" + joinTime +
+            ", joinStatus=" + joinStatus +
+            ", productId=" + productId +
+            ", pJoinId=" + pJoinId +
+            ", joinUserName=" + joinUserName +
+            ", joinUserHeadimgurl=" + joinUserHeadimgurl +
+            "}";
     }
 }

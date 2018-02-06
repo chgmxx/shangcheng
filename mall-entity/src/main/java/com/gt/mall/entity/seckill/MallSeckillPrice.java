@@ -70,19 +70,19 @@ public class MallSeckillPrice extends Model< MallSeckillPrice > {
 
     @Override
     protected Serializable pkVal() {
-	return this.id;
+        return this.id;
     }
 
     @Override
     public String toString() {
-	return "MallSeckillPrice{" +
-			"id=" + id +
-			", seckillId=" + seckillId +
-			", invenId=" + invenId +
-			", specificaIds=" + specificaIds +
-			", seckillPrice=" + seckillPrice +
-			", isJoinGroup=" + isJoinGroup +
-			", isDelete=" + isDelete +
-			"}";
+        return "MallSeckillPrice{" +
+            "id=" + id +
+            ", seckillId=" + seckillId +
+            ", invenId=" + invenId +
+            ", specificaIds=" + specificaIds +
+            ", seckillPrice=" + seckillPrice +
+            ", isJoinGroup=" + isJoinGroup +
+            ", isDelete=" + isDelete +
+            "}";
     }
 }

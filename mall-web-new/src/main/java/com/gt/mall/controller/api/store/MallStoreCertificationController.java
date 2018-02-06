@@ -70,42 +70,42 @@ public class MallStoreCertificationController extends BaseController {
     @SysLogAnnotation( description = "保存店铺认证信息", op_function = "2" )
     @RequestMapping( value = "/save", method = RequestMethod.POST )
     public ServerResponse save( HttpServletRequest request, HttpServletResponse response, String code, @RequestBody @Valid @ModelAttribute StoreCertDTO storeCertDTO ) {
-	try {
-	    if ( CommonUtil.isEmpty( code ) ) {
-		return ServerResponse.createBySuccessCodeMessage( ResponseEnums.ERROR.getCode(), "验证码不能为空" );
-	    }
-	    if ( CommonUtil.isEmpty( JedisUtil.get( Constants.REDIS_KEY + code ) ) ) {
-		return ServerResponse.createBySuccessCodeMessage( ResponseEnums.ERROR.getCode(), "验证码不正确" );
-	    }
-	    MallStoreCertification storeCert = new MallStoreCertification();
-	    EntityDtoConverter converter = new EntityDtoConverter();
-	    converter.entityConvertDto( storeCertDTO, storeCert );
-	    List< ImageAssociativeDTO > imgageList = JSONArray.parseArray( storeCertDTO.getImageList(), ImageAssociativeDTO.class );
-	    if ( CommonUtil.isEmpty( storeCert.getId() ) ) {
-		storeCert.setCreateTime( new Date() );
-		mallStoreCertService.insert( storeCert );
-		if ( imgageList != null && imgageList.size() > 0 ) {
-		    for ( int i = 0; i < imgageList.size(); i++ ) {
-			MallImageAssociative associative = new MallImageAssociative();
-			converter.entityConvertDto( imgageList.get( i ), associative );
-			associative.setAssId( storeCert.getId() );
-			associative.setAssType( 6 );
-			associative.setAssSort( i );
-			mallImageAssociativeService.insert( associative );
-		    }
-		}
-	    } else {
-		mallStoreCertService.updateById( storeCert );
+        try {
+            if ( CommonUtil.isEmpty( code ) ) {
+                return ServerResponse.createBySuccessCodeMessage( ResponseEnums.ERROR.getCode(), "验证码不能为空" );
+            }
+            if ( CommonUtil.isEmpty( JedisUtil.get( Constants.REDIS_KEY + code ) ) ) {
+                return ServerResponse.createBySuccessCodeMessage( ResponseEnums.ERROR.getCode(), "验证码不正确" );
+            }
+            MallStoreCertification storeCert = new MallStoreCertification();
+            EntityDtoConverter converter = new EntityDtoConverter();
+            converter.entityConvertDto( storeCertDTO, storeCert );
+            List< ImageAssociativeDTO > imgageList = JSONArray.parseArray( storeCertDTO.getImageList(), ImageAssociativeDTO.class );
+            if ( CommonUtil.isEmpty( storeCert.getId() ) ) {
+                storeCert.setCreateTime( new Date() );
+                mallStoreCertService.insert( storeCert );
+                if ( imgageList != null && imgageList.size() > 0 ) {
+                    for ( int i = 0; i < imgageList.size(); i++ ) {
+                        MallImageAssociative associative = new MallImageAssociative();
+                        converter.entityConvertDto( imgageList.get( i ), associative );
+                        associative.setAssId( storeCert.getId() );
+                        associative.setAssType( 6 );
+                        associative.setAssSort( i );
+                        mallImageAssociativeService.insert( associative );
+                    }
+                }
+            } else {
+                mallStoreCertService.updateById( storeCert );
 
-		imageAssociativeService.newSaveImage( imgageList, storeCert.getId(), 6 );
-	    }
-	    JedisUtil.del( Constants.REDIS_KEY + code );//保存成功，删除验证码
-	} catch ( Exception e ) {
-	    logger.error( "保存店铺认证信息异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
-	}
-	return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
+                imageAssociativeService.newSaveImage( imgageList, storeCert.getId(), 6 );
+            }
+            JedisUtil.del( Constants.REDIS_KEY + code );//保存成功，删除验证码
+        } catch ( Exception e ) {
+            logger.error( "保存店铺认证信息异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
+        }
+        return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
     }
 
     /**
@@ -115,24 +115,24 @@ public class MallStoreCertificationController extends BaseController {
     @ResponseBody
     @RequestMapping( value = "/categoryMap", method = RequestMethod.POST )
     public ServerResponse categoryMap( HttpServletRequest request, HttpServletResponse response ) {
-	List< DictBean > categoryMap = null;
-	try {
-	    //获取认证的店铺类型
-	    categoryMap = dictService.getDict( "K002" );
-	    for ( DictBean map : categoryMap ) {
-		String value = map.getItem_value();
-		JSONObject foorerObj = JSONObject.fromObject( value );
-		map.setValue( foorerObj.get( "title" ).toString() );//名称
-		if ( CommonUtil.isNotEmpty( foorerObj.get( "array" ) ) ) {
-		    map.setChildList( foorerObj.getJSONArray( "array" ) );//子级
-		}
-	    }
-	} catch ( Exception e ) {
-	    logger.error( "获取认证的店铺类型异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取认证的店铺类型异常" );
-	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), categoryMap, false );
+        List< DictBean > categoryMap = null;
+        try {
+            //获取认证的店铺类型
+            categoryMap = dictService.getDict( "K002" );
+            for ( DictBean map : categoryMap ) {
+                String value = map.getItem_value();
+                JSONObject foorerObj = JSONObject.fromObject( value );
+                map.setValue( foorerObj.get( "title" ).toString() );//名称
+                if ( CommonUtil.isNotEmpty( foorerObj.get( "array" ) ) ) {
+                    map.setChildList( foorerObj.getJSONArray( "array" ) );//子级
+                }
+            }
+        } catch ( Exception e ) {
+            logger.error( "获取认证的店铺类型异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取认证的店铺类型异常" );
+        }
+        return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), categoryMap, false );
     }
 
     /**
@@ -142,22 +142,22 @@ public class MallStoreCertificationController extends BaseController {
     @ResponseBody
     @RequestMapping( value = "/certInfo", method = RequestMethod.POST )
     public ServerResponse certInfo( HttpServletRequest request, HttpServletResponse response, @ApiParam( name = "id", value = "认证ID", required = true ) @RequestParam Integer id ) {
-	MallStoreCertification storeCert = null;
-	try {
-	    storeCert = mallStoreCertService.selectById( id );
-	    if ( storeCert != null && storeCert.getIsCertDoc() == 1 ) {
-		Map< String,Object > params = new HashMap<>();
-		params.put( "assType", 6 );
-		params.put( "assId", storeCert.getId() );
-		List< MallImageAssociative > imageAssociativeList = mallImageAssociativeService.selectByAssId( params );
-		storeCert.setImageList( imageAssociativeList );
-	    }
-	} catch ( Exception e ) {
-	    logger.error( "获取店铺认证信息异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取店铺认证信息异常" );
-	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), storeCert );
+        MallStoreCertification storeCert = null;
+        try {
+            storeCert = mallStoreCertService.selectById( id );
+            if ( storeCert != null && storeCert.getIsCertDoc() == 1 ) {
+                Map< String,Object > params = new HashMap<>();
+                params.put( "assType", 6 );
+                params.put( "assId", storeCert.getId() );
+                List< MallImageAssociative > imageAssociativeList = mallImageAssociativeService.selectByAssId( params );
+                storeCert.setImageList( imageAssociativeList );
+            }
+        } catch ( Exception e ) {
+            logger.error( "获取店铺认证信息异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取店铺认证信息异常" );
+        }
+        return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), storeCert );
     }
 
     /**
@@ -167,19 +167,19 @@ public class MallStoreCertificationController extends BaseController {
     @ResponseBody
     @RequestMapping( value = "/setInvalid", method = RequestMethod.POST )
     public ServerResponse certInvalid( HttpServletRequest request, HttpServletResponse response,
-		    @ApiParam( name = "id", value = "认证ID", required = true ) @RequestParam Integer id ) throws IOException {
-	try {
-	    MallStoreCertification storeCert = mallStoreCertService.selectById( id );
-	    if ( storeCert != null ) {
-		storeCert.setIsDelete( 1 );
-		mallStoreCertService.updateById( storeCert );
-	    }
-	} catch ( Exception e ) {
-	    logger.error( "认证信息设置失效异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "认证信息设置失效异常" );
-	}
-	return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc(), false );
+        @ApiParam( name = "id", value = "认证ID", required = true ) @RequestParam Integer id ) throws IOException {
+        try {
+            MallStoreCertification storeCert = mallStoreCertService.selectById( id );
+            if ( storeCert != null ) {
+                storeCert.setIsDelete( 1 );
+                mallStoreCertService.updateById( storeCert );
+            }
+        } catch ( Exception e ) {
+            logger.error( "认证信息设置失效异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "认证信息设置失效异常" );
+        }
+        return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc(), false );
     }
 
     /**
@@ -189,22 +189,22 @@ public class MallStoreCertificationController extends BaseController {
     @ResponseBody
     @RequestMapping( value = "/updateStatus", method = RequestMethod.POST )
     public ServerResponse updateStatus( HttpServletRequest request, HttpServletResponse response,
-		    @ApiParam( name = "id", value = "认证ID", required = true ) @RequestParam Integer id,
-		    @ApiParam( name = "status", value = "类型 1通过 -1不通过", required = true ) @RequestParam Integer status ) {
-	try {
-	    MallStoreCertification certification = mallStoreCertService.selectById( id );
-	    certification.setCheckStatus( status );
-	    boolean flag = mallStoreCertService.updateById( certification );
+        @ApiParam( name = "id", value = "认证ID", required = true ) @RequestParam Integer id,
+        @ApiParam( name = "status", value = "类型 1通过 -1不通过", required = true ) @RequestParam Integer status ) {
+        try {
+            MallStoreCertification certification = mallStoreCertService.selectById( id );
+            certification.setCheckStatus( status );
+            boolean flag = mallStoreCertService.updateById( certification );
 
-	    if ( !flag ) {
-		return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "修改审核状态异常" );
-	    }
-	} catch ( Exception e ) {
-	    logger.error( "修改审核状态异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "修改审核状态异常" );
-	}
-	return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
+            if ( !flag ) {
+                return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "修改审核状态异常" );
+            }
+        } catch ( Exception e ) {
+            logger.error( "修改审核状态异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "修改审核状态异常" );
+        }
+        return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
     }
 
     /**
@@ -214,24 +214,24 @@ public class MallStoreCertificationController extends BaseController {
     @ResponseBody
     @RequestMapping( value = "/getValCode", method = RequestMethod.POST )
     public ServerResponse getValCode( HttpServletRequest request, HttpServletResponse response,
-		    @ApiParam( name = "mobile", value = "手机号码", required = true ) @RequestParam String mobile ) {
-	try {
-	    BusUser user = MallSessionUtils.getLoginUser( request );
-	    //	    WxPublicUsers pbUser = wxPublicUserService.selectByUserId( user.getId() );
-	    String no = CommonUtil.getPhoneCode();
-	    JedisUtil.set( Constants.REDIS_KEY + no, no, 10 * 60 );
-	    System.out.println( "店铺认证短信验证码：" + no );
+        @ApiParam( name = "mobile", value = "手机号码", required = true ) @RequestParam String mobile ) {
+        try {
+            BusUser user = MallSessionUtils.getLoginUser( request );
+            //	    WxPublicUsers pbUser = wxPublicUserService.selectByUserId( user.getId() );
+            String no = CommonUtil.getPhoneCode();
+            JedisUtil.set( Constants.REDIS_KEY + no, no, 10 * 60 );
+            System.out.println( "店铺认证短信验证码：" + no );
 
-	    boolean result = mallCommonService.getValCode( "", mobile, user.getId(), no, Constants.MALL_CODE_MODEL_ID );
-	    if ( !result ) {
-		return ServerResponse.createBySuccessCodeMessage( ResponseEnums.ERROR.getCode(), "发送短信验证码异常" );
-	    }
-	} catch ( Exception e ) {
-	    logger.error( "获取短信验证码异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取短信验证码异常" );
-	}
-	return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
+            boolean result = mallCommonService.getValCode( "", mobile, user.getId(), no, Constants.MALL_CODE_MODEL_ID );
+            if ( !result ) {
+                return ServerResponse.createBySuccessCodeMessage( ResponseEnums.ERROR.getCode(), "发送短信验证码异常" );
+            }
+        } catch ( Exception e ) {
+            logger.error( "获取短信验证码异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "获取短信验证码异常" );
+        }
+        return ServerResponse.createBySuccessCodeMessage( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
     }
 
  /*   *//**

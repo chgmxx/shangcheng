@@ -33,42 +33,42 @@ public class MallGroupBuyPriceServiceImpl extends BaseServiceImpl< MallGroupBuyP
 
     @Override
     public void editGroupBuyPrice( Map< String,Object > map, int groupBuyId, boolean flag ) {
-	if ( flag ) {//已经更换了商品
-	    //删除已经有的团购价
-	    MallGroupBuyPrice price = new MallGroupBuyPrice();
-	    price.setIsDelete( 1 );
-	    price.setGroupBuyId( groupBuyId );
-	    groupBuyPriceDAO.updateByGroupBuyId( price );
-	}
-	if ( CommonUtil.isNotEmpty( map.get( "specArr" ) ) ) {
-	    List< MallGroupBuyPrice > priceList = (List< MallGroupBuyPrice >) JSONArray.parseArray( map.get( "specArr" ).toString(), MallGroupBuyPrice.class );
-	    if ( priceList != null && priceList.size() > 0 ) {
-		for ( MallGroupBuyPrice mallGroupBuyPrice : priceList ) {
-		    mallGroupBuyPrice.setGroupBuyId( groupBuyId );
-		    if ( CommonUtil.isEmpty( mallGroupBuyPrice.getId() ) ) {
-			groupBuyPriceDAO.insert( mallGroupBuyPrice );
-		    } else {
-			groupBuyPriceDAO.updateById( mallGroupBuyPrice );
-		    }
-		}
-	    }
-	}
+        if ( flag ) {//已经更换了商品
+            //删除已经有的团购价
+            MallGroupBuyPrice price = new MallGroupBuyPrice();
+            price.setIsDelete( 1 );
+            price.setGroupBuyId( groupBuyId );
+            groupBuyPriceDAO.updateByGroupBuyId( price );
+        }
+        if ( CommonUtil.isNotEmpty( map.get( "specArr" ) ) ) {
+            List< MallGroupBuyPrice > priceList = (List< MallGroupBuyPrice >) JSONArray.parseArray( map.get( "specArr" ).toString(), MallGroupBuyPrice.class );
+            if ( priceList != null && priceList.size() > 0 ) {
+                for ( MallGroupBuyPrice mallGroupBuyPrice : priceList ) {
+                    mallGroupBuyPrice.setGroupBuyId( groupBuyId );
+                    if ( CommonUtil.isEmpty( mallGroupBuyPrice.getId() ) ) {
+                        groupBuyPriceDAO.insert( mallGroupBuyPrice );
+                    } else {
+                        groupBuyPriceDAO.updateById( mallGroupBuyPrice );
+                    }
+                }
+            }
+        }
     }
 
     @Override
     public List< MallGroupBuyPrice > selectPriceByGroupId( int groupBuyId ) {
 
-	Wrapper< MallGroupBuyPrice > groupWrapper = new EntityWrapper<>();
-	groupWrapper.where( "group_buy_id = {0} and is_delete = 0", groupBuyId );
-	return groupBuyPriceDAO.selectList( groupWrapper );
+        Wrapper< MallGroupBuyPrice > groupWrapper = new EntityWrapper<>();
+        groupWrapper.where( "group_buy_id = {0} and is_delete = 0", groupBuyId );
+        return groupBuyPriceDAO.selectList( groupWrapper );
     }
 
     @Override
     public List< MallGroupBuyPrice > selectPriceByInvId( int groupId, int invId ) {
 
-	Wrapper< MallGroupBuyPrice > groupWrapper = new EntityWrapper<>();
-	groupWrapper.where( "group_buy_id = {0}  and inven_id = {1}  and is_delete = 0", groupId, invId );
-	return groupBuyPriceDAO.selectList( groupWrapper );
+        Wrapper< MallGroupBuyPrice > groupWrapper = new EntityWrapper<>();
+        groupWrapper.where( "group_buy_id = {0}  and inven_id = {1}  and is_delete = 0", groupId, invId );
+        return groupBuyPriceDAO.selectList( groupWrapper );
     }
 
 }

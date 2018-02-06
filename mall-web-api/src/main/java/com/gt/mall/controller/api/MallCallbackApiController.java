@@ -51,64 +51,64 @@ public class MallCallbackApiController {
     @ResponseBody
     @RequestMapping( value = "/paySuccessPresale", method = RequestMethod.POST )
     public ServerResponse paySuccessPresale( HttpServletRequest request, HttpServletResponse response, @RequestBody Map< String,Object > params ) {
-	try {
-	    //params 传参 out_trade_no：保证金编号
-	    logger.info( "预售交纳保证金成功回调参数：" + params );
-	    mallPresaleDepositService.paySuccessPresale( params );
-	} catch ( Exception e ) {
-	    logger.error( "预售交纳保证金成功回调异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "预售交纳保证金成功回调异常" );
-	}
-	return ServerResponse.createBySuccessCode();
+        try {
+            //params 传参 out_trade_no：保证金编号
+            logger.info( "预售交纳保证金成功回调参数：" + params );
+            mallPresaleDepositService.paySuccessPresale( params );
+        } catch ( Exception e ) {
+            logger.error( "预售交纳保证金成功回调异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "预售交纳保证金成功回调异常" );
+        }
+        return ServerResponse.createBySuccessCode();
     }
 
     @ApiOperation( value = "预售退保证金成功回调", notes = "预售退保证金成功回调" )
     @ResponseBody
     @RequestMapping( value = "/refundSuccessPresale", method = RequestMethod.POST )
     public ServerResponse refundSuccessPresale( HttpServletRequest request, HttpServletResponse response, @RequestBody Map< String,Object > params ) {
-	try {
-	    //params 传参 out_trade_no：保证金编号
-	    logger.info( "预售退保证金成功回调参数：" + params );
-	    mallPresaleDepositService.returnAlipayDeposit( params );
-	} catch ( Exception e ) {
-	    logger.error( "预售退保证金成功回调异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "预售退保证金成功回调异常" );
-	}
-	return ServerResponse.createBySuccessCode();
+        try {
+            //params 传参 out_trade_no：保证金编号
+            logger.info( "预售退保证金成功回调参数：" + params );
+            mallPresaleDepositService.returnAlipayDeposit( params );
+        } catch ( Exception e ) {
+            logger.error( "预售退保证金成功回调异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "预售退保证金成功回调异常" );
+        }
+        return ServerResponse.createBySuccessCode();
     }
 
     @ApiOperation( value = "拍卖交纳保证金成功回调", notes = "拍卖交纳保证金成功回调" )
     @ResponseBody
     @RequestMapping( value = "/paySuccessAuction", method = RequestMethod.POST )
     public ServerResponse paySuccessAuction( HttpServletRequest request, HttpServletResponse response, @RequestBody Map< String,Object > params ) {
-	try {
-	    //params 传参 out_trade_no：保证金编号
-	    logger.info( "拍卖交纳保证金成功回调参数：" + JSONObject.fromObject( params ) );
-	    mallAuctionMarginService.paySuccessAuction( params );
-	} catch ( Exception e ) {
-	    logger.error( "拍卖交纳保证金成功回调异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "拍卖交纳保证金成功回调异常" );
-	}
-	return ServerResponse.createBySuccessCode();
+        try {
+            //params 传参 out_trade_no：保证金编号
+            logger.info( "拍卖交纳保证金成功回调参数：" + JSONObject.fromObject( params ) );
+            mallAuctionMarginService.paySuccessAuction( params );
+        } catch ( Exception e ) {
+            logger.error( "拍卖交纳保证金成功回调异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "拍卖交纳保证金成功回调异常" );
+        }
+        return ServerResponse.createBySuccessCode();
     }
 
     @ApiOperation( value = "拍卖退保证金成功回调", notes = "拍卖退保证金成功回调" )
     @ResponseBody
     @RequestMapping( value = "/refundSuccessAuction", method = RequestMethod.POST )
     public ServerResponse refundSuccessAuction( HttpServletRequest request, HttpServletResponse response, @RequestBody Map< String,Object > params ) {
-	try {
-	    //params 传参 out_trade_no：保证金编号
-	    logger.info( "拍卖退保证金成功回调参数：" + JSONObject.fromObject( params ) );
-	    mallAuctionMarginService.returnAlipayMargin( params );
-	} catch ( Exception e ) {
-	    logger.error( "拍卖退保证金成功回调异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "拍卖退保证金成功回调异常" );
-	}
-	return ServerResponse.createBySuccessCode();
+        try {
+            //params 传参 out_trade_no：保证金编号
+            logger.info( "拍卖退保证金成功回调参数：" + JSONObject.fromObject( params ) );
+            mallAuctionMarginService.returnAlipayMargin( params );
+        } catch ( Exception e ) {
+            logger.error( "拍卖退保证金成功回调异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "拍卖退保证金成功回调异常" );
+        }
+        return ServerResponse.createBySuccessCode();
     }
 
     /**
@@ -118,38 +118,38 @@ public class MallCallbackApiController {
     @ResponseBody
     @PostMapping( value = "paySuccessModified" )
     public ServerResponse paySuccessModified( HttpServletRequest request, HttpServletResponse response, @RequestBody Map< String,Object > params ) throws IOException {
-	logger.info( " 支付成功回调参数：" + JSONObject.fromObject( params ) );
-	try {
-	    if ( CommonUtil.isEmpty( params.get( "out_trade_no" ) ) ) {
-		return ServerResponse.createByErrorMessage( "支付成功回调失败：参数=" + JSONObject.fromObject( params ) );
-	    }
-	    mallOrderService.paySuccessModified( params, null );
-	} catch ( BusinessException e ) {
-	    logger.error( "支付成功回调异常：" + e.getCode() + "---" + e.getMessage() );
-	    if ( e.getCode() == ResponseEnums.NEED_LOGIN.getCode() ) {
-		return ErrorInfo.createByErrorCodeMessage( e.getCode(), e.getMessage(), e.getData() );
-	    }
-	    return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
-	} catch ( Exception e ) {
-	    logger.error( "支付成功回调异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorMessage( "支付成功回调失败" );
-	}
-	return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
+        logger.info( " 支付成功回调参数：" + JSONObject.fromObject( params ) );
+        try {
+            if ( CommonUtil.isEmpty( params.get( "out_trade_no" ) ) ) {
+                return ServerResponse.createByErrorMessage( "支付成功回调失败：参数=" + JSONObject.fromObject( params ) );
+            }
+            mallOrderService.paySuccessModified( params, null );
+        } catch ( BusinessException e ) {
+            logger.error( "支付成功回调异常：" + e.getCode() + "---" + e.getMessage() );
+            if ( e.getCode() == ResponseEnums.NEED_LOGIN.getCode() ) {
+                return ErrorInfo.createByErrorCodeMessage( e.getCode(), e.getMessage(), e.getData() );
+            }
+            return ServerResponse.createByErrorCodeMessage( e.getCode(), e.getMessage() );
+        } catch ( Exception e ) {
+            logger.error( "支付成功回调异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorMessage( "支付成功回调失败" );
+        }
+        return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
     }
 
     @ApiOperation( value = "订单退款回调", notes = "订单退款回调" )
     @ResponseBody
     @PostMapping( value = "/agreanOrderReturn" )
     public ServerResponse agreanOrderReturn( HttpServletRequest request, HttpServletResponse response, @RequestBody Map< String,Object > params ) {
-	try {
-	    mallOrderService.agreanOrderReturn( params );
-	} catch ( Exception e ) {
-	    logger.error( "订单退款回调异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "订单退款回调异常" );
-	}
-	return ServerResponse.createBySuccessCode();
+        try {
+            mallOrderService.agreanOrderReturn( params );
+        } catch ( Exception e ) {
+            logger.error( "订单退款回调异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ServerResponse.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "订单退款回调异常" );
+        }
+        return ServerResponse.createBySuccessCode();
     }
 
     /**
@@ -160,22 +160,22 @@ public class MallCallbackApiController {
     @ResponseBody
     @PostMapping( value = "daifuSuccess" )
     public ServerResponse daifuSuccess( HttpServletRequest request, HttpServletResponse response, @RequestBody Map< String,Object > params ) {
-	try {
-	    if ( CommonUtil.isEmpty( params.get( "out_trade_no" ) ) && CommonUtil.isNotEmpty( params.get( "no" ) ) ) {
-		params.put( "out_trade_no", params.get( "no" ) );
-	    }
-	    mallOrderService.paySuccessDaifu( params );
-	    return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
-	} catch ( BusinessException e ) {
-	    if ( e.getCode() == ResponseEnums.NEED_LOGIN.getCode() ) {
-		return ErrorInfo.createByErrorCodeMessage( e.getCode(), e.getMessage(), e.getData() );
-	    }
-	    return ErrorInfo.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), e.getMessage() );
-	} catch ( Exception e ) {
-	    logger.error( "代付支付成功回调异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ErrorInfo.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "代付支付成功回调异常" );
-	}
+        try {
+            if ( CommonUtil.isEmpty( params.get( "out_trade_no" ) ) && CommonUtil.isNotEmpty( params.get( "no" ) ) ) {
+                params.put( "out_trade_no", params.get( "no" ) );
+            }
+            mallOrderService.paySuccessDaifu( params );
+            return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
+        } catch ( BusinessException e ) {
+            if ( e.getCode() == ResponseEnums.NEED_LOGIN.getCode() ) {
+                return ErrorInfo.createByErrorCodeMessage( e.getCode(), e.getMessage(), e.getData() );
+            }
+            return ErrorInfo.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), e.getMessage() );
+        } catch ( Exception e ) {
+            logger.error( "代付支付成功回调异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ErrorInfo.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "代付支付成功回调异常" );
+        }
     }
 
     /**
@@ -186,21 +186,21 @@ public class MallCallbackApiController {
     @ResponseBody
     @PostMapping( value = "flowSuccess" )
     public ServerResponse flowSuccess( HttpServletRequest request, HttpServletResponse response, @RequestBody Map< String,Object > params ) {
-	try {
-	    if ( CommonUtil.isEmpty( params.get( "id" ) ) && CommonUtil.isNotEmpty( params.get( "status" ) ) ) {
-		return ErrorInfo.createByErrorCodeMessage( ResponseEnums.NULL_ERROR.getCode(), ResponseEnums.NULL_ERROR.getDesc() );
-	    }
-	    quartzOrderService.rollbackOrderByFlow( params );
-	    return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
-	} catch ( BusinessException e ) {
-	    if ( e.getCode() == ResponseEnums.NEED_LOGIN.getCode() ) {
-		return ErrorInfo.createByErrorCodeMessage( e.getCode(), e.getMessage(), e.getData() );
-	    }
-	    return ErrorInfo.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), e.getMessage() );
-	} catch ( Exception e ) {
-	    logger.error( "流量充值成功回调异常：" + e.getMessage() );
-	    e.printStackTrace();
-	    return ErrorInfo.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "流量充值成功回调异常" );
-	}
+        try {
+            if ( CommonUtil.isEmpty( params.get( "id" ) ) && CommonUtil.isNotEmpty( params.get( "status" ) ) ) {
+                return ErrorInfo.createByErrorCodeMessage( ResponseEnums.NULL_ERROR.getCode(), ResponseEnums.NULL_ERROR.getDesc() );
+            }
+            quartzOrderService.rollbackOrderByFlow( params );
+            return ServerResponse.createBySuccessCodeData( ResponseEnums.SUCCESS.getCode(), ResponseEnums.SUCCESS.getDesc() );
+        } catch ( BusinessException e ) {
+            if ( e.getCode() == ResponseEnums.NEED_LOGIN.getCode() ) {
+                return ErrorInfo.createByErrorCodeMessage( e.getCode(), e.getMessage(), e.getData() );
+            }
+            return ErrorInfo.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), e.getMessage() );
+        } catch ( Exception e ) {
+            logger.error( "流量充值成功回调异常：" + e.getMessage() );
+            e.printStackTrace();
+            return ErrorInfo.createByErrorCodeMessage( ResponseEnums.ERROR.getCode(), "流量充值成功回调异常" );
+        }
     }
 }

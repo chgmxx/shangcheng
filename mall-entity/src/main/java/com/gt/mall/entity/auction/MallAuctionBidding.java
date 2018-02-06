@@ -90,24 +90,24 @@ public class MallAuctionBidding extends Model< MallAuctionBidding > {
 
     @Override
     protected Serializable pkVal() {
-	return this.id;
+        return this.id;
     }
 
     @Override
     public String toString() {
-	return "MallAuctionBidding{" +
-			"id=" + id +
-			", aucId=" + aucId +
-			", proId=" + proId +
-			", proName=" + proName +
-			", proSpecificaIds=" + proSpecificaIds +
-			", proImgUrl=" + proImgUrl +
-			", aucPrice=" + aucPrice +
-			", aucStatus=" + aucStatus +
-			", orderId=" + orderId +
-			", orderDetailId=" + orderDetailId +
-			", userId=" + userId +
-			", createTime=" + createTime +
-			"}";
+        return "MallAuctionBidding{" +
+            "id=" + id +
+            ", aucId=" + aucId +
+            ", proId=" + proId +
+            ", proName=" + proName +
+            ", proSpecificaIds=" + proSpecificaIds +
+            ", proImgUrl=" + proImgUrl +
+            ", aucPrice=" + aucPrice +
+            ", aucStatus=" + aucStatus +
+            ", orderId=" + orderId +
+            ", orderDetailId=" + orderDetailId +
+            ", userId=" + userId +
+            ", createTime=" + createTime +
+            "}";
     }
 }

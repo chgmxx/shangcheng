@@ -30,56 +30,56 @@ public class MallSearchKeywordServiceImpl extends BaseServiceImpl< MallSearchKey
 
     @Override
     public MallSearchKeyword selectBykeyword( int shopId, String keyword, int userId ) {
-	Wrapper< MallSearchKeyword > keywordWrapper = new EntityWrapper<>();
-	keywordWrapper.where( "shop_id={0} and keyword ={1} and user_id={2}", shopId, keyword, userId );
-	List< MallSearchKeyword > keywordList = mallSearchKeywordDAO.selectList( keywordWrapper );
-	if ( keywordList != null && keywordList.size() > 0 ) {
-	    return keywordList.get( 0 );
-	}
-	return null;
+        Wrapper< MallSearchKeyword > keywordWrapper = new EntityWrapper<>();
+        keywordWrapper.where( "shop_id={0} and keyword ={1} and user_id={2}", shopId, keyword, userId );
+        List< MallSearchKeyword > keywordList = mallSearchKeywordDAO.selectList( keywordWrapper );
+        if ( keywordList != null && keywordList.size() > 0 ) {
+            return keywordList.get( 0 );
+        }
+        return null;
     }
 
     @Override
     public List< MallSearchKeyword > selectByUser( Map< String,Object > map ) {
-	Wrapper< MallSearchKeyword > keywordWrapper = new EntityWrapper<>();
-	keywordWrapper.setSqlSelect( "id,keyword, shop_id" );
-	keywordWrapper.where( "shop_id={0} and user_id={1} and is_delete = 0", map.get( "shopId" ), map.get( "userId" ) );
-	return mallSearchKeywordDAO.selectList( keywordWrapper );
+        Wrapper< MallSearchKeyword > keywordWrapper = new EntityWrapper<>();
+        keywordWrapper.setSqlSelect( "id,keyword, shop_id" );
+        keywordWrapper.where( "shop_id={0} and user_id={1} and is_delete = 0", map.get( "shopId" ), map.get( "userId" ) );
+        return mallSearchKeywordDAO.selectList( keywordWrapper );
     }
 
     @Override
     public int clearSearchKeyWord( Map< String,Object > params ) {
-	Wrapper wrapper = new EntityWrapper();
-	wrapper.where( "user_id={0}", params.get( "userId" ) );
-	if ( CommonUtil.isNotEmpty( params.get( "shopId" ) ) ) {
-	    wrapper.andNew( "shop_id ={0}", params.get( "shopId" ) );
-	}
-	MallSearchKeyword keyword = new MallSearchKeyword();
-	keyword.setIsDelete( 1 );
-	return mallSearchKeywordDAO.update( keyword, wrapper );
+        Wrapper wrapper = new EntityWrapper();
+        wrapper.where( "user_id={0}", params.get( "userId" ) );
+        if ( CommonUtil.isNotEmpty( params.get( "shopId" ) ) ) {
+            wrapper.andNew( "shop_id ={0}", params.get( "shopId" ) );
+        }
+        MallSearchKeyword keyword = new MallSearchKeyword();
+        keyword.setIsDelete( 1 );
+        return mallSearchKeywordDAO.update( keyword, wrapper );
     }
 
     @Override
     public void insertSeachKeyWord( int memberId, int shopId, Object searchName ) {
 
-	if ( CommonUtil.isNotEmpty( searchName ) ) {
-	    //保存到搜索关键字表
-	    MallSearchKeyword keyword = selectBykeyword( shopId, searchName.toString(), memberId );
-	    if ( CommonUtil.isEmpty( keyword ) ) {
-		keyword = new MallSearchKeyword();
-		keyword.setKeyword( searchName.toString() );
-		keyword.setSearchNum( 1 );
-		keyword.setShopId( shopId );
-		keyword.setUserId( memberId );
-		keyword.setEditTime( new Date() );
-		keyword.setCreateTime( new Date() );
-		mallSearchKeywordDAO.insert( keyword );
-	    } else {
-		keyword.setEditTime( new Date() );
-		keyword.setSearchNum( keyword.getSearchNum() + 1 );
-		keyword.setIsDelete( 0 );
-		mallSearchKeywordDAO.updateById( keyword );
-	    }
-	}
+        if ( CommonUtil.isNotEmpty( searchName ) ) {
+            //保存到搜索关键字表
+            MallSearchKeyword keyword = selectBykeyword( shopId, searchName.toString(), memberId );
+            if ( CommonUtil.isEmpty( keyword ) ) {
+                keyword = new MallSearchKeyword();
+                keyword.setKeyword( searchName.toString() );
+                keyword.setSearchNum( 1 );
+                keyword.setShopId( shopId );
+                keyword.setUserId( memberId );
+                keyword.setEditTime( new Date() );
+                keyword.setCreateTime( new Date() );
+                mallSearchKeywordDAO.insert( keyword );
+            } else {
+                keyword.setEditTime( new Date() );
+                keyword.setSearchNum( keyword.getSearchNum() + 1 );
+                keyword.setIsDelete( 0 );
+                mallSearchKeywordDAO.updateById( keyword );
+            }
+        }
     }
 }

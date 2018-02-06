@@ -83,23 +83,23 @@ public class MallProductSpecifica extends Model< MallProductSpecifica > {
 
     @Override
     protected Serializable pkVal() {
-	return this.id;
+        return this.id;
     }
 
     @Override
     public String toString() {
-	return "MallProductSpecifica{" +
-			"id=" + id +
-			", productId=" + productId +
-			", specificaNameId=" + specificaNameId +
-			", specificaValueId=" + specificaValueId +
-			", specificaName=" + specificaName +
-			", specificaValue=" + specificaValue +
-			", specificaImgUrl=" + specificaImgUrl +
-			", isDelete=" + isDelete +
-			", sort=" + sort +
-			", erpSpecvalueId=" + erpSpecvalueId +
-			", erpSpecnameId=" + erpSpecnameId +
-			"}";
+        return "MallProductSpecifica{" +
+            "id=" + id +
+            ", productId=" + productId +
+            ", specificaNameId=" + specificaNameId +
+            ", specificaValueId=" + specificaValueId +
+            ", specificaName=" + specificaName +
+            ", specificaValue=" + specificaValue +
+            ", specificaImgUrl=" + specificaImgUrl +
+            ", isDelete=" + isDelete +
+            ", sort=" + sort +
+            ", erpSpecvalueId=" + erpSpecvalueId +
+            ", erpSpecnameId=" + erpSpecnameId +
+            "}";
     }
 }

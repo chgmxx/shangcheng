@@ -30,50 +30,50 @@ public class MallPifaPriceServiceImpl extends BaseServiceImpl< MallPifaPriceDAO,
 
     @Override
     public void editPifaPrice( Map< String,Object > map, int pifaId, boolean flag ) {
-	if ( flag ) {//已经更换了商品
-	    //删除已经有的团购价
-	    MallPifaPrice price = new MallPifaPrice();
-	    price.setPifaId( pifaId );
-	    price.setIsDelete( 1 );
-	    mallPifaPriceDAO.updateByPifaId( price );
-	}
-	if ( CommonUtil.isNotEmpty( map.get( "specArr" ) ) ) {
-	    List< MallPifaPrice > priceList = JSONArray.parseArray( map.get( "specArr" ).toString(), MallPifaPrice.class );
-	    if ( priceList != null && priceList.size() > 0 ) {
-		for ( MallPifaPrice price : priceList ) {
-		    price.setPifaId( pifaId );
-		    if ( CommonUtil.isEmpty( price.getId() ) ) {
-			mallPifaPriceDAO.insert( price );
-		    } else {
-			mallPifaPriceDAO.updateById( price );
-		    }
-		}
-	    }
-	}
+        if ( flag ) {//已经更换了商品
+            //删除已经有的团购价
+            MallPifaPrice price = new MallPifaPrice();
+            price.setPifaId( pifaId );
+            price.setIsDelete( 1 );
+            mallPifaPriceDAO.updateByPifaId( price );
+        }
+        if ( CommonUtil.isNotEmpty( map.get( "specArr" ) ) ) {
+            List< MallPifaPrice > priceList = JSONArray.parseArray( map.get( "specArr" ).toString(), MallPifaPrice.class );
+            if ( priceList != null && priceList.size() > 0 ) {
+                for ( MallPifaPrice price : priceList ) {
+                    price.setPifaId( pifaId );
+                    if ( CommonUtil.isEmpty( price.getId() ) ) {
+                        mallPifaPriceDAO.insert( price );
+                    } else {
+                        mallPifaPriceDAO.updateById( price );
+                    }
+                }
+            }
+        }
 
     }
 
     @Override
     public List< MallPifaPrice > selectPriceByGroupId( int groupId ) {
-	return mallPifaPriceDAO.selectPriceByGroupId( groupId );
+        return mallPifaPriceDAO.selectPriceByGroupId( groupId );
     }
 
     @Override
     public List< MallPifaPrice > selectPriceByInvId( int pifaId, int invId ) {
-	Wrapper< MallPifaPrice > priceWrapper = new EntityWrapper<>();
-	priceWrapper.where( "inven_id = {0} and pifa_id = {1} and is_delete = 0 ", invId, pifaId );
-	return mallPifaPriceDAO.selectList( priceWrapper );
+        Wrapper< MallPifaPrice > priceWrapper = new EntityWrapper<>();
+        priceWrapper.where( "inven_id = {0} and pifa_id = {1} and is_delete = 0 ", invId, pifaId );
+        return mallPifaPriceDAO.selectList( priceWrapper );
     }
 
     @Override
     public MallPifaPrice selectPifaBySpecifica( String specificaIds, int pifaId ) {
-	Wrapper< MallPifaPrice > priceWrapper = new EntityWrapper<>();
-	priceWrapper.where( "specifica_ids = {0} and pifa_id = {1} and is_delete = 0 ", specificaIds, pifaId );
+        Wrapper< MallPifaPrice > priceWrapper = new EntityWrapper<>();
+        priceWrapper.where( "specifica_ids = {0} and pifa_id = {1} and is_delete = 0 ", specificaIds, pifaId );
 
-	List< MallPifaPrice > pifaPricesList = mallPifaPriceDAO.selectList( priceWrapper );
-	if ( CommonUtil.isNotEmpty( pifaPricesList ) && pifaPricesList.size() > 0 ) {
-	    return pifaPricesList.get( 0 );
-	}
-	return null;
+        List< MallPifaPrice > pifaPricesList = mallPifaPriceDAO.selectList( priceWrapper );
+        if ( CommonUtil.isNotEmpty( pifaPricesList ) && pifaPricesList.size() > 0 ) {
+            return pifaPricesList.get( 0 );
+        }
+        return null;
     }
 }

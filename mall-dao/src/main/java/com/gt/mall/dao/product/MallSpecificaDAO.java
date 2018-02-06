@@ -18,8 +18,7 @@ public interface MallSpecificaDAO extends BaseMapper< MallSpecifica > {
 
     /**
      * 获取规格
-     *
      */
-    List<Map<String, Object>> selectByUserId(Map<String, Object> maps);
+    List< Map< String,Object > > selectByUserId( Map< String,Object > maps );
 
 }

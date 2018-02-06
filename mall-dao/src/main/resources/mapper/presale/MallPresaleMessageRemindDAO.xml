@@ -18,9 +18,9 @@
         id, presale_id , remind_user_id , is_remind , is_open, create_time , remind_time
     </sql>
 
-    <select id="selectByPresale" resultMap="BaseResultMap" parameterType="com.gt.mall.entity.presale.MallPresaleMessageRemind" >
+    <select id="selectByPresale" resultMap="BaseResultMap" parameterType="com.gt.mall.entity.presale.MallPresaleMessageRemind">
         select
-        <include refid="Base_Column_List" />
+        <include refid="Base_Column_List"/>
         from t_mall_presale_message_remind
         where 1=1
         <if test="presaleId != null">
