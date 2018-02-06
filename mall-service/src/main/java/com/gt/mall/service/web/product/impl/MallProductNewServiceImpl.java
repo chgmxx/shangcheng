@@ -146,7 +146,6 @@ public class MallProductNewServiceImpl extends BaseServiceImpl< MallProductDAO,M
         if ( CommonUtil.isNotEmpty( errorMsg ) ) {
             result.setProductError( ResponseEnums.PRODUCT_NULL_ERROR.getCode() );
             result.setProductErrorMsg( errorMsg );
-            //	    throw new BusinessException( ResponseEnums.PRODUCT_NULL_ERROR.getCode(), errorMsg );
         }
         if ( CommonUtil.isNotEmpty( product.getProTypeId() ) ) {
             if ( "2".equals( product.getProTypeId().toString() ) ) {//会员卡购买

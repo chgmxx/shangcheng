@@ -46,7 +46,10 @@ public enum ResponseEnums {
     GRAND_ERROR( 1026, "请使用微信进行授权" ),
     GRANT_MAX_ERROR( 1027, "授权人数已满" ),
 
-    PRO_MEMBER_ERROR( 1028, "会员卡购买跳转" );
+    PRO_MEMBER_ERROR( 1028, "会员卡购买跳转" ),
+    FENBI_EXCHANGE_NULL_ERROR(1029,"您的粉币不够，不能用粉币来兑换这件商品"),
+    JIFEN_EXCHANGE_NULL_ERROR(1030,"您的积分不够，不能用积分来兑换这件商品")
+    ;
 
     private final int    code;
     private final String desc;

@@ -299,4 +299,5 @@ public class Constants {
      */
     public static final String ORDER_REFUND_URL = PropertiesUtil.getHomeUrl() + "mallCallback/callbackApi/agreanOrderReturn";
 
+
 }

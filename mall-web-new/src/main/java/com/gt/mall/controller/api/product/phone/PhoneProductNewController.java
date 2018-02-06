@@ -257,9 +257,6 @@ public class PhoneProductNewController extends AuthorizeOrUcLoginController {
             }
             //判断店铺和门店是否已经被删除
             boolean isShop = mallPageService.wxShopIsDelete( params.getShopId(), null );
-            //	    if ( !isShop ) {
-            //		return ServerResponse.createByErrorCodeMessage( ResponseEnums.SHOP_NULL_ERROR.getCode(), ResponseEnums.SHOP_NULL_ERROR.getDesc() );
-            //	    }
 
             //封装登陆参数
             //	    loginDTO.setUcLogin( 1 );//不需要登陆
