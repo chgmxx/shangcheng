@@ -988,17 +988,17 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
                 Map< String,Object > specMap = new HashMap<>();
                 // 批量同步商品规格
                 if ( CommonUtil.isNotEmpty( specList ) ) {
-                    specMap = mallProductSpecificaService.copyProductSpecifica( specList, newId, shopId, user.getId(), product.getId() );
+                    specMap = mallProductSpecificaService.copyProductSpecifica( specList, newId, shopId, user.getId(), productId );
                 }
                 // 批量同步商品库存
                 if ( CommonUtil.isNotEmpty( invenList ) ) {
-                    mallProductInventoryService.copyProductInven( invenList, specMap, newId , product.getId());
+                    mallProductInventoryService.copyProductInven( invenList, specMap, newId , productId);
                 }
             }
 
             // 批量同步商品参数
             if ( CommonUtil.isNotEmpty( paramList ) ) {
-                mallProductParamService.copyProductParam( paramList, newId, shopId, user.getId(), product.getId() );
+                mallProductParamService.copyProductParam( paramList, newId, shopId, user.getId(), productId );
             }
 
             map.put( "code", 1 );
