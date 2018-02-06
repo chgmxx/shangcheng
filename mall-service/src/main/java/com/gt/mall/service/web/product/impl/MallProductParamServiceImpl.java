@@ -130,10 +130,10 @@ public class MallProductParamServiceImpl extends BaseServiceImpl< MallProductPar
     }
 
     @Override
-    public void copyProductParam( List< MallProductParam > paramList, int proId, int shopId, int userId ) throws Exception {
+    public void copyProductParam( List< MallProductParam > paramList, int proId, int shopId, int userId , int oldProId) throws Exception {
         if ( paramList != null && paramList.size() > 0 ) {
             for ( MallProductParam param : paramList ) {
-                if ( !param.getProductId().toString().equals( CommonUtil.toString( proId ) ) ) {
+                if ( !param.getProductId().toString().equals( CommonUtil.toString( oldProId ) ) ) {
                     continue;
                 }
                 //判断店铺下面是否存在商品规格值

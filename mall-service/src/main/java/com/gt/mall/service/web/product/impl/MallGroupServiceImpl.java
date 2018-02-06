@@ -408,7 +408,7 @@ public class MallGroupServiceImpl extends BaseServiceImpl< MallGroupDAO,MallGrou
         //List< Map< String,Object > > productGroupList = mallProductGroupDAO.selectgroupsByProductId( params );
         if ( productGroupList != null && productGroupList.size() > 0 ) {
             for ( Map< String,Object > map2 : productGroupList ) {
-                if ( !map2.get( "productId" ).toString().equals( product.getId().toString() ) ) {
+                if ( !map2.get( "productId" ).toString().equals(params.get( "proId" ).toString() ) ) {
                     continue;
                 }
                 MallProductGroup productGroup = new MallProductGroup();

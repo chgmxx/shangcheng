@@ -41,6 +41,6 @@ public interface MallProductParamService extends BaseService< MallProductParam >
      *
      * @return
      */
-    void copyProductParam( List< MallProductParam > paramList, int proId, int shopId, int userId ) throws Exception;
+    void copyProductParam( List< MallProductParam > paramList, int proId, int shopId, int userId, int oldProId) throws Exception;
 
 }

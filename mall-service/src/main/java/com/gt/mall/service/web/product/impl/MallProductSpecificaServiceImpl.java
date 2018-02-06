@@ -263,12 +263,12 @@ public class MallProductSpecificaServiceImpl extends BaseServiceImpl< MallProduc
     }
 
     @Override
-    public Map< String,Object > copyProductSpecifica( List< MallProductSpecifica > specList, int proId, int shopId, int userId ) {
+    public Map< String,Object > copyProductSpecifica( List< MallProductSpecifica > specList, int proId, int shopId, int userId,int oldProId ) {
         Map< String,Object > specMap = new HashMap< String,Object >();
 
         if ( specList != null && specList.size() > 0 ) {
             for ( MallProductSpecifica proSpecifica : specList ) {
-                if ( !proSpecifica.getProductId().toString().equals( CommonUtil.toString( proId ) ) ) {
+                if ( !proSpecifica.getProductId().toString().equals( CommonUtil.toString( oldProId ) ) ) {
                     continue;
                 }
                 proSpecifica.setProductId( proId );
