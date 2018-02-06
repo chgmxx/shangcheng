@@ -19,7 +19,6 @@ import com.gt.mall.dao.product.*;
 import com.gt.mall.dao.seckill.MallSeckillDAO;
 import com.gt.mall.entity.auction.MallAuction;
 import com.gt.mall.entity.basic.MallImageAssociative;
-import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.groupbuy.MallGroupBuy;
 import com.gt.mall.entity.order.MallOrder;
 import com.gt.mall.entity.order.MallOrderDetail;
@@ -44,8 +43,6 @@ import com.gt.mall.utils.*;
 import com.gt.util.entity.param.fenbiFlow.BusFlow;
 import com.gt.util.entity.param.fenbiFlow.BusFlowInfo;
 import com.gt.util.entity.param.fenbiFlow.WsFenbiFlowRecord;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -442,7 +439,8 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
             /*List<MallProductGroup> groupList = mallProductGroupDao
                     .selectByProductId(product.getId());*/
             Map< String,Object > params = new HashMap<>();
-            params.put( "proId", product.getId() );
+            int proIds[] = {product.getId()};
+            params.put( "proIds", proIds );
             List< Map< String,Object > > groupList = mallProductGroupDAO.selectgroupsByProductId( params );
 
             params.put( "assId", product.getId() );
