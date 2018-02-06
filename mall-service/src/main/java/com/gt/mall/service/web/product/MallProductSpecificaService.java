@@ -84,7 +84,7 @@ public interface MallProductSpecificaService extends BaseService< MallProductSpe
      *
      * @return
      */
-    Map< String,Object > copyProductSpecifica( List< MallProductSpecifica > specList, int proId, int shopId, int userId );
+    Map< String,Object > copyProductSpecifica( List< MallProductSpecifica > specList, int proId, int shopId, int userId,int oldProId );
 
     /**
      * 新增或修改规格

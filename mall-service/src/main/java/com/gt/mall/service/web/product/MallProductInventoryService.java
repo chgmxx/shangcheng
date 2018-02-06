@@ -70,7 +70,7 @@ public interface MallProductInventoryService extends BaseService< MallProductInv
      * @param specMap   规格
      * @param proId     商品id
      */
-    void copyProductInven( List< MallProductInventory > invenList, Map< String,Object > specMap, int proId ) throws Exception;
+    void copyProductInven( List< MallProductInventory > invenList, Map< String,Object > specMap, int proId ,int oldProId) throws Exception;
 
     /**
      * 批量保存或修改erp商品库存

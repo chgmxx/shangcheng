@@ -16,6 +16,7 @@ import com.gt.util.entity.result.shop.WsWxShopInfo;
 import com.gt.util.entity.result.shop.WsWxShopInfoExtend;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -55,7 +56,7 @@ public class WxShopServiceImpl implements WxShopService {
     @Override
     public List< WsShopPhoto > getShopPhotoByShopId( int wxShopId ) {
         if ( wxShopId == 0 ) {
-            return null;
+            return new ArrayList<>();
         }
         try {
             String key = Constants.REDIS_KEY + "wx_shop_photo_" + wxShopId;
@@ -75,13 +76,13 @@ public class WxShopServiceImpl implements WxShopService {
         } catch ( Exception e ) {
             e.printStackTrace();
         }
-        return null;
+        return new ArrayList<>();
     }
 
     @Override
     public List< WsWxShopInfoExtend > queryWxShopByBusId( int busUserId ) {
         if ( busUserId == 0 ) {
-            return null;
+            return new ArrayList<>();
         }
         String key = Constants.REDIS_KEY + "wx_shop_user_id_" + busUserId;
         if ( JedisUtil.exists( key ) ) {
@@ -97,7 +98,7 @@ public class WxShopServiceImpl implements WxShopService {
             JedisUtil.set( key, result, Constants.REDIS_SECONDS );
             return JSONArray.parseArray( result, WsWxShopInfoExtend.class );
         }
-        return null;
+        return new ArrayList<>();
     }
 
     @Override
@@ -136,7 +137,7 @@ public class WxShopServiceImpl implements WxShopService {
     @Override
     public List< Map > queryCityByParentId( int parentId ) {
         if ( parentId == 0 ) {
-            return null;
+            return new ArrayList<>();
         }
         String key = Constants.REDIS_KEY + "area_parent_" + parentId;
         if ( JedisUtil.exists( key ) ) {
@@ -152,7 +153,7 @@ public class WxShopServiceImpl implements WxShopService {
             JedisUtil.set( key, result, Constants.REDIS_SECONDS );
             return JSONArray.parseArray( result, Map.class );
         }
-        return null;
+        return new ArrayList<>();
     }
 
     @Override
@@ -171,13 +172,13 @@ public class WxShopServiceImpl implements WxShopService {
             JedisUtil.set( key, result, Constants.REDIS_SECONDS );
             return JSONArray.parseArray( result, Map.class );
         }
-        return null;
+        return new ArrayList<>();
     }
 
     @Override
     public List< Map > queryBasisCityIds( String cityIds ) {
         if ( CommonUtil.isEmpty( cityIds ) ) {
-            return null;
+            return new ArrayList<>();
         }
         String key = Constants.REDIS_KEY + "area_id_" + cityIds;
         if ( JedisUtil.exists( key ) ) {
@@ -193,7 +194,7 @@ public class WxShopServiceImpl implements WxShopService {
             JedisUtil.set( key, result, Constants.REDIS_SECONDS );
             return JSONArray.parseArray( result, Map.class );
         }
-        return null;
+        return new ArrayList<>();
     }
 
     @Override

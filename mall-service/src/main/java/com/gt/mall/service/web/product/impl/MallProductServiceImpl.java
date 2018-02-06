@@ -19,7 +19,6 @@ import com.gt.mall.dao.product.*;
 import com.gt.mall.dao.seckill.MallSeckillDAO;
 import com.gt.mall.entity.auction.MallAuction;
 import com.gt.mall.entity.basic.MallImageAssociative;
-import com.gt.mall.entity.basic.MallPaySet;
 import com.gt.mall.entity.groupbuy.MallGroupBuy;
 import com.gt.mall.entity.order.MallOrder;
 import com.gt.mall.entity.order.MallOrderDetail;
@@ -44,8 +43,6 @@ import com.gt.mall.utils.*;
 import com.gt.util.entity.param.fenbiFlow.BusFlow;
 import com.gt.util.entity.param.fenbiFlow.BusFlowInfo;
 import com.gt.util.entity.param.fenbiFlow.WsFenbiFlowRecord;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -67,7 +64,7 @@ import java.util.*;
 @Service
 public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,MallProduct > implements MallProductService {
 
-//    private static Logger logger = LoggerFactory.getLogger( MallProductServiceImpl.class );
+    //    private static Logger logger = LoggerFactory.getLogger( MallProductServiceImpl.class );
 
     @Autowired
     private MallProductDAO mallProductDAO;//商品dao
@@ -442,7 +439,8 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
             /*List<MallProductGroup> groupList = mallProductGroupDao
                     .selectByProductId(product.getId());*/
             Map< String,Object > params = new HashMap<>();
-            params.put( "proId", product.getId() );
+            int proIds[] = { product.getId() };
+            params.put( "proIds", proIds );
             List< Map< String,Object > > groupList = mallProductGroupDAO.selectgroupsByProductId( params );
 
             params.put( "assId", product.getId() );
@@ -949,7 +947,7 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
             if ( ( detailList != null ) && ( detailList.size() > 0 ) ) {
                 for ( int i = 0; i < detailList.size(); i++ ) {
                     MallProductDetail mallProductDetail = detailList.get( i );
-                    if ( !mallProductDetail.getProductId().toString().equals( product.getId().toString() ) ) {
+                    if ( !mallProductDetail.getProductId().toString().equals( CommonUtil.toString( productId ) ) ) {
                         continue;
                     }
                     mallProductDetail.setId( null );
@@ -976,7 +974,7 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
             //同步商品图片
             if ( imageList != null && imageList.size() > 0 ) {
                 for ( MallImageAssociative images : imageList ) {
-                    if ( !images.getAssId().toString().equals( product.getId().toString() ) ) {
+                    if ( !images.getAssId().toString().equals( CommonUtil.toString( productId ) ) ) {
                         continue;
                     }
                     images.setAssId( newId );
@@ -990,17 +988,17 @@ public class MallProductServiceImpl extends BaseServiceImpl< MallProductDAO,Mall
                 Map< String,Object > specMap = new HashMap<>();
                 // 批量同步商品规格
                 if ( CommonUtil.isNotEmpty( specList ) ) {
-                    specMap = mallProductSpecificaService.copyProductSpecifica( specList, newId, shopId, user.getId() );
+                    specMap = mallProductSpecificaService.copyProductSpecifica( specList, newId, shopId, user.getId(), productId );
                 }
                 // 批量同步商品库存
                 if ( CommonUtil.isNotEmpty( invenList ) ) {
-                    mallProductInventoryService.copyProductInven( invenList, specMap, newId );
+                    mallProductInventoryService.copyProductInven( invenList, specMap, newId , productId);
                 }
             }
 
             // 批量同步商品参数
             if ( CommonUtil.isNotEmpty( paramList ) ) {
-                mallProductParamService.copyProductParam( paramList, newId, shopId, user.getId() );
+                mallProductParamService.copyProductParam( paramList, newId, shopId, user.getId(), productId );
             }
 
             map.put( "code", 1 );

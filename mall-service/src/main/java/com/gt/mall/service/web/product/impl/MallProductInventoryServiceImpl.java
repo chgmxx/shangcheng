@@ -289,13 +289,13 @@ public class MallProductInventoryServiceImpl extends BaseServiceImpl< MallProduc
     }
 
     @Override
-    public void copyProductInven( List< MallProductInventory > invenList, Map< String,Object > specMap, int proId ) throws Exception {
+    public void copyProductInven( List< MallProductInventory > invenList, Map< String,Object > specMap, int proId,int oldProId ) throws Exception {
         if ( invenList != null && invenList.size() > 0 ) {
             if ( CommonUtil.isEmpty( specMap ) ) {
                 throw new BusinessException( ResponseEnums.ERROR.getCode(), ResponseEnums.ERROR.getDesc() );
             }
             for ( MallProductInventory inven : invenList ) {
-                if ( !inven.getProductId().toString().equals( CommonUtil.toString( proId ) ) ) {
+                if ( !inven.getProductId().toString().equals( CommonUtil.toString( oldProId ) ) ) {
                     continue;
                 }
                 inven.setInvSaleNum( 0 );
