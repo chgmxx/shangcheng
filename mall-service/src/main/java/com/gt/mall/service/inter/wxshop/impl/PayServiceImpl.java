@@ -28,6 +28,8 @@ public class PayServiceImpl implements PayService {
 
     private static final String PAY_URL = "/8A5DA52E/payApi/6F6D9AD2/79B4DE7C/";
 
+    private static final String REFUND_URL = "/8A5DA52E/orderApi/79B4DE7C/";
+
     private static final String WX_APPLET_PAY_URL = "/wxPay/79B4DE7C/";
 
     private static final String WALLET_REFUND = "/8A5DA52E/orderApi/79B4DE7C/";
@@ -50,7 +52,7 @@ public class PayServiceImpl implements PayService {
     public Map< String,Object > walletRefund( TRefundOrder refundOrder ) {
         RequestUtils< TRefundOrder > requestUtils = new RequestUtils<>();
         requestUtils.setReqdata( refundOrder );
-        return HttpSignUtil.signHttpInsertOrUpdate( requestUtils, PAY_URL + "refund", 5, 1 );
+        return HttpSignUtil.signHttpInsertOrUpdate( requestUtils, REFUND_URL + "refund", 5, 1 );
     }
 
     @Override
